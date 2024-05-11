@@ -1,2 +1,0 @@
-# Trellomize
-AP python project
