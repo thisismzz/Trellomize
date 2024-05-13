@@ -3,6 +3,7 @@ import json
 import base64
 import uuid
 
+
 #................................
 
 class UserStatus(Enum):
@@ -28,7 +29,32 @@ class User:
             data = vars(self)
             json.dump(data,file,indent=4)
 
-    
+def register_user(email, username, password):
+    try:
+        if not is_valid_email(email):
+            raise ValueError("Invalid email format")
+        if not is_valid_username(username):
+            raise ValueError("Invalid username format")
+        if not is_unique_username(username):
+            raise ValueError("Username already exists")
+        if not is_strong_password(password):
+            raise ValueError("Weak password")
+        print("[bold green]Registration successful![/bold green]")
+    except ValueError as e:
+        print("[bold red]Error:[/bold red]", str(e))
+
+def is_valid_email(email):
+    pass
+
+def is_valid_username(username):
+    pass
+
+def is_unique_username(username):
+    pass
+
+def is_strong_password(password):
+
+    pass
 
 mahdi = User("mahdi@gmail.com","1234","mzz")
 # print(mahdi)
