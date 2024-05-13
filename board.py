@@ -1,5 +1,6 @@
 import users
 from enum import Enum
+import uuid
 
 
 
@@ -37,5 +38,13 @@ class TaskPriority(Enum):
         return self.name
 
 class Task:
-    def __init__(self,title,defenition,due,status=str(TaskStatus.BACKLOG),priority=str(TaskPriority.LOW)):
-        pass
+    def __init__(self,title,description,assignees:users.User,due,status=str(TaskStatus.BACKLOG),priority=str(TaskPriority.LOW)):
+        self.id = str(uuid.uuid4())
+        self.title = title
+        self.description = description
+        self.assignees = assignees
+        self.priority = priority
+        self.status = status
+        self.created_at = datetime.now()
+        self.due = due
+        self.comments = []
