@@ -49,3 +49,12 @@ class Task:
         self.created_at = datetime.now()
         self.due = due
         self.comments = []
+    def create_task():
+        title = input("Please enter a title: ")
+        description = input("Please write a description: ")
+        show the list of member of project
+        assignees = input()
+        print("Choose the priority of you task:")
+        priority = input("Please a description: ")
+        status = input("Please write a description: ")
+        return title,description,assignees,priority,status 
