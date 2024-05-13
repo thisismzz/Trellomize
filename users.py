@@ -15,7 +15,8 @@ class UserStatus(Enum):
 
 
 class User:
-    def __init__(self,email,password,username):
+    def __init__(self):
+        email,password,username = User.create_user()
         self._email=email
         self._password=str(base64.b64encode(password.encode("utf-8")))
         self.username=username
@@ -28,6 +29,15 @@ class User:
         with open ('users/'+self.username+'.json','w') as file:
             data = vars(self)
             json.dump(data,file,indent=4)
+
+    def create_user():
+        email = input("Please enter a valid Email: ")
+        password = input("Please enter a valid Password: ")
+        username = input("Please Enter a valid uername: ")
+        return email,password,username
+
+    def __str__(self):
+        return str(vars(self))
 
 def register_user(email, username, password):
     try:
@@ -56,5 +66,6 @@ def is_strong_password(password):
 
     pass
 
-mahdi = User("mahdi@gmail.com","1234","mzz")
+kimia = User()
+print(kimia)
 # print(mahdi)
