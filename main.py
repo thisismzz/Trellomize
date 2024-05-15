@@ -109,6 +109,24 @@ class User:
         except ValueError as e:
             console.print("Error: " + str(e), style="Error")
 
+    @staticmethod
+    def login():
+        data = load_data()
+        console.print("Login", style="Title")
+        username = input("Username: ")
+        password = input("Password: ")
+
+        for user_data in data["users"]:
+            if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
+                if not user_data["active"]:
+                    console.print("Your account is inactive.", style="Error")
+                    return None
+                console.print("Login successful.", style="Notice")
+                return User(**user_data)
+
+        console.print("Incorrect username or password.", style="Error")
+        return None
+
 def load_data():
     if not os.path.exists("data.json"):
         return {"users": [], "projects": []}
