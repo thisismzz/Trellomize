@@ -158,6 +158,24 @@ def main_menu():
         else:
             console.print("Invalid choice.", style="Error")
 
+def user_menu(user):
+    while True:
+        console.print(f"Welcome, {user.username}", style="Title")
+        console.print("1. Create Project")
+        console.print("2. View Projects")
+        console.print("3. Logout")
+
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            Project().create_project(user)
+        elif choice == "2":
+            Project.view_user_projects(user)
+        elif choice == "3":
+            console.print("You have been successfully logged out.", style="Notice")
+            break
+        else:
+            console.print("Invalid choice.", style="Error")
+
 class Task:
     def __init__(self, title, description, project, priority=Priority.LOW.value, status=Status.BACKLOG.value):
         self.id = str(uuid.uuid4())
