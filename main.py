@@ -267,6 +267,181 @@ class Task:
         else:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
+class Project:
+    def __init__(self, name=None, owner=None):
+        self.id = str(uuid.uuid4())
+        self.name = name
+        self.owner = owner
+        self.tasks = []
+        self.members = [owner] if owner else []
+
+    def add_member(self, username):
+        if username not in self.members:
+            self.members.append(username)
+        save_data(load_data())
+
+    def remove_member(self, username):
+        if username in self.members:
+            self.members.remove(username)
+            save_data(load_data())
+
+    def delete_project(self):
+        data = load_data()
+        data["projects"] = [proj for proj in data["projects"] if proj["id"] != self.id]
+        save_data(data)
+        console.print(f"Project '{self.name}' has been deleted successfully.", style="Notice")
+
+    def create_task(self, title, description):
+        new_task = Task(title, description, self, priority=Priority.LOW.value, status=Status.BACKLOG.value)
+        self.tasks.append(new_task)  
+        save_data(load_data())
+        return new_task
+
+    def manage_tasks(self, user):
+        while True:
+            console.print(f"Managing Tasks for Project: {self.name}", style="Title")
+            console.print("1. Create Task")
+            console.print("2. View Tasks")
+            console.print("3. Add Member")
+            console.print("4. Remove Member")
+            console.print("5. Delete Project")
+            console.print("6. Back")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                self.create_task_menu(user)
+            elif choice == "2":
+                self.view_project_tasks(user)
+            elif choice == "3":
+                self.add_member_menu()
+            elif choice == "4":
+                self.remove_member_menu()
+            elif choice == "5":
+                self.delete_project()
+                break
+            elif choice == "6":
+                break
+            else:
+                console.print("Invalid choice.", style="Error")
+
+    def add_member_menu(self):
+        console.print("Available users:")
+        for username in User.get_all_usernames():
+            console.print("-", username)
+        member_username = input("Enter username to add as member: ")
+        if member_username in User.get_all_usernames():
+            self.add_member(member_username)
+            console.print("Member added successfully.", style="Notice")
+        else:
+            console.print("Invalid username.", style="Error")
+
+    def remove_member_menu(self):
+        console.print("Current project members:")
+        for member in self.members:
+            console.print("-", member)
+        member_username = input("Enter username to remove from project: ")
+        if member_username in self.members:
+            self.remove_member(member_username)
+            console.print("Member removed successfully.", style="Notice")
+        else:
+            console.print("User is not a member of the project.", style="Error")
+
+    def create_task_menu(self, user):
+        if self.owner != user.username:
+            console.print("Only the project owner can create tasks.", style="Error")
+            return
+        
+        title = input("Task Title: ")
+        description = input("Task Description: ")
+
+        self.create_task(title, description)  
+        console.print("Task created successfully.", style="Notice")
+
+    def view_project_tasks(self, user):
+        table = Table(title=f"Tasks for Project: {self.name}")
+        table.add_column("ID", justify="center")
+        table.add_column("Title", justify="center")
+        table.add_column("Description", justify="center")
+        table.add_column("Start Time", justify="center")
+        table.add_column("End Time", justify="center")
+        table.add_column("Priority", justify="center")
+        table.add_column("Status", justify="center")
+
+        for task in self.tasks:
+            priority = Priority(task.priority).name  
+            status = Status(task.status).name       
+            table.add_row(task.id, task.title, task.description, task.formatted_start_time(), task.formatted_end_time(), priority, status)  
+
+        console.print(table)
+        task_id = input("Enter task ID to manage (or 'back' to go back): ")
+        if task_id == "back":
+            return
+        for task in self.tasks:
+            if task.id == task_id:
+                self.task_menu(user, task)  
+                break
+
+    def task_menu(self, user, task):
+        while True:
+            console.print(f"Managing Task: {task.title}", style="Title")
+            console.print("1. Change Status")
+            console.print("2. Change Priority")
+            console.print("3. Update Start Time")
+            console.print("4. Update End Time")
+            console.print("5. Add Comment")
+            console.print("6. Assign Member")
+            console.print("7. Back")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                task.update_status()
+            elif choice == "2":
+                task.update_priority()
+            elif choice == "3":
+                task.update_start_time()
+            elif choice == "4":
+                task.update_end_time()
+            elif choice == "5":
+                task.add_comment(user)
+            elif choice == "6":
+                task.show_project_members()  
+                member = input("Enter member username: ")
+                task.assign_member(self, member)  
+            elif choice == "7":
+                break
+            else:
+                console.print("Invalid choice.", style="Error")
+
+    def create_project(self, user):
+        name = input("Project Name: ")
+        project = Project(name, user.username)
+        data = load_data()
+        data["projects"].append(project.__dict__)
+        save_data(data)
+        console.print("Project created successfully.", style="Notice")
+
+    @staticmethod
+    def view_user_projects(user):
+        data = load_data()
+        user_projects = [proj for proj in data["projects"] if user.username in proj["members"]]
+
+        table = Table(title="Projects")
+        table.add_column("ID", justify="center")
+        table.add_column("Name", justify="center")
+        table.add_column("Owner", justify="center")
+
+        for project in user_projects:
+            table.add_row(project["id"], project["name"], project["owner"])
+
+        console.print(table)
+        project_id = input("Enter project ID to manage (or 'back' to go back): ")
+        if project_id == "back":
+            return
+        for project in user_projects:
+            if project["id"] == project_id:
+                project_instance = Project(name=project["name"], owner=project["owner"])  
+                project_instance.manage_tasks(user)
+                break
 
 if __name__ == "__main__":
     main_menu()
