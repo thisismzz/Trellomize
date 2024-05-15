@@ -1,7 +1,7 @@
 import users
 from enum import Enum
 import uuid
-
+from datetime import datetime
 
 
 
@@ -49,3 +49,6 @@ class Task:
         self.created_at = datetime.now()
         self.due = due
         self.comments = []
+        
+    def add_comment(self,comment):
+        self.comments.append(comment)

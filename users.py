@@ -2,7 +2,7 @@ from enum import Enum
 import json
 import base64
 import uuid
-
+import os
 
 #................................
 
@@ -26,9 +26,12 @@ class User:
         self._create_user_data()
     
     def _create_user_data(self):
-        with open ('users/'+self.username+'.json','w') as file:
+        folder_path = os.path.join('users', self.username)
+        os.makedirs(folder_path, exist_ok=True)
+        json_file_path = os.path.join(folder_path, f"{self.username}.json")
+        with open(json_file_path, 'w') as file:
             data = vars(self)
-            json.dump(data,file,indent=4)
+            json.dump(data, file, indent=4)
 
     def create_user():
         email = input("Please enter a valid Email: ")
@@ -63,7 +66,6 @@ def is_unique_username(username):
     pass
 
 def is_strong_password(password):
-
     pass
 
 kimia = User()
