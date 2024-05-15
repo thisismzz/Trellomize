@@ -30,7 +30,7 @@ class Priority(Enum):
     HIGH = 'HIGH'
     MEDIUM = 'MEDIUM'
     LOW = 'LOW'
-    
+
 class User:
     def __init__(self, email, username, password, active=True):
         self.email = email
@@ -76,3 +76,13 @@ class User:
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
             return False
         return True
+
+def load_data():
+    if not os.path.exists("data.json"):
+        return {"users": [], "projects": []}
+    with open("data.json", "r") as file:
+        return json.load(file)
+
+def save_data(data):
+    with open("data.json", "w") as file:
+        json.dump(data, file, indent=4)
