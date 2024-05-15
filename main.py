@@ -136,3 +136,27 @@ def load_data():
 def save_data(data):
     with open("data.json", "w") as file:
         json.dump(data, file, indent=4)
+
+def main_menu():
+    while True:
+        console.print("Welcome to the Project Management System", style="Title")
+        console.print("Already have an account? Login now. New user? Register to get started.", style="Info")
+        console.print("1. Register")
+        console.print("2. Login")
+        console.print("3. Exit")
+        
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            User.register()
+        elif choice == "2":
+            user = User.login()
+            if user:
+                user_menu(user)
+        elif choice == "3":
+            console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
+            break
+        else:
+            console.print("Invalid choice.", style="Error")
+
+if __name__ == "__main__":
+    main_menu()
