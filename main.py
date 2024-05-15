@@ -158,5 +158,97 @@ def main_menu():
         else:
             console.print("Invalid choice.", style="Error")
 
+class Task:
+    def __init__(self, title, description, project, priority=Priority.LOW.value, status=Status.BACKLOG.value):
+        self.id = str(uuid.uuid4())
+        self.title = title
+        self.description = description
+        self.start_time = datetime.now()  
+        self.end_time = datetime.now() + timedelta(hours=24)  
+        self.priority = priority
+        self.status = status
+        self.assignees = []
+        self.comments = []
+        self.project = project  
+
+    def formatted_start_time(self):
+        return self.start_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    def formatted_end_time(self):
+        return self.end_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    def update_end_time(self):
+        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): ")
+        try:
+            self.end_time = datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S")
+            save_data(load_data())
+            console.print("End time updated successfully.", style="Notice")
+        except ValueError:
+            console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
+
+    def update_start_time(self):
+        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): ")
+        try:
+            self.start_time = datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S")
+            save_data(load_data())
+            console.print("Start time updated successfully.", style="Notice")
+        except ValueError:
+            console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
+
+    def update_status(self):
+        console.print("Available statuses:", style="Title")
+        for status in Status:
+            console.print(f"- {status.value}")
+        new_status = input("Enter new status: ")
+        if new_status in Status.__members__:
+            self.status = new_status
+            save_data(load_data())
+            console.print("Task status updated successfully.", style="Notice")
+        else:
+            console.print("Invalid status.", style="Error")
+
+    def update_priority(self):
+        console.print("Available priorities:", style="Title")
+        for priority in Priority:
+            console.print(f"- {priority.value}")
+        new_priority = input("Enter new priority: ")
+        if new_priority in Priority.__members__:
+            self.priority = new_priority
+            save_data(load_data())
+            console.print("Task priority updated successfully.", style="Notice")
+        else:
+            console.print("Invalid priority.", style="Error")
+
+    def add_comment(self, user):
+        comment = input("Enter comment: ")
+        self.comments.append({"user": user.username, "comment": comment, "timestamp": datetime.now().isoformat()})
+        save_data(load_data())
+        console.print("Comment added successfully.", style="Notice")
+    
+    def show_project_members(self):
+        console.print("Project Members:")
+        for member in self.project.members:
+            console.print("-", member)
+
+    def assign_member(self, project, member):
+        if member in project.members:
+            if member not in self.assignees:
+                self.assignees.append(member)
+                save_data(load_data())
+                console.print("Member assigned to task successfully.", style="Notice")
+            else:
+                console.print("Member is already assigned to the task.", style="Error")
+        else:
+            console.print("User is not a member of the project.", style="Error")
+
+    def remove_assignee(self, username):
+        if username in self.assignees:
+            self.assignees.remove(username)
+            save_data(load_data())
+            console.print(f"Member '{username}' removed from task '{self.title}' successfully.", style="Notice")
+        else:
+            console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
+
+
 if __name__ == "__main__":
     main_menu()
