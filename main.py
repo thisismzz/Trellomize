@@ -18,6 +18,11 @@ custom_theme = Theme({
 
 console = Console(theme=custom_theme)
 
+#.........................
+#        CLASSES          
+#.........................
+
+
 class Status(Enum):
     BACKLOG = 'BACKLOG'
     TODO = 'TODO'
@@ -37,6 +42,7 @@ class User:
         self.username = username
         self.password = password
         self.active = active
+        self.ID=str(uuid.uuid1())
 
     @staticmethod
     def get_all_usernames():
@@ -80,34 +86,37 @@ class User:
     @staticmethod
     def register():
         data = load_data()
-        console.print("Registration", style="Title")
-        console.print("Please provide the following details to create your account:", style="Info")
-        email = input("Email: ")
-        username = input("Username: ")
-        password = input("Password: ")
-        try:
-            if not User.validate_email_format(email):
-                raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
-            if not User.validate_username_format(username):
-                raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
-            if not User.check_unique_username(username, data):
-                raise ValueError("Username already exists! Please choose a different username.")
-            if not User.validate_password_strength(password):
-                raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
+        
+        while(True):
+            console.print("Registration", style="Title")
+            console.print("Please provide the following details to create your account:", style="Info")
+            email = input("Email: ")
+            username = input("Username: ")
+            password = input("Password: ")
+            try:
+                if not User.validate_email_format(email):
+                    raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
+                if not User.validate_username_format(username):
+                    raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
+                if not User.check_unique_username(username, data):
+                    raise ValueError("Username already exists! Please choose a different username.")
+                if not User.validate_password_strength(password):
+                    raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
 
-            for user in data["users"]:
-                if user["email"] == email or user["username"] == username:
-                    console.print("Email or username already exists.", style="Error")
-                    return
-            
-            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            new_user = User(email, username, hashed_password)
-            data["users"].append(new_user.__dict__)
-            save_data(data)
-            console.print("Account created successfully.", style="Notice")
+                for user in data["users"]:
+                    if user["email"] == email or user["username"] == username:
+                        console.print("Email or username already exists.", style="Error")
+                        return
 
-        except ValueError as e:
-            console.print("Error: " + str(e), style="Error")
+                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                new_user = User(email, username, hashed_password)
+                data["users"].append(new_user.__dict__)
+                save_data(data)
+                console.print("Account created successfully.", style="Notice")
+                break
+
+            except ValueError as e:
+                console.print("Error: " + str(e), style="Error")
 
     @staticmethod
     def login():
@@ -126,55 +135,6 @@ class User:
 
         console.print("Incorrect username or password.", style="Error")
         return None
-
-def load_data():
-    if not os.path.exists("data.json"):
-        return {"users": [], "projects": []}
-    with open("data.json", "r") as file:
-        return json.load(file)
-
-def save_data(data):
-    with open("data.json", "w") as file:
-        json.dump(data, file, indent=4)
-
-def main_menu():
-    while True:
-        console.print("Welcome to the Project Management System", style="Title")
-        console.print("Already have an account? Login now. New user? Register to get started.", style="Info")
-        console.print("1. Register")
-        console.print("2. Login")
-        console.print("3. Exit")
-        
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            User.register()
-        elif choice == "2":
-            user = User.login()
-            if user:
-                user_menu(user)
-        elif choice == "3":
-            console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
-            break
-        else:
-            console.print("Invalid choice.", style="Error")
-
-def user_menu(user):
-    while True:
-        console.print(f"Welcome, {user.username}", style="Title")
-        console.print("1. Create Project")
-        console.print("2. View Projects")
-        console.print("3. Logout")
-
-        choice = input("Enter your choice: ")
-        if choice == "1":
-            Project().create_project(user)
-        elif choice == "2":
-            Project.view_user_projects(user)
-        elif choice == "3":
-            console.print("You have been successfully logged out.", style="Notice")
-            break
-        else:
-            console.print("Invalid choice.", style="Error")
 
 class Task:
     def __init__(self, title, description, project, priority=Priority.LOW.value, status=Status.BACKLOG.value):
@@ -268,12 +228,12 @@ class Task:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
 class Project:
-    def __init__(self, name=None, owner=None):
+    def __init__(self, title, owner):
         self.id = str(uuid.uuid4())
-        self.name = name
+        self.title = title
         self.owner = owner
         self.tasks = []
-        self.members = [owner] if owner else []
+        self.members = [owner]
 
     def add_member(self, username):
         if username not in self.members:
@@ -442,6 +402,69 @@ class Project:
                 project_instance = Project(name=project["name"], owner=project["owner"])  
                 project_instance.manage_tasks(user)
                 break
+
+#.........................
+#       FUNCTIONS         
+#.........................
+
+def load_data():
+    if not os.path.exists("data.json"):
+        return {"users": [], "projects": []}
+    with open("data.json", "r") as file:
+        return json.load(file)
+
+def save_data(data):
+    with open("data.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+def main_menu():
+    while True:
+        console.print("Welcome to the Project Management System", style="Title")
+        console.print("Already have an account? Login now. New user? Register to get started.", style="Info")
+        console.print("1. Register")
+        console.print("2. Login")
+        console.print("3. Exit")
+        
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            User.register()
+        elif choice == "2":
+            user = User.login()
+            if user:
+                user_menu(user)
+        elif choice == "3":
+            console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
+            break
+        else:
+            console.print("Invalid choice.", style="Error")
+
+def user_menu(user):
+    while True:
+        console.print(f"Welcome, {user.username}", style="Title")
+        console.print("1. Create Project")
+        console.print("2. View Projects")
+        console.print("3. Logout")
+
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            Project().create_project(user)
+        elif choice == "2":
+            Project.view_user_projects(user)
+        elif choice == "3":
+            console.print("You have been successfully logged out.", style="Notice")
+            break
+        else:
+            console.print("Invalid choice.", style="Error")
+
+def unique_id_generator():
+    seed = 111100
+    while True:
+        yield seed
+        seed += 1
+
+#.........................
+#      START POINT        
+#.........................
 
 if __name__ == "__main__":
     main_menu()
