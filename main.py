@@ -76,6 +76,38 @@ class User:
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
             return False
         return True
+    
+    @staticmethod
+    def register():
+        data = load_data()
+        console.print("Registration", style="Title")
+        console.print("Please provide the following details to create your account:", style="Info")
+        email = input("Email: ")
+        username = input("Username: ")
+        password = input("Password: ")
+        try:
+            if not User.validate_email_format(email):
+                raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
+            if not User.validate_username_format(username):
+                raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
+            if not User.check_unique_username(username, data):
+                raise ValueError("Username already exists! Please choose a different username.")
+            if not User.validate_password_strength(password):
+                raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
+
+            for user in data["users"]:
+                if user["email"] == email or user["username"] == username:
+                    console.print("Email or username already exists.", style="Error")
+                    return
+            
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            new_user = User(email, username, hashed_password)
+            data["users"].append(new_user.__dict__)
+            save_data(data)
+            console.print("Account created successfully.", style="Notice")
+
+        except ValueError as e:
+            console.print("Error: " + str(e), style="Error")
 
 def load_data():
     if not os.path.exists("data.json"):
