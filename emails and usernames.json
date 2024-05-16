@@ -1,16 +1,14 @@
 {
     "emails": [
-        "mahdi@gmail.com",
-        "mahdiii@gmail.com",
-        "wuehfw@ger.com",
-        "mahdii@gmail.com",
-        "admin@admin.com"
+        "admin@admin.com",
+        "admin1@admin1.com",
+        "admin2@admin2.com",
+        "admin3@admin3.com"
     ],
     "usernames": [
-        "mzz",
-        "weif",
-        "irfh",
-        "erwerw",
-        "admin"
+        "admin",
+        "admin1",
+        "admin2",
+        "admin3"
     ]
 }

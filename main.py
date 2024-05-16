@@ -94,7 +94,7 @@ class User:
         with open(json_file_path, "w") as json_file:
             json.dump(vars(self), json_file, indent=4)
 
-    def load_user_data_login (username):
+    def load_user_data (username):
         user_folder = "users/" + username
         json_file_path = os.path.join(user_folder, f"{username}.json")
         with open(json_file_path, "r") as json_file:
@@ -153,9 +153,7 @@ class User:
         path = f"users/{username}/{username}.json"
         
         if os.path.exists(path):
-            user_data = {}
-            with open (path , 'r') as file:
-                user_data = json.load(file)
+            user_data =  User.load_user_data(username)
         
             if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
                 if not user_data["active"]:
@@ -169,17 +167,16 @@ class User:
     
 
 class Task:
-    def __init__(self, title, description, project, priority=Priority.LOW.value, status=Status.BACKLOG.value):
+    def __init__(self, title, description, priority=Priority.LOW.value, status=Status.BACKLOG.value):
         self.id = str(uuid.uuid4())
         self.title = title
         self.description = description
-        self.start_time = datetime.now()  
+        self.start_time = datetime.now()
         self.end_time = datetime.now() + timedelta(hours=24)  
         self.priority = priority
         self.status = status
         self.assignees = []
         self.comments = []
-        self.project = project  
 
     def formatted_start_time(self):
         return self.start_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -260,32 +257,52 @@ class Task:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
 class Project:
-    def __init__(self, title, owner):
-        self.id = str(uuid.uuid4())
+
+    def __init__(self, title, owner:User):
         self.title = title
-        self.owner = owner
+        self.owner = owner.username
         self.tasks = []
-        self.members = [owner]
+        self.collaborators = [owner.username]
         self.ID = str(uuid.uuid1())
 
+
+    def save_project_data(self):
+        project_folder = "projects/"
+        os.makedirs(project_folder, exist_ok=True)
+        json_file_path = os.path.join(project_folder, f"{self.ID}.json")
+        with open(json_file_path, "w") as json_file:
+            json.dump(vars(self), json_file, indent=4)
+
+
+    def load_project_data(ID):
+        project_folder = "users/"
+        json_file_path = os.path.join(project_folder, f"{ID}.json")
+        with open(json_file_path, "r") as json_file:
+            return json.load(json_file)
+
+
     def add_member(self, member : User):
-        if member not in self.members:
-            self.members.append(member)
+        if member not in self.collaborators:
+            self.collaborators.append(member)
+            self.save_project_data()
         else:
-            Console.print(f"User {member.username} has already been added" , style='Error')
-        save_data(load_data())
+            console.print(f"User {member.username} has already been added" , style='Error')
 
     def remove_member(self, member: User):
-        if member in self.members:
-            self.members.remove(member)
-            Console.print(f"User {member.username} removed from project" , style="Notice")
-            save_data(load_data())
+        if member in self.collaborators:
+            self.collaborators.remove(member)
+            self.save_project_data()
+            console.print(f"User {member.username} removed from project" , style="Notice")
+        else:
+            console.print("No such member in collaborators" , style="Error")
 
     def delete_project(self):
-        data = load_data()
-        data["projects"] = [proj for proj in data["projects"] if proj["id"] != self.id]
-        save_data(data)
-        console.print(f"Project '{self.name}' has been deleted successfully.", style="Notice")
+        file_path = f"projects/{self.ID}.json"
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
+
 
     def create_task(self, title, description):
         new_task = Task(title, description, self, priority=Priority.LOW.value, status=Status.BACKLOG.value)
@@ -353,6 +370,7 @@ class Project:
         self.create_task(title, description)  
         console.print("Task created successfully.", style="Notice")
 
+
     def view_project_tasks(self, user):
         table = Table(title=f"Tasks for Project: {self.name}")
         table.add_column("ID", justify="center")
@@ -374,8 +392,9 @@ class Project:
             return
         for task in self.tasks:
             if task.id == task_id:
-                self.task_menu(user, task)  
+                self.task_menu(user, task)
                 break
+
 
     def task_menu(self, user, task):
         while True:
@@ -408,15 +427,14 @@ class Project:
             else:
                 console.print("Invalid choice.", style="Error")
 
-    def create_project(self, user):
-        name = input("Project Name: ")
-        project = Project(name, user.username)
-        data = load_data()
-        data["projects"].append(project.__dict__)
-        save_data(data)
+    def create_project(user:User):
+        console.print("Create new Project" , style="Title")
+        title = input("Enter Project title: ")
+        project = Project(title, user)
+        project.save_project_data()
         console.print("Project created successfully.", style="Notice")
 
-    @staticmethod
+
     def view_user_projects(user):
         data = load_data()
         user_projects = [proj for proj in data["projects"] if user.username in proj["members"]]
@@ -427,7 +445,7 @@ class Project:
         table.add_column("Owner", justify="center")
 
         for project in user_projects:
-            table.add_row(project["id"], project["name"], project["owner"])
+            table.add_row(project["id"][:8], project["title"], project["owner"])
 
         console.print(table)
         project_id = input("Enter project ID to manage (or 'back' to go back): ")
@@ -443,15 +461,6 @@ class Project:
 #       FUNCTIONS         
 #.........................
 
-def load_user_data():
-    if not os.path.exists("users.json"):
-        return {"users": []}
-    with open("users.json", "r") as file:
-        return json.load(file)
-
-def save_user_data(data):
-    with open("users.json", "w") as file:
-        json.dump(data, file, indent=4)
 
 def main_menu():
     while True:
@@ -474,16 +483,17 @@ def main_menu():
         else:
             console.print("Invalid choice.", style="Error")
 
-def user_menu(user):
+
+def user_menu(user:User):
+    console.print(f"Welcome, {user.username}", style="Title")
     while True:
-        console.print(f"Welcome, {user.username}", style="Title")
         console.print("1. Create Project")
         console.print("2. View Projects")
         console.print("3. Logout")
 
         choice = input("Enter your choice: ")
         if choice == "1":
-            Project().create_project(user)
+            Project.create_project(user)
         elif choice == "2":
             Project.view_user_projects(user)
         elif choice == "3":
@@ -492,11 +502,6 @@ def user_menu(user):
         else:
             console.print("Invalid choice.", style="Error")
 
-def unique_id_generator():
-    seed = 111100
-    while True:
-        yield seed
-        seed += 1
 
 #.........................
 #      START POINT        
