@@ -37,12 +37,13 @@ class Priority(Enum):
     LOW = 'LOW'
 
 class User:
-    def __init__(self, email, username, password, active=True , ID = str(uuid.uuid4())[:8]):
+        
+    def __init__(self, email, username, password, active = True , ID = None):
         self.email = email
         self.username = username
         self.password = password
         self.active = active
-        self.ID=ID
+        self.ID=ID if ID is not None else str(uuid.uuid1())[:8]
 
 
     def validate_email_format(email):
@@ -187,24 +188,19 @@ class User:
     
 
 class Task:
-    def __init__(self, title, description, priority=Priority.LOW.value, status=Status.BACKLOG.value ,ID=str(uuid.uuid4())[:8], 
-                 start_time=str(datetime.now()) ,end_time = str(datetime.now() + timedelta(hours=24)) , assigness = [] , comments = []):
-        self.ID = ID
+        
+    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time= None, assigness = [], comments = []):
         self.title = title
         self.description = description
-        self.start_time = start_time
-        self.end_time = end_time  
-        self.priority = priority
-        self.status = status
-        self.assignees = assigness
+        self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
+        self.start_time = start_time if start_time is not None else str(datetime.now())
+        self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
+        self.priority = priority if priority is not None else Priority.LOW.value
+        self.status = status if status is not None else Status.BACKLOG.value
+        self.assignees = assigness 
         self.comments = comments
 
-    def formatted_start_time(self):
-        return self.start_time.strftime("%Y-%m-%d %H:%M:%S")
-    
-    def formatted_end_time(self):
-        return self.end_time.strftime("%Y-%m-%d %H:%M:%S")
-    
+
     def update_end_time(self):
         new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): ")
         try:
@@ -269,7 +265,7 @@ class Task:
         else:
             console.print("User is not a member of the project.", style="Error")
 
-    def remove_assignee(self, username):
+    def remove_assignees(self, username):
         if username in self.assignees:
             self.assignees.remove(username)
             save_data(load_data())
@@ -279,12 +275,12 @@ class Task:
 
 class Project:
 
-    def __init__(self, title, owner , tasks = [] , collaborators = [] , ID = str(uuid.uuid4())[:8]):
+    def __init__(self, title, owner , tasks = [] , collaborators = [], ID = None):
         self.title = title
         self.owner = owner
         self.tasks = tasks
         self.collaborators = collaborators
-        self.ID = ID
+        self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
 
     def save_project_data(self):
         project_folder = "projects/"
@@ -393,7 +389,7 @@ class Project:
 
 
     def view_project_tasks(self, user):
-        table = Table(title=f"Tasks for Project: {self.name}")
+        table = Table(title=f"Tasks for Project: {self.title}")
         table.add_column("ID", justify="center")
         table.add_column("Title", justify="center")
         table.add_column("Description", justify="center")
@@ -404,7 +400,7 @@ class Project:
         
 
         for task in self.tasks:
-            table.add_row(task.id, task.title, task.description, task.formatted_start_time(), task.formatted_end_time(), task.priority, task.status)  
+            table.add_row(task.ID, task.title, task.description, task.start_time().strftime("%Y-%m-%d %H:%M:%S"), task.end_time().strftime("%Y-%m-%d %H:%M:%S"), task.priority, task.status)  
 
         console.print(table)
 
