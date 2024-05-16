@@ -43,7 +43,7 @@ class User:
         self.username = username
         self.password = password
         self.active = active
-        self.ID=ID if ID is not None else str(uuid.uuid1())[:8]
+        self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
 
 
     def validate_email_format(email):
@@ -192,12 +192,12 @@ class Task:
     def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time= None, assigness = [], comments = []):
         self.title = title
         self.description = description
+        self.priority = priority if priority is not None else Priority.LOW.value
+        self.status = status if status is not None else Status.BACKLOG.value
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
         self.start_time = start_time if start_time is not None else str(datetime.now())
         self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
-        self.priority = priority if priority is not None else Priority.LOW.value
-        self.status = status if status is not None else Status.BACKLOG.value
-        self.assignees = assigness 
+        self.assigness = assigness 
         self.comments = comments
 
 
@@ -400,7 +400,8 @@ class Project:
         
 
         for task in self.tasks:
-            table.add_row(task.ID, task.title, task.description, task.start_time().strftime("%Y-%m-%d %H:%M:%S"), task.end_time().strftime("%Y-%m-%d %H:%M:%S"), task.priority, task.status)  
+            instance_task = Task(**task)
+            table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time, instance_task.end_time, instance_task.priority, instance_task.status)  
 
         console.print(table)
 
