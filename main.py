@@ -37,7 +37,7 @@ class Priority(Enum):
     LOW = 'LOW'
 
 class User:
-    def __init__(self, email, username, password, active=True):
+    def __init__(self, email, username, password, active=True , ID = None):
         self.email = email
         self.username = username
         self.password = password
@@ -63,8 +63,8 @@ class User:
             data = json.load(file)
         
         if username in data['usernames']:
-            return True
-        return False
+            return False
+        return True
     
     def check_unique_email(email):
         data = {}
@@ -72,8 +72,8 @@ class User:
             data = json.load(file)
         
         if email in data['emails']:
-            return True
-        return False
+            return False
+        return True
     
     def add_email_username(email , username):
         data = {}
@@ -146,12 +146,17 @@ class User:
 
 
     def login():
-        data = load_data()
         console.print("Login", style="Title")
         username = input("Username: ")
         password = input("Password: ")
 
-        for user_data in data["users"]:
+        path = f"users/{username}/{username}.json"
+        
+        if os.path.exists(path):
+            user_data = {}
+            with open (path , 'r') as file:
+                user_data = json.load(file)
+        
             if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
                 if not user_data["active"]:
                     console.print("Your account is inactive.", style="Error")
