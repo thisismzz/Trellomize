@@ -44,49 +44,78 @@ class User:
         self.active = active
         self.ID=str(uuid.uuid1())
 
-    @staticmethod
-    def get_all_usernames():
-        data = load_data()
-        usernames = [user["username"] for user in data["users"]]
-        return usernames
 
-    @staticmethod
     def validate_email_format(email):
         email_regex = r'^[\w\.\+\-]+\@[\w]+\.[a-z]{2,3}$'
         return re.match(email_regex, email) is not None
 
-    @staticmethod
-    def validate_username_format(username):
-        username_regex = r'^[a-zA-Z0-9_]+$'
-        if re.match(username_regex, username) and 3 <= len(username) <= 20:
+
+    # def validate_username_format(username):
+    #     username_regex = r'^[a-zA-Z0-9_]+$'
+    #     if re.match(username_regex, username) and 3 <= len(username) <= 20:
+    #         return True
+    #     return False
+
+
+    def check_unique_username(username):
+        data = {}
+        with open ('emails and usernames.json' , 'r') as file:
+            data = json.load(file)
+        
+        if username in data['usernames']:
             return True
         return False
-
-    @staticmethod
-    def check_unique_username(username, data):
-        for user in data["users"]:
-            if user["username"] == username:
-                return False
-        return True
-
-    @staticmethod
-    def validate_password_strength(password):
-        if len(password) < 8:
-            return False
-        if not re.search(r"[A-Z]", password):
-            return False
-        if not re.search(r"[a-z]", password):
-            return False
-        if not re.search(r"[0-9]", password):
-            return False
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-            return False
-        return True
     
-    @staticmethod
-    def register():
-        data = load_data()
+    def check_unique_email(email):
+        data = {}
+        with open ('emails and usernames.json' , 'r') as file:
+            data = json.load(file)
         
+        if email in data['emails']:
+            return True
+        return False
+    
+    def add_email_username(email , username):
+        data = {}
+        with open ('emails and usernames.json' , 'r') as file:
+            data = json.load(file)
+        
+        data['emails'].append(email)
+        data['usernames'].append(username)
+        
+        with open ('emails and usernames.json' , 'w') as file:
+            data = json.dump(data , file , indent=4)
+
+
+    def save_user_data (self):
+        user_folder = "users/" + self.username
+        os.makedirs(user_folder, exist_ok=True)
+        json_file_path = os.path.join(user_folder, f"{self.username}.json")
+        with open(json_file_path, "w") as json_file:
+            json.dump(vars(self), json_file, indent=4)
+
+    def load_user_data_login (username):
+        user_folder = "users/" + username
+        json_file_path = os.path.join(user_folder, f"{username}.json")
+        with open(json_file_path, "r") as json_file:
+            return json.load(json_file)
+        
+
+    # def validate_password_strength(password):
+    #     if len(password) < 8:
+    #         return False
+    #     if not re.search(r"[A-Z]", password):
+    #         return False
+    #     if not re.search(r"[a-z]", password):
+    #         return False
+    #     if not re.search(r"[0-9]", password):
+    #         return False
+    #     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+    #         return False
+    #     return True
+    
+
+    def register():
         while(True):
             console.print("Registration", style="Title")
             console.print("Please provide the following details to create your account:", style="Info")
@@ -96,29 +125,26 @@ class User:
             try:
                 if not User.validate_email_format(email):
                     raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
-                if not User.validate_username_format(username):
-                    raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
-                if not User.check_unique_username(username, data):
+                # if not User.validate_username_format(username):
+                #     raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
+                if not User.check_unique_username(username):
                     raise ValueError("Username already exists! Please choose a different username.")
-                if not User.validate_password_strength(password):
-                    raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
-
-                for user in data["users"]:
-                    if user["email"] == email or user["username"] == username:
-                        console.print("Email or username already exists.", style="Error")
-                        return
+                # if not User.validate_password_strength(password):
+                #     raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
+                if not User.check_unique_email(email):
+                    raise ValueError("Email already exists! Please enter a different email.")
 
                 hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 new_user = User(email, username, hashed_password)
-                data["users"].append(new_user.__dict__)
-                save_data(data)
+                new_user.save_user_data()
+                User.add_email_username(email , username)
                 console.print("Account created successfully.", style="Notice")
                 break
 
             except ValueError as e:
                 console.print("Error: " + str(e), style="Error")
 
-    @staticmethod
+
     def login():
         data = load_data()
         console.print("Login", style="Title")
@@ -135,6 +161,7 @@ class User:
 
         console.print("Incorrect username or password.", style="Error")
         return None
+    
 
 class Task:
     def __init__(self, title, description, project, priority=Priority.LOW.value, status=Status.BACKLOG.value):
@@ -234,15 +261,19 @@ class Project:
         self.owner = owner
         self.tasks = []
         self.members = [owner]
+        self.ID = str(uuid.uuid1())
 
-    def add_member(self, username):
-        if username not in self.members:
-            self.members.append(username)
+    def add_member(self, member : User):
+        if member not in self.members:
+            self.members.append(member)
+        else:
+            Console.print(f"User {member.username} has already been added" , style='Error')
         save_data(load_data())
 
-    def remove_member(self, username):
-        if username in self.members:
-            self.members.remove(username)
+    def remove_member(self, member: User):
+        if member in self.members:
+            self.members.remove(member)
+            Console.print(f"User {member.username} removed from project" , style="Notice")
             save_data(load_data())
 
     def delete_project(self):
@@ -407,14 +438,14 @@ class Project:
 #       FUNCTIONS         
 #.........................
 
-def load_data():
-    if not os.path.exists("data.json"):
-        return {"users": [], "projects": []}
-    with open("data.json", "r") as file:
+def load_user_data():
+    if not os.path.exists("users.json"):
+        return {"users": []}
+    with open("users.json", "r") as file:
         return json.load(file)
 
-def save_data(data):
-    with open("data.json", "w") as file:
+def save_user_data(data):
+    with open("users.json", "w") as file:
         json.dump(data, file, indent=4)
 
 def main_menu():
