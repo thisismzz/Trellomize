@@ -37,12 +37,12 @@ class Priority(Enum):
     LOW = 'LOW'
 
 class User:
-    def __init__(self, email, username, password, active=True , ID = None):
+    def __init__(self, email, username, password, active=True , ID = str(uuid.uuid4())[:8]):
         self.email = email
         self.username = username
         self.password = password
         self.active = active
-        self.ID=str(uuid.uuid1())
+        self.ID=ID
 
 
     def validate_email_format(email):
@@ -100,6 +100,26 @@ class User:
         with open(json_file_path, "r") as json_file:
             return json.load(json_file)
         
+
+    def add_my_project(self,project_id):
+        path = "users/" + self.username + "/ad_projects.json"
+        data = {}
+        if os.path.exists(path):
+            with open(path, "r") as file:
+                data = json.load(file)
+            data['projects'].append(project_id)
+        else:
+            data = {'projects' : [project_id]}
+        
+        with open(path, "w") as file:
+            json.dump(data , file , indent=4)
+
+
+    def load_user_projects(username):
+        path = "users/" + username + "/ad_projects.json"
+        with open(path, "r") as file:
+                return json.load(file)
+
 
     # def validate_password_strength(password):
     #     if len(password) < 8:
@@ -167,16 +187,17 @@ class User:
     
 
 class Task:
-    def __init__(self, title, description, priority=Priority.LOW.value, status=Status.BACKLOG.value):
-        self.id = str(uuid.uuid4())
+    def __init__(self, title, description, priority=Priority.LOW.value, status=Status.BACKLOG.value ,ID=str(uuid.uuid4())[:8], 
+                 start_time=str(datetime.now()) ,end_time = str(datetime.now() + timedelta(hours=24)) , assigness = [] , comments = []):
+        self.ID = ID
         self.title = title
         self.description = description
-        self.start_time = datetime.now()
-        self.end_time = datetime.now() + timedelta(hours=24)  
+        self.start_time = start_time
+        self.end_time = end_time  
         self.priority = priority
         self.status = status
-        self.assignees = []
-        self.comments = []
+        self.assignees = assigness
+        self.comments = comments
 
     def formatted_start_time(self):
         return self.start_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -258,13 +279,12 @@ class Task:
 
 class Project:
 
-    def __init__(self, title, owner:User):
+    def __init__(self, title, owner , tasks = [] , collaborators = [] , ID = str(uuid.uuid4())[:8]):
         self.title = title
-        self.owner = owner.username
-        self.tasks = []
-        self.collaborators = [owner.username]
-        self.ID = str(uuid.uuid1())
-
+        self.owner = owner
+        self.tasks = tasks
+        self.collaborators = collaborators
+        self.ID = ID
 
     def save_project_data(self):
         project_folder = "projects/"
@@ -275,7 +295,7 @@ class Project:
 
 
     def load_project_data(ID):
-        project_folder = "users/"
+        project_folder = "projects/"
         json_file_path = os.path.join(project_folder, f"{ID}.json")
         with open(json_file_path, "r") as json_file:
             return json.load(json_file)
@@ -304,15 +324,10 @@ class Project:
             console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
 
 
-    def create_task(self, title, description):
-        new_task = Task(title, description, self, priority=Priority.LOW.value, status=Status.BACKLOG.value)
-        self.tasks.append(new_task)  
-        save_data(load_data())
-        return new_task
-
     def manage_tasks(self, user):
         while True:
-            console.print(f"Managing Tasks for Project: {self.name}", style="Title")
+            console.print(f"Managing Tasks for Project:", end=" " ,style="Title")
+            console.print(f"{self.title}" , style="Info")
             console.print("1. Create Task")
             console.print("2. View Tasks")
             console.print("3. Add Member")
@@ -337,6 +352,7 @@ class Project:
             else:
                 console.print("Invalid choice.", style="Error")
 
+
     def add_member_menu(self):
         console.print("Available users:")
         for username in User.get_all_usernames():
@@ -347,6 +363,7 @@ class Project:
             console.print("Member added successfully.", style="Notice")
         else:
             console.print("Invalid username.", style="Error")
+
 
     def remove_member_menu(self):
         console.print("Current project members:")
@@ -359,6 +376,7 @@ class Project:
         else:
             console.print("User is not a member of the project.", style="Error")
 
+
     def create_task_menu(self, user):
         if self.owner != user.username:
             console.print("Only the project owner can create tasks.", style="Error")
@@ -366,9 +384,12 @@ class Project:
         
         title = input("Task Title: ")
         description = input("Task Description: ")
-
-        self.create_task(title, description)  
+        
+        new_task = Task(title , description)
+        self.tasks.append(vars(new_task))
+        self.save_project_data()
         console.print("Task created successfully.", style="Notice")
+
 
 
     def view_project_tasks(self, user):
@@ -380,13 +401,13 @@ class Project:
         table.add_column("End Time", justify="center")
         table.add_column("Priority", justify="center")
         table.add_column("Status", justify="center")
+        
 
         for task in self.tasks:
-            priority = Priority(task.priority).name  
-            status = Status(task.status).name       
-            table.add_row(task.id, task.title, task.description, task.formatted_start_time(), task.formatted_end_time(), priority, status)  
+            table.add_row(task.id, task.title, task.description, task.formatted_start_time(), task.formatted_end_time(), task.priority, task.status)  
 
         console.print(table)
+
         task_id = input("Enter task ID to manage (or 'back' to go back): ")
         if task_id == "back":
             return
@@ -396,7 +417,11 @@ class Project:
                 break
 
 
-    def task_menu(self, user, task):
+    def task_menu(self, user:User, task:Task):
+        if user.username not in task.assignees:
+            console.print("You don't have access to modify this task" , style='Error')
+            return
+
         while True:
             console.print(f"Managing Task: {task.title}", style="Title")
             console.print("1. Change Status")
@@ -430,14 +455,16 @@ class Project:
     def create_project(user:User):
         console.print("Create new Project" , style="Title")
         title = input("Enter Project title: ")
-        project = Project(title, user)
+        project = Project(title, user.username)
         project.save_project_data()
+        user.add_my_project(project.ID)
         console.print("Project created successfully.", style="Notice")
 
 
-    def view_user_projects(user):
-        data = load_data()
-        user_projects = [proj for proj in data["projects"] if user.username in proj["members"]]
+    def view_user_projects(user:User):
+        data = User.load_user_projects(user.username)
+        
+        user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         table = Table(title="Projects")
         table.add_column("ID", justify="center")
@@ -445,17 +472,21 @@ class Project:
         table.add_column("Owner", justify="center")
 
         for project in user_projects:
-            table.add_row(project["id"][:8], project["title"], project["owner"])
+            table.add_row(project["ID"], project["title"], project["owner"])
 
         console.print(table)
         project_id = input("Enter project ID to manage (or 'back' to go back): ")
+        
         if project_id == "back":
             return
+
         for project in user_projects:
-            if project["id"] == project_id:
-                project_instance = Project(name=project["name"], owner=project["owner"])  
+            if project["ID"] == project_id:
+                project_instance = Project(**project)  
                 project_instance.manage_tasks(user)
                 break
+
+        console.print("Invalid ID" , style="Error")
 
 #.........................
 #       FUNCTIONS         
