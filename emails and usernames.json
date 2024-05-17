@@ -2,11 +2,13 @@
     "emails": [
         "admin@admin.com",
         "admin1@admin1.com",
-        "admin2@admin2.com"
+        "admin2@admin2.com",
+        "admin4@admin4.com"
     ],
     "usernames": [
         "admin",
         "admin1",
-        "admin2"
+        "admin2",
+        "admin4"
     ]
 }

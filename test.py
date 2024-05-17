@@ -1,3 +1,4 @@
+from enum import Enum
 def _id_generator():
     seed = 12032341
     
@@ -18,5 +19,16 @@ class a:
     
 
 
-s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
-print(s1)
+# s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
+# print(s1)
+
+class Priority(Enum):
+    CRITICAL = 'CRITICAL'
+    HIGH = 'HIGH'
+    MEDIUM = 'MEDIUM'
+    LOW = 'LOW'
+    
+    def __str__():
+        print("salam")
+        
+print(Priority)

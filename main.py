@@ -219,81 +219,75 @@ class Task:
         self.comments = comments
 
 
-    def update_end_time(self):
+    def change_end_time(self):
         new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): ")
         try:
-            self.end_time = datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S")
-            save_data(load_data())
-            console.print("End time updated successfully.", style="Notice")
+            self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
+            console.print("End time changed successfully.", style="Notice")
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
 
-    def update_start_time(self):
+
+    def change_start_time(self):
         new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): ")
         try:
-            self.start_time = datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S")
-            save_data(load_data())
-            console.print("Start time updated successfully.", style="Notice")
+            self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
+            console.print("Start time changed successfully.", style="Notice")
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
 
-    def update_status(self):
+
+    def change_status(self):
         console.print("Available statuses:", style="Title")
         for status in Status:
             console.print(f"- {status.value}")
         new_status = input("Enter new status: ")
         if new_status in Status.__members__:
             self.status = new_status
-            save_data(load_data())
-            console.print("Task status updated successfully.", style="Notice")
+            console.print("Task status changed successfully.", style="Notice")
         else:
             console.print("Invalid status.", style="Error")
 
-    def update_priority(self):
+
+    def change_priority(self):
         console.print("Available priorities:", style="Title")
         for priority in Priority:
             console.print(f"- {priority.value}")
         new_priority = input("Enter new priority: ")
         if new_priority in Priority.__members__:
             self.priority = new_priority
-            save_data(load_data())
-            console.print("Task priority updated successfully.", style="Notice")
+            console.print("Task priority changed successfully.", style="Notice")
         else:
             console.print("Invalid priority.", style="Error")
 
-    def add_comment(self, user):
+
+    def add_comment(self, username ,is_owner:bool):
         comment = input("Enter comment: ")
-        self.comments.append({"user": user.username, "comment": comment, "timestamp": datetime.now().isoformat()})
-        save_data(load_data())
+        self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assigness","timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
     
-    def show_project_members(self):
-        console.print("Project Members:")
-        for member in self.project.members:
-            console.print("-", member)
 
-    def assign_member(self, project, member):
-        if member in project.members:
-            if member not in self.assignees:
-                self.assignees.append(member)
-                save_data(load_data())
+    def assign_member(self, project_members, member):
+        if member in project_members:
+            if member not in self.assigness:
+                self.assigness.append(member)
                 console.print("Member assigned to task successfully.", style="Notice")
             else:
                 console.print("Member is already assigned to the task.", style="Error")
         else:
             console.print("User is not a member of the project.", style="Error")
 
+
     def remove_assignees(self, username):
-        if username in self.assignees:
-            self.assignees.remove(username)
-            save_data(load_data())
+        if username in self.assigness:
+            self.assigness.remove(username)
             console.print(f"Member '{username}' removed from task '{self.title}' successfully.", style="Notice")
         else:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
 class Project:
 
-    def __init__(self, title, owner , tasks = [] , collaborators = None, ID = None):
+    def __init__(self, title, owner , tasks = {} , collaborators = None, ID = None):
         self.title = title
         self.owner = owner
         self.tasks = tasks
@@ -384,6 +378,10 @@ class Project:
                 console.print("Invalid choice.", style="Error")
 
 
+    def update_task(self,new_task:Task):
+        self.tasks[new_task.ID] = vars(new_task)
+
+
     def add_member_menu(self,user:User):
         if self.owner != user.username:
             console.print("Only the project owner can add member.", style="Error")
@@ -413,7 +411,7 @@ class Project:
             if member != self.owner:
                 console.print("-", member)
         
-        member_usernames = list(map(lambda x:x.strip(),input("Enter usernames to remove from project :(format : 'user1 , user2') ").split(',')))
+        member_usernames = list(map(lambda x:x.strip(),input("Enter usernames to remove from project :(format : 'user1,user2') ").split(',')))
         for member in member_usernames:
                 self.remove_member(member)
 
@@ -427,7 +425,7 @@ class Project:
         description = input("Task Description: ")
         
         new_task = Task(title , description)
-        self.tasks.append(vars(new_task))
+        self.tasks[new_task.ID]=vars(new_task)
         self.save_project_data()
         console.print("Task created successfully.", style="Notice")
 
@@ -444,22 +442,22 @@ class Project:
         table.add_column("Status", justify="center")
         
 
-        for task in self.tasks:
+        for task in self.tasks.values():
             instance_task = Task(**task)
-            table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time, instance_task.end_time, instance_task.priority, instance_task.status)  
+            table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
 
         console.print(table)
 
         task_id = input("Enter task ID to manage (or 'back' to go back): ")
         if task_id == "back":
             return
-        for task in self.tasks:
+        for task in self.tasks.values():
             if task["ID"] == task_id:
                 self.task_menu(user, Task(**task))
                 break
 
 
-    def task_menu(self, user, task:Task):
+    def task_menu(self, user:User, task:Task):
         if user.username not in task.assigness and user.username != self.owner:
             console.print("You don't have access to modify this task" , style='Error')
             return
@@ -468,28 +466,70 @@ class Project:
             console.print(f"Managing Task: {task.title}", style="Title")
             console.print("1. Change Status")
             console.print("2. Change Priority")
-            console.print("3. Update Start Time")
-            console.print("4. Update End Time")
+            console.print("3. Change Start Time")
+            console.print("4. Change End Time")
             console.print("5. Add Comment")
             console.print("6. Assign Member")
-            console.print("7. Back")
+            console.print("7. Remove assigness")
+            console.print("8. View task")
+            console.print("9. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
-                task.update_status()
+                task.change_status()
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "2":
-                task.update_priority()
+                task.change_priority()
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "3":
-                task.update_start_time()
+                task.change_start_time()
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "4":
-                task.update_end_time()
+                task.change_end_time()
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "5":
-                task.add_comment(user)
+                task.add_comment(user.username , user.username==self.owner)
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "6":
-                task.show_project_members()  
-                member = input("Enter member username: ")
-                task.assign_member(self, member)  
+                all_usernames = User.get_all_usernames()
+                console.print("Project Members:")
+                for member in self.collaborators:
+                    if member != self.owner:
+                        console.print("-", member)
+                member_username = list(map(lambda x:x.strip(),input("Enter usernames to add as member :(format : 'user1,user2') ").split(',')))
+                for username in member_username:
+                    if username in all_usernames:
+                        task.assign_member(self.collaborators, username)
+                    else:
+                        console.print(f"Invalid username {username}.", style="Error")
+                self.update_task(task)
+                self.save_project_data()
+                 
             elif choice == "7":
+                console.print("Current task members:")
+                for member in task.assigness:
+                    if member != self.owner:
+                        console.print("-", member)
+                member_usernames = list(map(lambda x:x.strip(),input("Enter usernames to remove from task :(format : 'user1,user2') ").split(',')))
+                for member in member_usernames:
+                    task.remove_assignees(member)
+                self.update_task(task)
+                self.save_project_data()
+            
+            elif choice == "8":
+                pass
+                 
+            elif choice == "9":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
