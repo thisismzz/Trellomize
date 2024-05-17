@@ -58,6 +58,13 @@ class User:
     #     return False
 
 
+    def get_all_usernames():
+        data = {}
+        with open ('emails and usernames.json' , 'r') as file:
+            data = json.load(file)
+        return data['usernames']
+    
+
     def check_unique_username(username):
         data = {}
         with open ('emails and usernames.json' , 'r') as file:
@@ -102,8 +109,8 @@ class User:
             return json.load(json_file)
         
 
-    def add_my_project(self,project_id):
-        path = "users/" + self.username + "/ad_projects.json"
+    def add_my_project(username,project_id):
+        path = "users/" + username + "/projects.json"
         data = {}
         if os.path.exists(path):
             with open(path, "r") as file:
@@ -116,8 +123,19 @@ class User:
             json.dump(data , file , indent=4)
 
 
+    def remove_project(username , project_id):
+        path = "users/" + username + "/projects.json"
+        data = {}
+        with open(path, "r") as file:
+            data = json.load(file)
+            
+        data['projects'].remove(project_id)
+        with open(path, "w") as file:
+            json.dump(data,file,indent=4)
+    
+    
     def load_user_projects(username):
-        path = "users/" + username + "/ad_projects.json"
+        path = "users/" + username + "/projects.json"
         with open(path, "r") as file:
                 return json.load(file)
 
@@ -275,11 +293,11 @@ class Task:
 
 class Project:
 
-    def __init__(self, title, owner , tasks = [] , collaborators = [], ID = None):
+    def __init__(self, title, owner , tasks = [] , collaborators = None, ID = None):
         self.title = title
         self.owner = owner
         self.tasks = tasks
-        self.collaborators = collaborators
+        self.collaborators = collaborators if collaborators is not None else [owner]
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
 
     def save_project_data(self):
@@ -297,30 +315,42 @@ class Project:
             return json.load(json_file)
 
 
-    def add_member(self, member : User):
+    def add_member(self, member):
         if member not in self.collaborators:
             self.collaborators.append(member)
+            console.print(f"{member} added successfully.", style="Notice")
+            User.add_my_project(member,self.ID)
             self.save_project_data()
         else:
-            console.print(f"User {member.username} has already been added" , style='Error')
+            console.print(f"User {member} has already been added" , style='Error')
 
-    def remove_member(self, member: User):
+
+    def remove_member(self, member):
         if member in self.collaborators:
             self.collaborators.remove(member)
+            User.remove_project(member,self.ID)
             self.save_project_data()
-            console.print(f"User {member.username} removed from project" , style="Notice")
+            console.print(f"{member} removed successfully.", style="Notice")
         else:
-            console.print("No such member in collaborators" , style="Error")
+            console.print(f"{member} is not a member of the project.", style="Error")
 
     def delete_project(self):
         file_path = f"projects/{self.ID}.json"
+    
+        try:
+            if os.path.exists(file_path) :
+                os.remove(file_path)
+                for member in self.collaborators:
+                    User.remove_project(member,self.ID)
+                console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
+            
+            else:
+                raise FileNotFoundError("No such Project")
+        except FileNotFoundError as e:
+            console.print(e , style="Error")
 
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
 
-
-    def manage_tasks(self, user):
+    def manage_project(self, user):
         while True:
             console.print(f"Managing Tasks for Project:", end=" " ,style="Title")
             console.print(f"{self.title}" , style="Info")
@@ -350,27 +380,29 @@ class Project:
 
 
     def add_member_menu(self):
-        console.print("Available users:")
-        for username in User.get_all_usernames():
+        console.print("Available users:" , style='Info')
+        all_usernames = User.get_all_usernames()
+        all_usernames.remove(self.owner)
+        for username in all_usernames:
             console.print("-", username)
-        member_username = input("Enter username to add as member: ")
-        if member_username in User.get_all_usernames():
-            self.add_member(member_username)
-            console.print("Member added successfully.", style="Notice")
-        else:
-            console.print("Invalid username.", style="Error")
+
+        member_username = list(map(lambda x:x.strip(),input("Enter usernames to add as member :(format : 'user1,user2') ").split(',')))
+        for username in member_username:
+            if username in all_usernames:
+                self.add_member(username)
+            else:
+                console.print(f"Invalid username {username}.", style="Error")
 
 
     def remove_member_menu(self):
         console.print("Current project members:")
-        for member in self.members:
-            console.print("-", member)
-        member_username = input("Enter username to remove from project: ")
-        if member_username in self.members:
-            self.remove_member(member_username)
-            console.print("Member removed successfully.", style="Notice")
-        else:
-            console.print("User is not a member of the project.", style="Error")
+        for member in self.collaborators:
+            if member != self.owner:
+                console.print("-", member)
+        
+        member_usernames = list(map(lambda x:x.strip(),input("Enter usernames to remove from project :(format : 'user1 , user2') ").split(',')))
+        for member in member_usernames:
+                self.remove_member(member)
 
 
     def create_task_menu(self, user):
@@ -449,12 +481,13 @@ class Project:
             else:
                 console.print("Invalid choice.", style="Error")
 
+
     def create_project(user:User):
         console.print("Create new Project" , style="Title")
         title = input("Enter Project title: ")
         project = Project(title, user.username)
         project.save_project_data()
-        user.add_my_project(project.ID)
+        User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
 
@@ -477,13 +510,16 @@ class Project:
         if project_id == "back":
             return
 
+        flag = False
         for project in user_projects:
             if project["ID"] == project_id:
                 project_instance = Project(**project)  
-                project_instance.manage_tasks(user)
+                project_instance.manage_project(user)
+                flag = True
                 break
 
-        console.print("Invalid ID" , style="Error")
+        if not flag:
+            console.print("Invalid ID" , style="Error")
 
 #.........................
 #       FUNCTIONS         

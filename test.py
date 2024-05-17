@@ -17,6 +17,6 @@ class a:
         return self.a
     
 
-for _ in range(10):
-    obj = a()
-    print(obj)
+
+s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
+print(s1)
