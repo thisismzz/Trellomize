@@ -433,7 +433,7 @@ class Project:
 
 
 
-    def view_project_tasks(self, user):
+    def view_project_tasks(self, user:User):
         table = Table(title=f"Tasks for Project: {self.title}")
         table.add_column("ID", justify="center")
         table.add_column("Title", justify="center")
@@ -454,13 +454,13 @@ class Project:
         if task_id == "back":
             return
         for task in self.tasks:
-            if task.id == task_id:
-                self.task_menu(user, task)
+            if task["ID"] == task_id:
+                self.task_menu(user, Task(**task))
                 break
 
 
     def task_menu(self, user, task:Task):
-        if user not in task.assigness:
+        if user.username not in task.assigness and user.username != self.owner:
             console.print("You don't have access to modify this task" , style='Error')
             return
 
