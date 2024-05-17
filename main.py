@@ -334,7 +334,11 @@ class Project:
         else:
             console.print(f"{member} is not a member of the project.", style="Error")
 
-    def delete_project(self):
+    def delete_project(self,user:User):
+        if self.owner != user.username:
+            console.print("Only the project owner can delete project.", style="Error")
+            return False
+        
         file_path = f"projects/{self.ID}.json"
     
         try:
@@ -343,11 +347,12 @@ class Project:
                 for member in self.collaborators:
                     User.remove_project(member,self.ID)
                 console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
-            
+                return True
             else:
                 raise FileNotFoundError("No such Project")
         except FileNotFoundError as e:
             console.print(e , style="Error")
+            return False
 
 
     def manage_project(self, user):
@@ -367,19 +372,23 @@ class Project:
             elif choice == "2":
                 self.view_project_tasks(user)
             elif choice == "3":
-                self.add_member_menu()
+                self.add_member_menu(user)
             elif choice == "4":
-                self.remove_member_menu()
+                self.remove_member_menu(user)
             elif choice == "5":
-                self.delete_project()
-                break
+                if self.delete_project(user):
+                    break
             elif choice == "6":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
 
 
-    def add_member_menu(self):
+    def add_member_menu(self,user:User):
+        if self.owner != user.username:
+            console.print("Only the project owner can add member.", style="Error")
+            return
+        
         console.print("Available users:" , style='Info')
         all_usernames = User.get_all_usernames()
         all_usernames.remove(self.owner)
@@ -394,7 +403,11 @@ class Project:
                 console.print(f"Invalid username {username}.", style="Error")
 
 
-    def remove_member_menu(self):
+    def remove_member_menu(self,user:User):
+        if self.owner != user.username:
+            console.print("Only the project owner can remove member.", style="Error")
+            return
+
         console.print("Current project members:")
         for member in self.collaborators:
             if member != self.owner:
@@ -405,7 +418,7 @@ class Project:
                 self.remove_member(member)
 
 
-    def create_task_menu(self, user):
+    def create_task_menu(self, user:User):
         if self.owner != user.username:
             console.print("Only the project owner can create tasks.", style="Error")
             return
@@ -446,8 +459,8 @@ class Project:
                 break
 
 
-    def task_menu(self, user:User, task:Task):
-        if user.username not in task.assignees:
+    def task_menu(self, user, task:Task):
+        if user not in task.assigness:
             console.print("You don't have access to modify this task" , style='Error')
             return
 
