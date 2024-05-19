@@ -3,6 +3,7 @@ import os
 import uuid
 import bcrypt
 import re
+import logging
 from enum import Enum
 from datetime import datetime, timedelta
 from rich.console import Console
@@ -17,6 +18,13 @@ custom_theme = Theme({
 })
 
 console = Console(theme=custom_theme)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler  = logging.FileHandler('logs.log' , mode='a')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 #.........................
 #        CLASSES          
@@ -74,6 +82,7 @@ class User:
             return False
         return True
     
+    
     def check_unique_email(email):
         data = {}
         with open ('emails and usernames.json' , 'r') as file:
@@ -82,6 +91,7 @@ class User:
         if email in data['emails']:
             return False
         return True
+    
     
     def add_email_username(email , username):
         data = {}
@@ -101,6 +111,7 @@ class User:
         json_file_path = os.path.join(user_folder, f"{self.username}.json")
         with open(json_file_path, "w") as json_file:
             json.dump(vars(self), json_file, indent=4)
+
 
     def load_user_data (username):
         user_folder = "users/" + username
@@ -178,6 +189,7 @@ class User:
                 new_user.save_user_data()
                 User.add_email_username(email , username)
                 console.print("Account created successfully.", style="Notice")
+                logger.info(f"A new user registered : {new_user.username}")
                 break
 
             except ValueError as e:
@@ -199,6 +211,7 @@ class User:
                     console.print("Your account is inactive.", style="Error")
                     return None
                 console.print("Login successful.", style="Notice")
+                logger.info(f"User [{user_data["username"]}] has logged in ")
                 return User(**user_data)
 
         console.print("Incorrect username or password.", style="Error")
@@ -428,6 +441,7 @@ class Project:
         self.tasks[new_task.ID]=vars(new_task)
         self.save_project_data()
         console.print("Task created successfully.", style="Notice")
+        logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
 
 
 
@@ -540,6 +554,8 @@ class Project:
         title = input("Enter Project title: ")
         project = Project(title, user.username)
         project.save_project_data()
+        logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
+        
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
@@ -566,7 +582,8 @@ class Project:
         flag = False
         for project in user_projects:
             if project["ID"] == project_id:
-                project_instance = Project(**project)  
+                project_instance = Project(**project) 
+                logger.debug(f"User [{user.username}] is managing project [id : {project_instance.ID}]") 
                 project_instance.manage_project(user)
                 flag = True
                 break
@@ -596,6 +613,7 @@ def main_menu():
                 user_menu(user)
         elif choice == "3":
             console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
+            logger.info("EXIT")
             break
         else:
             console.print("Invalid choice.", style="Error")
@@ -615,6 +633,7 @@ def user_menu(user:User):
             Project.view_user_projects(user)
         elif choice == "3":
             console.print("You have been successfully logged out.", style="Notice")
+            logger.info(f"User [{user.username}] logged out")
             break
         else:
             console.print("Invalid choice.", style="Error")
