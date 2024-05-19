@@ -1,0 +1,7 @@
+2024-05-20 00:28:35,435 - __main__ - INFO - admin has logged in 
+2024-05-20 00:41:46,054 - __main__ - INFO - User [admin1] has logged in 
+2024-05-20 00:41:58,474 - __main__ - INFO - User [admin1] logged out
+2024-05-20 00:42:24,941 - __main__ - INFO - User [admin1] has logged in 
+2024-05-20 00:42:43,116 - __main__ - INFO - A new project [name : proj test , id : 882e8862] created by [admin1]
+2024-05-20 00:43:01,515 - __main__ - INFO - User [admin1] logged out
+2024-05-20 00:43:03,689 - __main__ - INFO - EXIT
