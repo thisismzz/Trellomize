@@ -26,13 +26,6 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-handler  = logging.FileHandler('logs.log' , mode='a')
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
 #........................#
 #        CLASSES         #
 #........................#
@@ -89,7 +82,6 @@ class User:
             return False
         return True
     
-    
     # def validate_password_strength(password):
     #     if len(password) < 8:
     #         return False
@@ -109,8 +101,6 @@ class User:
             data = json.load(file)
         return data['usernames']
     
-    
-    
     def add_email_username(email , username):
         data = {}
         with open ('emails and usernames.json' , 'r') as file:
@@ -128,7 +118,6 @@ class User:
         json_file_path = os.path.join(user_folder, f"{self.username}.json")
         with open(json_file_path, "w") as json_file:
             json.dump(vars(self), json_file, indent=4)
-
 
     def load_user_data (username):
         user_folder = "users/" + username
@@ -362,36 +351,6 @@ class Project:
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
-    def view_user_projects(user:User):
-        data = User.load_user_projects(user.username)
-        
-        user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
-
-        table = Table(title="Projects")
-        table.add_column("ID", justify="center")
-        table.add_column("Name", justify="center")
-        table.add_column("Owner", justify="center")
-
-        for project in user_projects:
-            table.add_row(project["ID"], project["title"], project["owner"])
-
-        console.print(table)
-        project_id = input("Enter project ID to manage (or 'back' to go back): ")
-        
-        if project_id == "back":
-            return
-
-        flag = False
-        for project in user_projects:
-            if project["ID"] == project_id:
-                project_instance = Project(**project)  
-                project_instance.manage_project_menu(user)
-                flag = True
-                break
-
-        if not flag:
-            console.print("Invalid ID" , style="Error")
-
     def view_members(self):
         console.print("Current project members:", style="Info")
         for member in self.collaborators:
@@ -485,13 +444,11 @@ class Project:
         for task in self.tasks.values():
             instance_task = Task(**task)
             table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
-
         console.print(table)
 
         task_id = input("Enter task ID to manage (or 'back' to go back): ")
         if task_id == "back":
             return
-        
         flag = False
         for task in self.tasks.values():
             if task["ID"] == task_id:
@@ -504,7 +461,6 @@ class Project:
         if self.owner != user.username:
             console.print("Only the project owner can delete project.", style="Error")
             return False
-        
         file_path = f"projects/{self.ID}.json"
     
         try:
@@ -657,37 +613,30 @@ class Project:
             else:
                 console.print("Invalid choice.", style="Error")
 
-
     def create_project(user:User):
         console.print("Create new Project" , style="Title")
         title = input("Enter Project title: ")
         project = Project(title, user.username)
         project.save_project_data()
         logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
-        
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
-
     def view_user_projects(user:User):
         data = User.load_user_projects(user.username)
-        
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         table = Table(title="Projects")
         table.add_column("ID", justify="center")
         table.add_column("Name", justify="center")
         table.add_column("Owner", justify="center")
-
         for project in user_projects:
             table.add_row(project["ID"], project["title"], project["owner"])
-
         console.print(table)
+
         project_id = input("Enter project ID to manage (or 'back' to go back): ")
-        
         if project_id == "back":
             return
-
         flag = False
         for project in user_projects:
             if project["ID"] == project_id:
@@ -696,7 +645,6 @@ class Project:
                 project_instance.manage_project(user)
                 flag = True
                 break
-
         if not flag:
             console.print("Invalid ID" , style="Error")
 
