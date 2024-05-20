@@ -219,7 +219,7 @@ class Task:
         self.comments = comments
 
     def view_task(self):
-        table = Table(title=f"Task: {self.title}", style="Title")
+        table = Table(title=f"Task: {self.title}", style="cyan")
         table.add_column("ID", justify="center")
         table.add_column("Title", justify="center")
         table.add_column("Description", justify="center")
@@ -275,10 +275,10 @@ class Task:
         self.title = new_title
         console.print(f"Task title changed to {self.title}", style="Notice")
 
-    def change_definition(self):
-        new_definition = input("Enter new definition: ")
-        self.definition = new_definition
-        console.print(f"Task definition changed to {self.definition}", style="Notice")
+    def change_description(self):
+        new_description = input("Enter new description: ")
+        self.description = new_description
+        console.print(f"Task description changed to {self.description}", style="Notice")
 
     def add_comment(self, username ,is_owner:bool):
         comment = input("Enter comment: ")
@@ -287,11 +287,24 @@ class Task:
 
     def view_comments(self):
         if not self.comments:
-            console.print("No comments available.", style="Error")
+            console.print("No comments available.", style="bold red")
         else:
-            console.print("Comments:", style="Info")
+            table = Table(title="Comments")
+
+            table.add_column("Username", justify="center", style="cyan", no_wrap=True)
+            table.add_column("Role", justify="center" , style="magenta")
+            table.add_column("Comment", justify="center" , style="green")
+            table.add_column("Timestamp", justify="center" , style="yellow")
+
             for comment in self.comments:
-                print(f"{comment['user']}: {comment['comment']}\nRole: {comment['role']}\nTimestamp: {comment['timestamp']}\n")
+                table.add_row(
+                    comment['user'],
+                    comment['role'],
+                    comment['comment'],
+                    comment['timestamp']
+                )
+
+            console.print(table)
     
     def assign_member(self, project_members, member):
         if member in project_members:
@@ -309,15 +322,6 @@ class Task:
             console.print(f"Member '{username}' removed from task '{self.title}' successfully.", style="Notice")
         else:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
-
-    def view_assignees(self):
-        console.print("Current task assigness:")
-        for member in self.assigness:
-            if member != self.owner:
-                console.print("-", member)
-        input_string= input("Enter 'back' to go back: ")
-        if input_string == "back":
-            return
 
 #........................................................................#
 
@@ -416,6 +420,15 @@ class Project:
     def update_task(self,new_task:Task):
         self.tasks[new_task.ID] = vars(new_task)
 
+    def view_assignees(self,task:Task):
+        console.print("Current task assigness:")
+        for member in task.assigness:
+            if member != self.owner:
+                console.print("-", member)
+        input_string= input("Enter 'back' to go back: ")
+        if input_string == "back":
+            return
+
     def create_task_menu(self, user:User):
         if self.owner != user.username:
             console.print("Only the project owner can create tasks.", style="Error")
@@ -432,7 +445,7 @@ class Project:
         logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
 
     def view_project_tasks(self, user:User):
-        table = Table(title=f"Tasks for Project: {self.title}", style="Title")
+        table = Table(title=f"Tasks for Project: {self.title}", style="cyan")
         table.add_column("ID", justify="center")
         table.add_column("Title", justify="center")
         table.add_column("Description", justify="center")
@@ -510,13 +523,15 @@ class Project:
 
     def change_task_fields(self, task: Task):
         while True:
+            console.print(f"Updating Task: {task.title}", style="Title")
+            task.view_task()
             console.print("Which task field do you want to change?", style="Info")
-            console.print("1. Change Status")
-            console.print("2. Change Priority")
-            console.print("3. Change Start Time")
-            console.print("4. Change End Time")
-            console.print("5. Change Title")
-            console.print("6. Change Definition")
+            console.print("1. Status")
+            console.print("2. Priority")
+            console.print("3. Start Time")
+            console.print("4. End Time")
+            console.print("5. Title")
+            console.print("6. Description")
             console.print("7. Back")
 
             choice = input("Enter your choice: ")
@@ -541,7 +556,7 @@ class Project:
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "6":
-                task.change_definition()
+                task.change_description()
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "7":
@@ -556,14 +571,15 @@ class Project:
 
         while True:
             console.print(f"Managing Task: {task.title}", style="Title")
+            task.view_task()
+            console.print("What would you like to do?", style="Info")
             console.print("1. Change Task Fields")
             console.print("2. View Comments")
             console.print("3. Add Comment")
             console.print("4. View Assignees")
             console.print("5. Assign Member")
             console.print("6. Remove Assignees")
-            console.print("7. View Task")
-            console.print("8. Back")
+            console.print("7. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -577,7 +593,7 @@ class Project:
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "4":
-                task.view_assignees()
+                self.view_assignees(task)
             elif choice == "5":
                 all_usernames = User.get_all_usernames()
                 console.print("Project Members:")
@@ -595,7 +611,7 @@ class Project:
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "6":
-                console.print("Current task assigness:")
+                console.print("Current task assigness:", style="Info")
                 for member in task.assigness:
                     if member != self.owner:
                         console.print("-", member)
@@ -607,8 +623,6 @@ class Project:
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "7":
-                task.view_task()
-            elif choice == "8":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
@@ -626,7 +640,7 @@ class Project:
         data = User.load_user_projects(user.username)
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
-        table = Table(title="Projects")
+        table = Table(title="Projects details", style="cyan")
         table.add_column("ID", justify="center")
         table.add_column("Name", justify="center")
         table.add_column("Owner", justify="center")
@@ -642,7 +656,7 @@ class Project:
             if project["ID"] == project_id:
                 project_instance = Project(**project) 
                 logger.debug(f"User [{user.username}] is managing project [id : {project_instance.ID}]") 
-                project_instance.manage_project(user)
+                project_instance.manage_project_menu(user)
                 flag = True
                 break
         if not flag:
