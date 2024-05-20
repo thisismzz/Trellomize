@@ -662,8 +662,8 @@ class Project:
         if not flag:
             console.print("Invalid ID" , style="Error")
 
-#.........................
-#       FUNCTIONS         
+#.........................#
+#       FUNCTIONS         #
 #.........................#
 
 def main_menu():
@@ -708,9 +708,9 @@ def user_menu(user:User):
         else:
             console.print("Invalid choice.", style="Error")
 
-#.........................
-#      START POINT        
-#.........................
+#.........................#
+#      START POINT        #
+#.........................#
 
 if __name__ == "__main__":
     main_menu()
