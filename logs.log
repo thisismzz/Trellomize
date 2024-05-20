@@ -7,3 +7,22 @@
 2024-05-20 00:43:03,689 - __main__ - INFO - EXIT
 2024-05-20 13:16:49,829 - __main__ - INFO - User [admin] has logged in 
 2024-05-20 13:17:00,386 - __main__ - DEBUG - User [admin] is managing project [id : e0cb2ac3]
+2024-05-20 20:12:56,811 - __main__ - INFO - User [admin] has logged in 
+2024-05-20 20:13:07,592 - __main__ - INFO - A new project [name : project test , id : 093af5fd] created by [admin]
+2024-05-20 20:13:19,107 - __main__ - DEBUG - User [admin] is managing project [id : 093af5fd]
+2024-05-20 20:13:30,744 - __main__ - INFO - A new task [name : Task No.1 , id : [1707770d]] created by [admin]
+2024-05-20 20:13:47,369 - __main__ - DEBUG - A new member [user : admin1] added to project [id : 093af5fd] collaborators by owner
+2024-05-20 20:13:54,836 - __main__ - DEBUG - A new member [user : admin2] added to project [id : 093af5fd] collaborators by owner
+2024-05-20 20:15:17,503 - __main__ - INFO - User [admin] has logged in 
+2024-05-20 20:15:25,873 - __main__ - DEBUG - User [admin] is managing project [id : 093af5fd]
+2024-05-20 20:16:28,205 - __main__ - INFO - User [admin] has logged in 
+2024-05-20 20:16:36,235 - __main__ - DEBUG - User [admin] is managing project [id : 093af5fd]
+2024-05-20 20:17:16,152 - __main__ - DEBUG - A new assigness [user : admin1] added to task [id : 1707770d]
+2024-05-20 20:18:51,912 - __main__ - INFO - User [admin] has logged in 
+2024-05-20 20:19:01,025 - __main__ - DEBUG - User [admin] is managing project [id : 093af5fd]
+2024-05-20 20:19:16,996 - __main__ - DEBUG - A new assigness [user : admin1] added to task [id : 1707770d]
+2024-05-20 20:19:16,996 - __main__ - DEBUG - Add new history to task [id : 1707770d]
+2024-05-20 20:19:37,163 - __main__ - DEBUG - A new comment added to task [id : 1707770d]
+2024-05-20 20:19:37,164 - __main__ - DEBUG - Add new history to task [id : 1707770d]
+2024-05-20 20:21:13,969 - __main__ - DEBUG - Task [id : 1707770d] status has changed (current : DOING)
+2024-05-20 20:21:13,969 - __main__ - DEBUG - Add new history to task [id : 1707770d]
