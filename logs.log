@@ -5,3 +5,5 @@
 2024-05-20 00:42:43,116 - __main__ - INFO - A new project [name : proj test , id : 882e8862] created by [admin1]
 2024-05-20 00:43:01,515 - __main__ - INFO - User [admin1] logged out
 2024-05-20 00:43:03,689 - __main__ - INFO - EXIT
+2024-05-20 13:16:49,829 - __main__ - INFO - User [admin] has logged in 
+2024-05-20 13:17:00,386 - __main__ - DEBUG - User [admin] is managing project [id : e0cb2ac3]

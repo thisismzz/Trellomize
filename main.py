@@ -237,6 +237,7 @@ class Task:
         try:
             self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
             console.print("End time changed successfully.", style="Notice")
+            logger.debug(f"Task [id : {self.ID}] end time has changed (current : {self.end_time})")
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
 
@@ -245,6 +246,7 @@ class Task:
         try:
             self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
             console.print("Start time changed successfully.", style="Notice")
+            logger.debug(f"Task [id : {self.ID}] start time has changed (current : {self.start_time})")
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
 
@@ -256,6 +258,7 @@ class Task:
         if new_status in Status.__members__:
             self.status = new_status
             console.print("Task status changed successfully.", style="Notice")
+            logger.debug(f"Task [id : {self.ID}] status has changed (current : {self.status})")
         else:
             console.print("Invalid status.", style="Error")
 
@@ -267,6 +270,7 @@ class Task:
         if new_priority in Priority.__members__:
             self.priority = new_priority
             console.print("Task priority changed successfully.", style="Notice")
+            logger.debug(f"Task [id : {self.ID}] priority has changed (current : {self.priority})")
         else:
             console.print("Invalid priority.", style="Error")
 
@@ -274,16 +278,19 @@ class Task:
         new_title = input("Enter new title: ")
         self.title = new_title
         console.print(f"Task title changed to {self.title}", style="Notice")
+        logger.debug(f"Task [id : {self.ID}] title has changed (current : {self.title})")
 
     def change_description(self):
         new_description = input("Enter new description: ")
         self.description = new_description
         console.print(f"Task description changed to {self.description}", style="Notice")
+        logger.debug(f"Task [id : {self.ID}] description has changed (current : {self.description})")
 
     def add_comment(self, username ,is_owner:bool):
         comment = input("Enter comment: ")
         self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assigness","timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
+        logger.debug(f"A new comment added to task [id : {self.ID}]")
 
     def view_comments(self):
         if not self.comments:
@@ -311,6 +318,7 @@ class Task:
             if member not in self.assigness:
                 self.assigness.append(member)
                 console.print("Member assigned to task successfully.", style="Notice")
+                logger.debug(f"A new assigness [user : {member}] added to task [id : {self.ID}]")
             else:
                 console.print("Member is already assigned to the task.", style="Error")
         else:
@@ -320,6 +328,7 @@ class Task:
         if username in self.assigness:
             self.assigness.remove(username)
             console.print(f"Member '{username}' removed from task '{self.title}' successfully.", style="Notice")
+            logger.debug(f"An assigness [user : {username}] removed from task [id : {self.ID}]")
         else:
             console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
@@ -370,6 +379,7 @@ class Project:
             console.print(f"{member} added successfully.", style="Notice")
             User.add_my_project(member,self.ID)
             self.save_project_data()
+            logger.debug(f"A new member [user : {member}] added to project [id : {self.ID}] collaborators by owner")
         else:
             console.print(f"User {member} has already been added" , style='Error')
 
@@ -379,6 +389,7 @@ class Project:
             User.remove_project(member,self.ID)
             self.save_project_data()
             console.print(f"{member} removed successfully.", style="Notice")
+            logger.debug(f"A member [user : {member}] removed from project [id : {self.ID}] collaborators")
         else:
             console.print(f"{member} is not a member of the project.", style="Error")
 
@@ -482,6 +493,7 @@ class Project:
                 for member in self.collaborators:
                     User.remove_project(member,self.ID)
                 console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
+                logger.info(f"Project [id : {self.ID}] deleted by owner [user : {user.username}]")
                 return True
             else:
                 raise FileNotFoundError("No such Project")
