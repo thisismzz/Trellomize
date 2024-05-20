@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 def _id_generator():
     seed = 12032341
     
@@ -17,9 +18,11 @@ class a:
     
 # obj1 = a(2)
 # print(type(obj1.a))
-obj = a()
+# obj = a()
 # obj.salam()
-exit("salamdsdasd")
+# exit("salamdsdasd")
+os.makedirs('test folder' , exist_ok=True)
+
 
 # s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
 # print(s1)

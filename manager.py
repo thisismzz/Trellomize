@@ -57,7 +57,9 @@ class Manager:
             console.print(f"welcome Manager {self.username}" , style='Title')
             console.print("What would you like to do?", style="Info")
             console.print("1. Deactivate a user")
-            console.print("2. Log out")
+            console.print("2. Activated a user")
+            console.print("3. Delete database")
+            console.print("4. Log out")
 
             choice = input("Enter your choice: ")
             if choice == '1':
@@ -67,13 +69,29 @@ class Manager:
                     console.print("-", username)
                 selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to deactive (format:'user1,user2') or 'back' to go back: ").split(',')))
                 
-                if selected_usernames == 'back':
-                    continue
+                if selected_usernames[0] == 'back':
+                    self.manager_menu()
                 
                 for username in selected_usernames:
                     Manager.deactive_user(username)
-            
+                
             elif choice == '2':
+                console.print("Available users:" , style='Info')
+                all_usernames = Manager.load_users()
+                for username in all_usernames:
+                    console.print("-", username)
+                selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to activate (format:'user1,user2') or 'back' to go back: ").split(',')))
+                
+                if selected_usernames[0] == 'back':
+                    self.manager_menu()
+                
+                for username in selected_usernames:
+                    Manager.activate_user(username)
+            
+            elif choice == '3':
+                self.purge_data(is_run=True)
+            
+            elif choice == '4':
                 console.print("You have been successfully logged out.", style="Notice")
                 exit()
 
@@ -94,7 +112,11 @@ class Manager:
         user_data = {}
         with open(path , 'r') as file :
             user_data = json.load(file)
-            
+        
+        if user_data["active"] == False:
+            console.print(f"User ({username}) has already been deactivated" , style='Error')
+            return
+        
         user_data["active"] = False
         
         with open (path , 'w') as file:
@@ -102,8 +124,58 @@ class Manager:
         
         console.print(f"User ({username}) has been deactivated successfully", style='Notice')
 
-    def purge_data():
-        pass
+    def activate_user(username):
+        path = 'users/' + username + '/' + username + ".json"
+        user_data = {}
+        with open(path , 'r') as file :
+            user_data = json.load(file)
+        
+        if user_data["active"] == True:
+            console.print(f"User ({username}) is active" , style='Error')
+            return
+        
+        user_data["active"] = True
+        
+        with open (path , 'w') as file:
+            json.dump(user_data,file,indent=4)
+        
+        console.print(f"User ({username}) has been activated successfully", style='Notice')
+        
+        
+    def purge_data(self,is_run = False):
+        if not is_run:
+            data = {}
+            try:
+                with open("manager_info.json" , 'r') as file:
+                    data = json.load(file)
+            except FileExistsError : 
+                console.print("Manager is not defined" , style='Error')
+                console.print("Create Manager first", style='Error')
+                exit()
+
+            if data['username'] == self.username and base64.b64decode(data['password']).decode("utf-8") == self.password:
+                pass
+            else:
+                console.print("Invalid username or password." , style='Error')
+                exit()
+            
+        project_path = 'projects/'
+        with os.scandir(project_path) as entries:
+            if not any(entries):
+                console.print("There is no project data" , style='Error')
+            else:
+                os.remove(project_path)
+                console.print("All projects has been deleted" , style='Notice')
+                os.makedirs(project_path)
+        
+        users_path = 'users/'
+        with os.scandir(users_path) as entries:
+            if not any(entries):
+                console.print("There is no user data" , style='Error')
+            else:
+                os.remove(users_path)
+                console.print("All users has been deleted" , style='Notice')
+                os.makedirs(users_path)
         
 
 if __name__ == "__main__":
@@ -118,10 +190,19 @@ if __name__ == "__main__":
     login_parser.add_argument("--username", required=True, help="Admin username")
     login_parser.add_argument("--password", required=True, help="Admin password")
 
+    purge_parser = subparsers.add_parser("purge-data" , help="Purge database")
+    purge_parser.add_argument("--username", required=True, help="Admin username")
+    purge_parser.add_argument("--password", required=True, help="Admin password")
+    
     args = parser.parse_args()
 
-    manager = Manager()
+    manager = Manager(args.username,args.password)
     if args.subcommand == "create-admin":
-        manager.create_admin(args.username, args.password)
+        manager.create_admin()
+        
     elif args.subcommand == "login":
-        manager.login(args.username, args.password)
+        manager.login()
+    
+    elif args.subcommand == "purge-data":
+        manager.purge_data()
+        
