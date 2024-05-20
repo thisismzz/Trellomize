@@ -11,12 +11,15 @@ g = _id_generator()
 
 
 class a:
-    def __init__(self , a : str):
-        self.a = a
+    def salam(self):
+        print("salam")
     
     
-obj1 = a(2)
-print(type(obj1.a))
+# obj1 = a(2)
+# print(type(obj1.a))
+obj = a()
+# obj.salam()
+exit("salamdsdasd")
 
 # s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
 # print(s1)
