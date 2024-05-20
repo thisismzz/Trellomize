@@ -207,7 +207,7 @@ class User:
     
 class Task:
         
-    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time= None, assigness = [], comments = []):
+    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time = None, histoy = [], assigness = [], comments = []):
         self.title = title
         self.description = description
         self.priority = priority if priority is not None else Priority.LOW.value
@@ -217,6 +217,8 @@ class Task:
         self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
         self.assigness = assigness 
         self.comments = comments
+        self.history = histoy
+        
 
     def view_task(self):
         table = Table(title=f"Task: {self.title}", style="cyan")
@@ -312,6 +314,54 @@ class Task:
                 )
 
             console.print(table)
+
+    def add_to_history(self , username , action , message = None , members = None , new_amount = None) :
+        if action == "add comment":
+            new_history = {"user" : username , "action" : action , "message" : message}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+            
+        elif action == "change status":
+            new_history = {"user" : username , "action" : action , "new status" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "change priority":
+            new_history = {"user" : username , "action" : action , "new priority" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "change start time":
+            new_history = {"user" : username , "action" : action , "new start time" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "change end time":
+            new_history = {"user" : username , "action" : action , "new end time" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "add asigness":
+            new_history = {"user" : username , "action" : action , "new assigness" : members}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "remove asigness":
+            new_history = {"user" : username , "action" : action , "removed assigness" : members}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        elif action == "change title":
+            new_history = {"user" : username , "action" : action , "new title" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+            
+        elif action == "change description":
+            new_history = {"user" : username , "action" : action , "new description" : new_amount}
+            new_history["time"] = str(datetime.now())[:19]
+            self.add_to_history.append(new_history)
+        
+        logger.debug(f"Add new history to task [id : {self.ID}]")
     
     def assign_member(self, project_members, member):
         if member in project_members:
@@ -533,7 +583,7 @@ class Project:
             else:
                 console.print("Invalid choice.", style="Error")
 
-    def change_task_fields(self, task: Task):
+    def change_task_fields(self, user : User , task : Task):
         while True:
             console.print(f"Updating Task: {task.title}", style="Title")
             task.view_task()
@@ -549,26 +599,32 @@ class Project:
             choice = input("Enter your choice: ")
             if choice == "1":
                 task.change_status()
+                task.add_to_history(user.username , action = "change status" , new_amount = task.status)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "2":
                 task.change_priority()
+                task.add_to_history(user.username , action = "change priority" , new_amount = task.priority)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "3":
                 task.change_start_time()
+                task.add_to_history(user.username , action = "change start time" , new_amount = task.start_time)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "4":
                 task.change_end_time()
+                task.add_to_history(user.username , action = "change end time" , new_amount = task.end_time)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "5":
                 task.change_title()
+                task.add_to_history(user.username , action = "change title" , new_amount = task.title)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "6":
                 task.change_description()
+                task.add_to_history(user.username , action = "change description" , new_amount = task.description)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "7":
@@ -595,13 +651,14 @@ class Project:
 
             choice = input("Enter your choice: ")
             if choice == "1":
-                self.change_task_fields(task)
+                self.change_task_fields(user,task)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "2":
                 task.view_comments()
             elif choice == "3":
                 task.add_comment(user.username, user.username == self.owner)
+                task.add_to_history(user.username , action = "add comment" , message = task.comments[-1])
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "4":
@@ -620,6 +677,7 @@ class Project:
                         task.assign_member(self.collaborators, username)
                     else:
                         console.print(f"Invalid username {username}.", style="Error")
+                task.add_to_history(user.username , action = "add asigness" , members = member_usernames)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "6":
@@ -632,6 +690,7 @@ class Project:
                     return
                 for member in member_usernames:
                     task.remove_assignees(member)
+                task.add_to_history(user.username , action = "remove asigness" , members = member_usernames)
                 self.update_task(task)
                 self.save_project_data()
             elif choice == "7":

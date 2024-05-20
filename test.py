@@ -11,13 +11,12 @@ g = _id_generator()
 
 
 class a:
-    def __init__(self):
-        self.a=next(g)
+    def __init__(self , a : str):
+        self.a = a
     
-    def __str__(self):
-        return self.a
     
-
+obj1 = a(2)
+print(type(obj1.a))
 
 # s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
 # print(s1)
@@ -31,4 +30,4 @@ class Priority(Enum):
     def __str__():
         print("salam")
         
-print(Priority)
+# print(Priority)
