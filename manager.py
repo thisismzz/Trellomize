@@ -2,6 +2,8 @@ import argparse
 import json
 import os
 import base64
+import shutil
+import logging
 from rich.console import Console
 from rich.table import Table
 from rich.theme import Theme
@@ -14,6 +16,13 @@ custom_theme = Theme({
 })
 
 console = Console(theme=custom_theme)
+
+logger = logging.getLogger("__manager__")
+logger.setLevel(logging.DEBUG)
+handler  = logging.FileHandler('logs.log' , mode='a')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 class Manager:
@@ -34,6 +43,7 @@ class Manager:
         with open("manager_info.json", "w") as admin_file:
             json.dump(admin_info, admin_file)
         print("Admin info created successfully.")
+        logger.info("Manager has created successfully")
     
     def login(self):
         data = {}
@@ -47,6 +57,7 @@ class Manager:
             
         if data['username'] == self.username and base64.b64decode(data['password']).decode("utf-8") == self.password:
             console.print("Login successful.", style="Notice")
+            logger.info("Manager has logged in successfully")
             self.manager_menu()
         else:
             console.print("Invalid username or password." , style='Error')
@@ -93,6 +104,7 @@ class Manager:
             
             elif choice == '4':
                 console.print("You have been successfully logged out.", style="Notice")
+                logger.info("End of Manager program")
                 exit()
 
             else:
@@ -123,6 +135,7 @@ class Manager:
             json.dump(user_data,file,indent=4)
         
         console.print(f"User ({username}) has been deactivated successfully", style='Notice')
+        logger.info(f"User ({username}) deactivated by Manager")
 
     def activate_user(username):
         path = 'users/' + username + '/' + username + ".json"
@@ -140,6 +153,7 @@ class Manager:
             json.dump(user_data,file,indent=4)
         
         console.print(f"User ({username}) has been activated successfully", style='Notice')
+        logger.info(f"User ({username}) activated by Manager")
         
         
     def purge_data(self,is_run = False):
@@ -164,8 +178,9 @@ class Manager:
             if not any(entries):
                 console.print("There is no project data" , style='Error')
             else:
-                os.remove(project_path)
+                shutil.rmtree(project_path)
                 console.print("All projects has been deleted" , style='Notice')
+                logger.info("All projects has been deleted")
                 os.makedirs(project_path)
         
         users_path = 'users/'
@@ -173,9 +188,14 @@ class Manager:
             if not any(entries):
                 console.print("There is no user data" , style='Error')
             else:
-                os.remove(users_path)
+                shutil.rmtree(users_path)
+                os.remove("emails and usernames.json")
                 console.print("All users has been deleted" , style='Notice')
+                logger.info("All users has been deleted")
                 os.makedirs(users_path)
+                with open ("emails and usernames.json" , 'w') as file:
+                    data = {'emails' : [] , 'usernames' : []}
+                    json.dump(data,file,indent=4)
         
 
 if __name__ == "__main__":

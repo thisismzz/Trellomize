@@ -764,7 +764,7 @@ def main_menu():
                 user_menu(user)
         elif choice == "3":
             console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
-            logger.info("EXIT")
+            logger.info("EXIT (end of program)")
             break
         else:
             console.print("Invalid choice.", style="Error")

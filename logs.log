@@ -32,3 +32,11 @@
 2024-05-21 00:32:20,191 - __main__ - INFO - A new project [name : test , id : 3f4d37c3] created by [admin1]
 2024-05-21 00:32:23,209 - __main__ - INFO - User [admin1] logged out
 2024-05-21 00:32:24,371 - __main__ - INFO - EXIT
+2024-05-21 23:23:27,847 - __main__ - INFO - A new user registered : test
+2024-05-21 23:23:42,568 - __main__ - INFO - EXIT
+2024-05-21 23:27:54,808 - __main__ - INFO - A new user registered : a
+2024-05-21 23:27:57,080 - __main__ - INFO - EXIT
+2024-05-21 23:38:36,944 - __main__ - INFO - Manager has logged in successfully
+2024-05-21 23:38:56,119 - __main__ - INFO - End of Manager program
+2024-05-21 23:39:59,396 - __manager__ - INFO - Manager has logged in successfully
+2024-05-21 23:40:10,771 - __manager__ - INFO - End of Manager program
