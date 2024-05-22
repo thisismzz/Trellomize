@@ -6,14 +6,19 @@
             "title": "testtt",
             "description": "testttttt",
             "priority": "LOW",
-            "status": "BACKLOG",
+            "status": "TODO",
             "ID": "1906a3f3",
             "start_time": "2024-05-22 19:13:55.802520",
             "end_time": "2024-05-23 19:13:55.802520",
-            "assignees": [
-                "admin"
+            "assignees": [],
+            "comments": [
+                {
+                    "user": "kimia1381",
+                    "comment": "llll",
+                    "role": "owner",
+                    "timestamp": "2024-05-22 20:44:45"
+                }
             ],
-            "comments": [],
             "history": [
                 {
                     "user": "kimia1381",
@@ -22,6 +27,18 @@
                         "back"
                     ],
                     "timestamp": "2024-05-22 19:21:25"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "change status",
+                    "new status": "TODO",
+                    "timestamp": "2024-05-22 20:44:14"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "add comment",
+                    "message": "llll",
+                    "timestamp": "2024-05-22 20:44:45"
                 }
             ]
         }

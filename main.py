@@ -153,6 +153,73 @@ class User:
         path = "users/" + username + "/projects.json"
         with open(path, "r") as file:
                 return json.load(file)
+        
+    def update_username(self, new_username):
+        old_username = self.username
+        self.username = new_username
+        self.save_user_data()
+
+        data = {}
+        with open('emails and usernames.json', 'r') as file:
+            data = json.load(file)
+        data['usernames'].remove(old_username)
+        data['usernames'].append(new_username)
+        with open('emails and usernames.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
+
+    def update_password(self, new_password):
+
+        self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        self.save_user_data()
+        logger.info(f"User [{self.username}] changed password")
+
+    def update_email(self, new_email):
+        old_email = self.email
+        self.email = new_email
+        self.save_user_data()
+
+        data = {}
+        with open('emails and usernames.json', 'r') as file:
+            data = json.load(file)
+        data['emails'].remove(old_email)
+        data['emails'].append(new_email)
+        with open('emails and usernames.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
+        
+    def edit_profile_menu(self):
+        while(True):
+            console.print("Edit Profile", style="Title")
+            console.print("What would you like to edit?", style="Info")
+            console.print("1. Username")
+            console.print("2. Password")
+            console.print("3. Email")
+            console.print("4. Back")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                new_username = input("Enter new username: ")
+                if User.check_unique_username(new_username):
+                    self.update_username(new_username)
+                    console.print("Username updated successfully.", style="Notice")
+                else:
+                    console.print("Username already exists. Please choose a different one.", style="Error")
+            elif choice == "2":
+                new_password = input("Enter new password: ")
+                self.update_password(new_password)
+                console.print("Password updated successfully.", style="Notice")
+            elif choice == "3":
+                new_email = input("Enter new email: ")
+                if User.check_unique_email(new_email):
+                    self.update_email(new_email)
+                    console.print("Email updated successfully.", style="Notice")
+                else:
+                    console.print("Email already exists. Please choose a different one.", style="Error")
+            elif choice == "4":
+                break
+            else:
+                console.print("Invalid choice.", style="Error")
 
     def register():
         while(True):
@@ -566,6 +633,10 @@ class Project:
             self.assign_member(username, task)
 
     def remove_assignee_menu(self, task: Task):
+        if not task.assignees:
+            console.print("There are no assignees for this task to remove.", style="Error")
+            return
+        
         console.print("Current task assignees:", style="Info")
         for idx, member in enumerate(task.assignees, start=1):
             if member != self.owner:
@@ -854,13 +925,14 @@ def main_menu():
         else:
             console.print("Invalid choice.", style="Error")
 
-def user_menu(user:User):
+def user_menu(user: User):
     while True:
         console.print(f"Welcome, {user.username}!", style="Title")
         console.print("What would you like to do?", style="Info")
         console.print("1. Create Project")
         console.print("2. View Projects")
-        console.print("3. Logout")
+        console.print("3. Edit Profile")
+        console.print("4. Logout")
 
         choice = input("Enter your choice: ")
         if choice == "1":
@@ -868,6 +940,8 @@ def user_menu(user:User):
         elif choice == "2":
             Project.view_user_projects(user)
         elif choice == "3":
+            User.edit_profile_menu(user)
+        elif choice == "4":
             console.print("You have been successfully logged out.", style="Notice")
             logger.info(f"User [{user.username}] logged out")
             break

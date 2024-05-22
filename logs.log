@@ -151,3 +151,37 @@
 2024-05-22 20:15:38,787 - __main__ - INFO - User [kimia1381] has logged in 
 2024-05-22 20:15:41,464 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
 2024-05-22 20:16:11,874 - __main__ - DEBUG - A new assignee [user : admin] added to task.
+2024-05-22 20:21:15,094 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:21:18,283 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:21:36,059 - __main__ - DEBUG - An assignee [user : admin] removed from task.
+2024-05-22 20:23:32,794 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:23:34,999 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:24:46,103 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:24:49,523 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:30:07,095 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:30:10,482 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:32:28,128 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:32:31,434 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:34:34,756 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:34:37,017 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:36:42,795 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:36:45,291 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:39:59,273 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:40:03,057 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:41:34,667 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 20:41:38,314 - __main__ - DEBUG - User [kimia1381] is managing project [id: 9f6aa229]
+2024-05-22 20:44:14,530 - __main__ - DEBUG - Task [id : 1906a3f3] status has changed (current : TODO)
+2024-05-22 20:44:14,530 - __main__ - DEBUG - Add new history to task [id : 1906a3f3]
+2024-05-22 20:44:45,720 - __main__ - DEBUG - A new comment added to task [id : 1906a3f3]
+2024-05-22 20:44:45,720 - __main__ - DEBUG - Add new history to task [id : 1906a3f3]
+2024-05-22 20:48:00,256 - __main__ - INFO - User [kimia1381] logged out
+2024-05-22 20:48:01,550 - __main__ - INFO - EXIT (end of program)
+2024-05-22 20:55:16,970 - __main__ - INFO - User [admin] has logged in 
+2024-05-22 20:55:42,963 - __main__ - DEBUG - User [admin] is managing project [id: 9f6aa229]
+2024-05-22 21:24:22,284 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 21:24:27,047 - __main__ - INFO - User [kimia1381] logged out
+2024-05-22 21:24:35,227 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 21:33:19,584 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-22 21:33:28,035 - __main__ - INFO - User [kimia1381bayat] changed username from kimia1381 to kimia1381bayat
+2024-05-22 21:34:46,287 - __main__ - INFO - User [kimia1381bayat] changed email from kimia1381@gmail.com to kimiabayat@gmail.com
+2024-05-22 21:38:29,697 - __main__ - INFO - User [kimia1381] has logged in 
