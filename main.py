@@ -366,25 +366,21 @@ class Task:
         console.print(f"Task description changed to {self.description}", style="Notice")
         logger.debug(f"Task [id : {self.ID}] description has changed (current : {self.description})")
 
-    def add_comment(self, username ,is_owner:bool):
-        comment = input("Enter comment: ")
-        self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assignees","timestamp": str(datetime.now())[:19]})
-        console.print("Comment added successfully.", style="Notice")
-        logger.debug(f"A new comment added to task [id : {self.ID}]")
-
     def view_comments(self):
         if not self.comments:
             console.print("No comments available.", style="bold red")
         else:
             table = Table(title="Comments")
 
+            table.add_column("No.", justify="center", style="White")
             table.add_column("Username", justify="center", style="cyan", no_wrap=True)
-            table.add_column("Role", justify="center" , style="magenta")
-            table.add_column("Comment", justify="center" , style="green")
-            table.add_column("Timestamp", justify="center" , style="yellow")
+            table.add_column("Role", justify="center", style="magenta")
+            table.add_column("Comment", justify="center", style="green")
+            table.add_column("Timestamp", justify="center", style="yellow")
 
-            for comment in self.comments:
+            for idx, comment in enumerate(self.comments, start=1):
                 table.add_row(
+                    str(idx),
                     comment['user'],
                     comment['role'],
                     comment['comment'],
@@ -392,6 +388,46 @@ class Task:
                 )
 
             console.print(table)
+
+    def add_comment(self, username, is_owner: bool):
+        comment = input("Enter comment: ")
+        self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
+        console.print("Comment added successfully.", style="Notice")
+        logger.debug(f"A new comment added to task [id : {self.ID}]")
+
+    def remove_comment(self):
+        self.view_comments()
+        if not self.comments:
+            return
+
+        try:
+            comment_idx = int(input("Enter the number of the comment to remove: ")) - 1
+            if 0 <= comment_idx < len(self.comments):
+                removed_comment = self.comments.pop(comment_idx)
+                console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
+                logger.debug(f"Comment removed from task [id : {self.ID}]")
+            else:
+                console.print("Invalid comment number.", style="Error")
+        except ValueError:
+            console.print("Invalid input. Please enter a number.", style="Error")
+
+    def edit_comment(self):
+        self.view_comments()
+        if not self.comments:
+            return
+
+        try:
+            comment_idx = int(input("Enter the number of the comment to edit: ")) - 1
+            if 0 <= comment_idx < len(self.comments):
+                new_comment = input("Enter new comment: ")
+                self.comments[comment_idx]['comment'] = new_comment
+                self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
+                console.print("Comment edited successfully.", style="Notice")
+                logger.debug(f"Comment edited on task [id : {self.ID}]")
+            else:
+                console.print("Invalid comment number.", style="Error")
+        except ValueError:
+            console.print("Invalid input. Please enter a number.", style="Error")
 
     def add_to_history(self , username , action , message = None , members = None , new_amount = None) :
         if action == "add comment":
@@ -440,7 +476,27 @@ class Task:
             self.history.append(new_history)
         
         logger.debug(f"Add new history to task [id : {self.ID}]")
-    
+
+    def view_history(self):
+        if not self.history:
+            console.print("No history available for this task.", style="Info")
+            return
+
+        table = Table(title="Task History")
+        table.add_column("No.", style="white", justify="center")
+        table.add_column("User", style="cyan", justify="center")
+        table.add_column("Action", style="magenta", justify="center")
+        table.add_column("Amount", style="green", justify="center")
+        table.add_column("Timestamp", style="yellow", justify="center")  
+
+        for index, entry in enumerate(self.history, start=1):
+            user = entry.get("user", "")
+            action = entry.get("action", "")
+            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or entry.get("new assignees", "") or entry.get("removed assignees", "") or entry.get("new title", "") or entry.get("new description", "")
+            timestamp = entry.get("timestamp", "")
+            table.add_row(str(index), user, action, amount, timestamp)
+
+        console.print(table)
 
 #........................................................................#
 
@@ -607,6 +663,10 @@ class Project:
             console.print(f"Member '{username}' is not assigned to the task.", style="Error")
         
     def assign_member_menu(self, task: Task):
+        if not self.collaborators or len(self.collaborators) == 1: 
+            console.print("There are no project members to assign.", style="Error")
+            return
+
         console.print("Project Members:")
         for idx, member in enumerate(self.collaborators, start=1):
             if member != self.owner:
@@ -816,11 +876,13 @@ class Project:
             console.print("1. Change Task Fields")
             console.print("2. View Comments")
             console.print("3. Add Comment")
-            console.print("4. View Assignees")
-            console.print("5. Assign Member")
-            console.print("6. Remove Assignees")
-            console.print("7. View History")
-            console.print("8. Back")
+            console.print("4. Edit Comment")
+            console.print("5. Remove comment")
+            console.print("6. View Assignees")
+            console.print("7. Assign Member")
+            console.print("8. Remove Assignees")
+            console.print("9. View History")
+            console.print("10. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -830,7 +892,7 @@ class Project:
 
             elif choice == "2":
                 task.view_comments()
-
+        
             elif choice == "3":
                 task.add_comment(user.username, user.username == self.owner)
                 task.add_to_history(user.username, action="add comment", message=task.comments[-1])
@@ -838,24 +900,30 @@ class Project:
                 self.save_project_data()
 
             elif choice == "4":
-                self.view_assignees(task)
+                task.edit_comment()
 
             elif choice == "5":
+                task.remove_comment()
+
+            elif choice == "6":
+                self.view_assignees(task)
+
+            elif choice == "7":
                 self.assign_member_menu(task)
                 #task.add_to_history(user.username, action="add assignee", members=member_usernames)
                 self.update_task(task)
                 self.save_project_data()
 
-            elif choice == "6":
+            elif choice == "8":
                 self.remove_assignee_menu(task)
                 #task.add_to_history(user.username, action="remove assignee", members=member_usernames)
                 self.update_task(task)
                 self.save_project_data()
             
-            elif choice == "7":
-                pass
+            elif choice == "9":
+                task.view_history()
 
-            elif choice == "8":
+            elif choice == "10":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
@@ -875,10 +943,10 @@ class Project:
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         table = Table(title="Projects details", style="cyan")
-        table.add_column("No.", justify="center")
-        table.add_column("ID", justify="center")
-        table.add_column("Name", justify="center")
-        table.add_column("Owner", justify="center")
+        table.add_column("No.", style="cyan", justify="center")
+        table.add_column("ID", style="magenta", justify="center")
+        table.add_column("Name", style="green", justify="center")
+        table.add_column("Owner", style="yellow", justify="center")
 
         project_map = {}
         for i, project in enumerate(user_projects, start=1):
