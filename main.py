@@ -559,7 +559,15 @@ class Project:
     def remove_member(self, member):
         if member in self.collaborators:
             self.collaborators.remove(member)
+            
+            #delete project id from user's project.json
             User.remove_project(member,self.ID)
+            
+            #erase user's name from any tasks
+            for task in self.tasks.values():
+                if member in task["assignees"]:
+                    self.remove_assignee(member,Task(**task))
+            
             self.save_project_data()
             console.print(f"{member} removed successfully.", style="Notice")
             logger.debug(f"A member [user : {member}] removed from project [id : {self.ID}] collaborators")
