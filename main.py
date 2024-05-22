@@ -169,7 +169,6 @@ class User:
         logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
 
     def update_password(self, new_password):
-
         self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.save_user_data()
         logger.info(f"User [{self.username}] changed password")
@@ -298,8 +297,7 @@ class Task:
         table.add_column("Priority", justify="center")
         table.add_column("Status", justify="center")
 
-        table.add_row(self.ID, self.title, self.description, self.start_time[:19], self.end_time[:19], self.priority, self.status)  
-
+        table.add_row(self.ID, self.title, self.description, self.start_time[:19], self.end_time[:19], self.priority, self.status)
         console.print(table)
 
     def change_end_time(self):
@@ -492,7 +490,7 @@ class Task:
         for index, entry in enumerate(self.history, start=1):
             user = entry.get("user", "")
             action = entry.get("action", "")
-            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or entry.get("new assignees", "") or entry.get("removed assignees", "") or entry.get("new title", "") or entry.get("new description", "")
+            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(entry.get("new assignees", "")) or str(entry.get("removed assignees", "")) or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20]
             timestamp = entry.get("timestamp", "")
             table.add_row(str(index), user, action, amount, timestamp)
 
@@ -582,10 +580,10 @@ class Project:
             console.print(f"{idx}. {username}")
         console.print("0. Back")
 
-        input_text = input("Enter the numbers of the users to add as members (e.g., '1,2') or '0' to go back: ")
-        if input_text == "0":
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to add as members (e.g., '1,2') or '0' to go back: ").split(',')))
+        
+        if selected_indices[0] == "0":
             return
-        selected_indices = input_text.split(",")
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
@@ -612,10 +610,11 @@ class Project:
             console.print(f"{idx}. {member}")
         console.print("0. Back")
 
-        input_text = input("Enter the numbers of the users to remove from the project (e.g., '1,2') or '0' to go back: ")
-        if input_text == "0":
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from the project (e.g., '1,2') or '0' to go back: ").strip(',')))
+        
+        if selected_indices[0] == "0":
             return
-        selected_indices = input_text.split(",")
+
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
@@ -662,8 +661,8 @@ class Project:
         else:
             console.print(f"Member '{username}' is not assigned to the task.", style="Error")
         
-    def assign_member_menu(self, task: Task):
-        if not self.collaborators or len(self.collaborators) == 1: 
+    def assign_member_menu(self, task: Task , user : User):
+        if len(self.collaborators) == 1: 
             console.print("There are no project members to assign.", style="Error")
             return
 
@@ -673,8 +672,10 @@ class Project:
                 console.print(f"{idx}. {member}")
         console.print("0. Back")
         
-        selected_indices = input("Enter the numbers of the users to assign as members (e.g., '1,2') or '0' to go back: ")
-        if selected_indices == "0":
+        
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g., '1,2') or '0' to go back: ").strip(',')))
+        
+        if selected_indices[0] == "0":
             return
         
         member_usernames = []
@@ -685,14 +686,14 @@ class Project:
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
                 member_usernames.append(self.collaborators[idx])
+                self.assign_member(self.collaborators[idx],task)
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
                 return
-        
-        for username in member_usernames:
-            self.assign_member(username, task)
+            
+            task.add_to_history(user.username, action="add assignee", members=member_usernames)
 
-    def remove_assignee_menu(self, task: Task):
+    def remove_assignee_menu(self, task: Task ,user : User):
         if not task.assignees:
             console.print("There are no assignees for this task to remove.", style="Error")
             return
@@ -703,8 +704,8 @@ class Project:
                 console.print(f"{idx}. {member}")
         console.print("0. Back")
         
-        selected_indices = input("Enter the numbers of the users to remove from task (e.g., '1,2') or '0' to go back: ")
-        if selected_indices == "0":
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g., '1,2') or '0' to go back: ").strip(',')))
+        if selected_indices[0] == "0":
             return
         
         member_usernames = []
@@ -714,13 +715,13 @@ class Project:
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(task.assignees):
+                self.remove_assignee(task.assignees[idx], task)
                 member_usernames.append(task.assignees[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
                 return
-        
-        for member in member_usernames:
-            self.remove_assignee(member, task)
+
+            task.add_to_history(user.username, action="remove assignee", members=member_usernames)
 
     def create_task_menu(self, user:User):
         if self.owner != user.username:
@@ -909,14 +910,12 @@ class Project:
                 self.view_assignees(task)
 
             elif choice == "7":
-                self.assign_member_menu(task)
-                #task.add_to_history(user.username, action="add assignee", members=member_usernames)
+                self.assign_member_menu(task,user)
                 self.update_task(task)
                 self.save_project_data()
 
             elif choice == "8":
                 self.remove_assignee_menu(task)
-                #task.add_to_history(user.username, action="remove assignee", members=member_usernames)
                 self.update_task(task)
                 self.save_project_data()
             
