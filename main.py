@@ -157,8 +157,11 @@ class User:
     def update_username(self, new_username):
         old_username = self.username
         self.username = new_username
+        
+        os.rename(f"users/{old_username}",f"users/{new_username}")
+        os.rename(f"users/{new_username}/{old_username}.json",f"users/{new_username}/{new_username}.json")
         self.save_user_data()
-
+        
         data = {}
         with open('emails and usernames.json', 'r') as file:
             data = json.load(file)
@@ -453,12 +456,12 @@ class Task:
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
         
-        elif action == "add asigness":
+        elif action == "add assignee":
             new_history = {"user" : username , "action" : action , "new assignees" : members}
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
         
-        elif action == "remove asigness":
+        elif action == "remove assignee":
             new_history = {"user" : username , "action" : action , "removed assignees" : members}
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
@@ -667,7 +670,7 @@ class Project:
             return
 
         console.print("Project Members:")
-        for idx, member in enumerate(self.collaborators, start=1):
+        for idx, member in enumerate(self.collaborators[1:], start=1):
             if member != self.owner:
                 console.print(f"{idx}. {member}")
         console.print("0. Back")
@@ -679,11 +682,11 @@ class Project:
             return
         
         member_usernames = []
-        for idx_str in selected_indices.split(","):
+        for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
                 return
-            idx = int(idx_str) - 1
+            idx = int(idx_str)
             if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
                 member_usernames.append(self.collaborators[idx])
                 self.assign_member(self.collaborators[idx],task)
@@ -700,8 +703,7 @@ class Project:
         
         console.print("Current task assignees:", style="Info")
         for idx, member in enumerate(task.assignees, start=1):
-            if member != self.owner:
-                console.print(f"{idx}. {member}")
+            console.print(f"{idx}. {member}")
         console.print("0. Back")
         
         selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g., '1,2') or '0' to go back: ").strip(',')))
@@ -709,11 +711,11 @@ class Project:
             return
         
         member_usernames = []
-        for idx_str in selected_indices.split(","):
+        for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
                 return
-            idx = int(idx_str) - 1
+            idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
                 self.remove_assignee(task.assignees[idx], task)
                 member_usernames.append(task.assignees[idx])
@@ -915,7 +917,7 @@ class Project:
                 self.save_project_data()
 
             elif choice == "8":
-                self.remove_assignee_menu(task)
+                self.remove_assignee_menu(task,user)
                 self.update_task(task)
                 self.save_project_data()
             

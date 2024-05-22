@@ -22,7 +22,6 @@ class a:
 # obj = a()
 # obj.salam()
 # exit("salamdsdasd")
-os.remove("projects")
 
 
 # s1 = list(map(lambda x:x.strip(),input("enter ").split(',')))
