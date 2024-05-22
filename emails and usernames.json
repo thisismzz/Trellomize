@@ -1,4 +1,10 @@
 {
-    "emails": [],
-    "usernames": []
+    "emails": [
+        "kimia1381@gmail.com",
+        "admin@gmail.com"
+    ],
+    "usernames": [
+        "kimia1381",
+        "admin"
+    ]
 }

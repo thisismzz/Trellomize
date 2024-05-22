@@ -4,6 +4,7 @@ import uuid
 import bcrypt
 import re
 import logging
+import maskpass
 from enum import Enum
 from datetime import datetime, timedelta
 from rich.console import Console
@@ -187,17 +188,17 @@ class User:
         console.print("Login", style="Title")
         console.print("Please provide your credentials to log in:", style="Info")
         username = input("Username: ")
-        password = input("Password: ")
+        password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
         path = f"users/{username}/{username}.json"
         
         if os.path.exists(path):
-            user_data =  User.load_user_data(username)
+            user_data = User.load_user_data(username)
             if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
                 if not user_data["active"]:
                     console.print("Your account is inactive.", style="Error")
                     return None
                 console.print("Login successful.", style="Notice")
-                logger.info(f"User [{user_data["username"]}] has logged in ")
+                logger.info(f"User [{user_data['username']}] has logged in ")
                 return User(**user_data)
 
         console.print("Incorrect username or password.", style="Error")
@@ -207,7 +208,7 @@ class User:
     
 class Task:
         
-    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time = None, assigness = [], comments = [], history = []):
+    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time = None, assignees = [], comments = [], history = []):
         self.title = title
         self.description = description
         self.priority = priority if priority is not None else Priority.LOW.value
@@ -215,7 +216,7 @@ class Task:
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
         self.start_time = start_time if start_time is not None else str(datetime.now())
         self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
-        self.assigness = assigness 
+        self.assignees = assignees 
         self.comments = comments
         self.history = history
         
@@ -254,27 +255,37 @@ class Task:
 
     def change_status(self):
         console.print("Available statuses:", style="Title")
-        for status in Status:
-            console.print(f"- {status.value}")
-        new_status = input("Enter new status: ")
-        if new_status in Status.__members__:
+        for idx, status in enumerate(Status, start=1):
+            console.print(f"{idx}. {status.value}")
+        console.print("0. BACK")
+        new_status_idx = int(input("Enter the number for the new status: "))
+        if new_status_idx == 0:
+            return  
+        new_status_idx -= 1
+        if 0 <= new_status_idx-1 < len(Status):
+            new_status = list(Status)[new_status_idx].name
             self.status = new_status
             console.print("Task status changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] status has changed (current : {self.status})")
         else:
-            console.print("Invalid status.", style="Error")
+            console.print("Invalid status number.", style="Error")
 
     def change_priority(self):
         console.print("Available priorities:", style="Title")
-        for priority in Priority:
-            console.print(f"- {priority.value}")
-        new_priority = input("Enter new priority: ")
-        if new_priority in Priority.__members__:
+        for idx, priority in enumerate(Priority, start=1):
+            console.print(f"{idx}. {priority.value}")
+        console.print("0. BACK")
+        new_priority_idx = int(input("Enter the number for the new priority: "))
+        if new_priority_idx == 0:
+            return 
+        new_priority_idx -= 1
+        if 0 <= new_priority_idx < len(Priority):
+            new_priority = list(Priority)[new_priority_idx].name
             self.priority = new_priority
             console.print("Task priority changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] priority has changed (current : {self.priority})")
         else:
-            console.print("Invalid priority.", style="Error")
+            console.print("Invalid priority number.", style="Error")
 
     def change_title(self):
         new_title = input("Enter new title: ")
@@ -290,7 +301,7 @@ class Task:
 
     def add_comment(self, username ,is_owner:bool):
         comment = input("Enter comment: ")
-        self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assigness","timestamp": str(datetime.now())[:19]})
+        self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assignees","timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
         logger.debug(f"A new comment added to task [id : {self.ID}]")
 
@@ -342,12 +353,12 @@ class Task:
             self.history.append(new_history)
         
         elif action == "add asigness":
-            new_history = {"user" : username , "action" : action , "new assigness" : members}
+            new_history = {"user" : username , "action" : action , "new assignees" : members}
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
         
         elif action == "remove asigness":
-            new_history = {"user" : username , "action" : action , "removed assigness" : members}
+            new_history = {"user" : username , "action" : action , "removed assignees" : members}
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
         
@@ -363,24 +374,6 @@ class Task:
         
         logger.debug(f"Add new history to task [id : {self.ID}]")
     
-    def assign_member(self, project_members, member):
-        if member in project_members:
-            if member not in self.assigness:
-                self.assigness.append(member)
-                console.print("Member assigned to task successfully.", style="Notice")
-                logger.debug(f"A new assigness [user : {member}] added to task [id : {self.ID}]")
-            else:
-                console.print("Member is already assigned to the task.", style="Error")
-        else:
-            console.print("User is not a member of the project.", style="Error")
-
-    def remove_assignees(self, username):
-        if username in self.assigness:
-            self.assigness.remove(username)
-            console.print(f"Member '{username}' removed from task '{self.title}' successfully.", style="Notice")
-            logger.debug(f"An assigness [user : {username}] removed from task [id : {self.ID}]")
-        else:
-            console.print(f"Member '{username}' is not assigned to task '{self.title}'.", style="Error")
 
 #........................................................................#
 
@@ -414,12 +407,18 @@ class Project:
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
+    def update_task(self,new_task:Task):
+        self.tasks[new_task.ID] = vars(new_task)
+
     def view_members(self):
+        if len(self.collaborators) == 1:  
+            console.print("There are no project members to display.", style="Error")
+            return
         console.print("Current project members:", style="Info")
         for member in self.collaborators:
             if member != self.owner:
                 console.print("-", member)
-        input_string= input("Enter 'back' to go back: ")
+        input_string = input("Enter 'back' to go back: ")
         if input_string == "back":
             return
 
@@ -443,52 +442,154 @@ class Project:
         else:
             console.print(f"{member} is not a member of the project.", style="Error")
 
-    def add_member_menu(self,user:User):
+    def add_member_menu(self, user: User):
         if self.owner != user.username:
-            console.print("Only the project owner can add member.", style="Error")
+            console.print("Only the project owner can add members.", style="Error")
             return
-        
-        console.print("Available users:" , style='Info')
+            
+        console.print("Available users:", style='Info')
         all_usernames = User.get_all_usernames()
         all_usernames.remove(self.owner)
-        for username in all_usernames:
-            console.print("-", username)
-
-        member_username = list(map(lambda x:x.strip(),input("Enter usernames to add as member (format:'user1,user2') or 'back' to go back: ").split(',')))
-        if member_username == "back":
+        
+        if not all_usernames:
+            console.print("There are no available users to add to the project.", style="Error")
             return
-        for username in member_username:
-            if username in all_usernames:
-                self.add_member(username)
+
+        for idx, username in enumerate(all_usernames, start=1):
+            console.print(f"{idx}. {username}")
+        console.print("0. Back")
+
+        input_text = input("Enter the numbers of the users to add as members (e.g., '1,2') or '0' to go back: ")
+        if input_text == "0":
+            return
+        selected_indices = input_text.split(",")
+        for idx_str in selected_indices:
+            if not idx_str.isdigit():
+                console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                return
+            idx = int(idx_str) - 1
+            if idx >= 0 and idx < len(all_usernames):
+                selected_username = all_usernames[idx]
+                self.add_member(selected_username)
             else:
-                console.print(f"Invalid username {username}.", style="Error")
+                console.print(f"Invalid user number: {idx + 1}.", style="Error")
 
-    def remove_member_menu(self,user:User):
+    def remove_member_menu(self, user: User):
         if self.owner != user.username:
-            console.print("Only the project owner can remove member.", style="Error")
+            console.print("Only the project owner can remove members.", style="Error")
             return
-    
-        console.print("Current project members:", style="Info")
-        for member in self.collaborators:
-            if member != self.owner:
-                console.print("-", member)
-        member_usernames = list(map(lambda x:x.strip(),input("Enter usernames to remove from project (format:'user1,user2') or 'back' to go back: ").split(',')))
-        if member_usernames == "back":
+            
+        members_to_display = [member for member in self.collaborators if member != self.owner]
+        if not members_to_display:
+            console.print("There are no project members to remove.", style="Error")
             return
-        for member in member_usernames:
-                self.remove_member(member)
-    
-    def update_task(self,new_task:Task):
-        self.tasks[new_task.ID] = vars(new_task)
 
-    def view_assignees(self,task:Task):
-        console.print("Current task assigness:")
-        for member in task.assigness:
+        console.print("Current project members:", style="Info")
+        for idx, member in enumerate(members_to_display, start=1):
+            console.print(f"{idx}. {member}")
+        console.print("0. Back")
+
+        input_text = input("Enter the numbers of the users to remove from the project (e.g., '1,2') or '0' to go back: ")
+        if input_text == "0":
+            return
+        selected_indices = input_text.split(",")
+        for idx_str in selected_indices:
+            if not idx_str.isdigit():
+                console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                return
+            idx = int(idx_str) - 1
+            if idx >= 0 and idx < len(members_to_display):
+                selected_member = members_to_display[idx]
+                self.remove_member(selected_member)
+            else:
+                console.print(f"Invalid user number: {idx + 1}.", style="Error")
+
+
+    def view_assignees(self, task: Task):
+        if not task.assignees:
+            console.print("There are no assignees for this task.", style="Error")
+            return
+            
+        console.print("Current task assignees:")
+        for member in task.assignees:
             if member != self.owner:
                 console.print("-", member)
-        input_string= input("Enter 'back' to go back: ")
+        input_string = input("Enter 'back' to go back: ")
         if input_string == "back":
             return
+
+    def assign_member(self, member, task: Task):
+        if member in self.collaborators:
+            if member not in task.assignees:
+                task.assignees.append(member)
+                console.print("Member assigned to task successfully.", style="Notice")
+                self.save_project_data()
+                logger.debug(f"A new assignee [user : {member}] added to task.")
+            else:
+                console.print("Member is already assigned to the task.", style="Error")
+        else:
+            console.print("User is not a member of the project.", style="Error")
+
+    def remove_assignee(self, username, task: Task):
+        if username in task.assignees:
+            task.assignees.remove(username)
+            console.print(f"Member '{username}' removed from task successfully.", style="Notice")
+            self.save_project_data()
+            logger.debug(f"An assignee [user : {username}] removed from task.")
+        else:
+            console.print(f"Member '{username}' is not assigned to the task.", style="Error")
+        
+    def assign_member_menu(self, task: Task):
+        console.print("Project Members:")
+        for idx, member in enumerate(self.collaborators, start=1):
+            if member != self.owner:
+                console.print(f"{idx}. {member}")
+        console.print("0. Back")
+        
+        selected_indices = input("Enter the numbers of the users to assign as members (e.g., '1,2') or '0' to go back: ")
+        if selected_indices == "0":
+            return
+        
+        member_usernames = []
+        for idx_str in selected_indices.split(","):
+            if not idx_str.isdigit():
+                console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                return
+            idx = int(idx_str) - 1
+            if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
+                member_usernames.append(self.collaborators[idx])
+            else:
+                console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                return
+        
+        for username in member_usernames:
+            self.assign_member(username, task)
+
+    def remove_assignee_menu(self, task: Task):
+        console.print("Current task assignees:", style="Info")
+        for idx, member in enumerate(task.assignees, start=1):
+            if member != self.owner:
+                console.print(f"{idx}. {member}")
+        console.print("0. Back")
+        
+        selected_indices = input("Enter the numbers of the users to remove from task (e.g., '1,2') or '0' to go back: ")
+        if selected_indices == "0":
+            return
+        
+        member_usernames = []
+        for idx_str in selected_indices.split(","):
+            if not idx_str.isdigit():
+                console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                return
+            idx = int(idx_str) - 1
+            if idx >= 0 and idx < len(task.assignees):
+                member_usernames.append(task.assignees[idx])
+            else:
+                console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                return
+        
+        for member in member_usernames:
+            self.remove_assignee(member, task)
 
     def create_task_menu(self, user:User):
         if self.owner != user.username:
@@ -633,7 +734,7 @@ class Project:
                 console.print("Invalid choice.", style="Error")
 
     def task_menu(self, user: User, task: Task):
-        if user.username not in task.assigness and user.username != self.owner:
+        if user.username not in task.assignees and user.username != self.owner:
             console.print("You don't have access to modify this task", style='Error')
             return
 
@@ -645,68 +746,49 @@ class Project:
             console.print("2. View Comments")
             console.print("3. Add Comment")
             console.print("4. View Assignees")
-            console.print("5. View History")
-            console.print("6. Assign Member")
-            console.print("7. Remove Assignees")
+            console.print("5. Assign Member")
+            console.print("6. Remove Assignees")
+            console.print("7. View History")
             console.print("8. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
-                self.change_task_fields(user,task)
+                self.change_task_fields(user, task)
                 self.update_task(task)
                 self.save_project_data()
-            
+
             elif choice == "2":
                 task.view_comments()
-            
+
             elif choice == "3":
                 task.add_comment(user.username, user.username == self.owner)
-                task.add_to_history(user.username , action = "add comment" , message = task.comments[-1])
+                task.add_to_history(user.username, action="add comment", message=task.comments[-1])
                 self.update_task(task)
                 self.save_project_data()
-            
+
             elif choice == "4":
                 self.view_assignees(task)
-            
+
             elif choice == "5":
-                pass
-            
+                self.assign_member_menu(task)
+                #task.add_to_history(user.username, action="add assignee", members=member_usernames)
+                self.update_task(task)
+                self.save_project_data()
+
             elif choice == "6":
-                all_usernames = User.get_all_usernames()
-                console.print("Project Members:")
-                for member in self.collaborators:
-                    if member != self.owner:
-                        console.print("-", member)
-                member_usernames = list(map(lambda x: x.strip(), input("Enter usernames to add as member (format:'user1,user2') or 'back' to go back: ").split(',')))
-                if member_usernames == "back":
-                    return
-                for username in member_usernames:
-                    if username in all_usernames:
-                        task.assign_member(self.collaborators, username)
-                    else:
-                        console.print(f"Invalid username {username}.", style="Error")
-                task.add_to_history(user.username , action = "add asigness" , members = member_usernames)
+                self.remove_assignee_menu(task)
+                #task.add_to_history(user.username, action="remove assignee", members=member_usernames)
                 self.update_task(task)
                 self.save_project_data()
             
             elif choice == "7":
-                console.print("Current task assigness:", style="Info")
-                for member in task.assigness:
-                    if member != self.owner:
-                        console.print("-", member)
-                member_usernames = list(map(lambda x: x.strip(), input("Enter usernames to remove from task (format:'user1,user2') or 'back' to go back: ").split(',')))
-                if member_usernames == "back":
-                    return
-                for member in member_usernames:
-                    task.remove_assignees(member)
-                task.add_to_history(user.username , action = "remove asigness" , members = member_usernames)
-                self.update_task(task)
-                self.save_project_data()
-            
+                pass
+
             elif choice == "8":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+
 
     def create_project(user:User):
         console.print("Create new Project" , style="Title")
@@ -717,31 +799,34 @@ class Project:
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
 
-    def view_user_projects(user:User):
+    def view_user_projects(user: User):
         data = User.load_user_projects(user.username)
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         table = Table(title="Projects details", style="cyan")
+        table.add_column("No.", justify="center")
         table.add_column("ID", justify="center")
         table.add_column("Name", justify="center")
         table.add_column("Owner", justify="center")
-        for project in user_projects:
-            table.add_row(project["ID"], project["title"], project["owner"])
+
+        project_map = {}
+        for i, project in enumerate(user_projects, start=1):
+            table.add_row(str(i), project["ID"], project["title"], project["owner"])
+            project_map[str(i)] = project
         console.print(table)
 
-        project_id = input("Enter project ID to manage (or 'back' to go back): ")
-        if project_id == "back":
-            return
-        flag = False
-        for project in user_projects:
-            if project["ID"] == project_id:
-                project_instance = Project(**project) 
-                logger.debug(f"User [{user.username}] is managing project [id : {project_instance.ID}]") 
+        while True:
+            project_number = input("Enter project number to manage (or 0 to go back): ")
+            if project_number == "0":
+                return
+            if project_number in project_map:
+                project = project_map[project_number]
+                project_instance = Project(**project)
+                logger.debug(f"User [{user.username}] is managing project [id: {project_instance.ID}]")
                 project_instance.manage_project_menu(user)
-                flag = True
                 break
-        if not flag:
-            console.print("Invalid ID" , style="Error")
+            else:
+                console.print("Invalid number", style="Error")
 
 #.........................#
 #       FUNCTIONS         #
