@@ -259,3 +259,18 @@
 2024-05-23 02:28:47,152 - __main__ - INFO - User [admin1] has logged in 
 2024-05-23 02:28:52,465 - __main__ - DEBUG - User [admin1] is managing project [id: d4e34ef3]
 2024-05-23 02:29:08,598 - __main__ - DEBUG - An assignee [user : kimia1381] removed from task.
+2024-05-23 02:46:16,286 - __main__ - INFO - User [admin1] has logged in 
+2024-05-23 02:46:31,835 - __main__ - DEBUG - User [admin1] is managing project [id: d4e34ef3]
+2024-05-23 02:47:02,880 - __main__ - DEBUG - A new assignee [user : kimia1381] added to task.
+2024-05-23 02:47:02,880 - __main__ - DEBUG - Add new history to task [id : f71ab076]
+2024-05-23 02:50:47,589 - __main__ - INFO - User [admin1] has logged in 
+2024-05-23 02:50:49,277 - __main__ - DEBUG - User [admin1] is managing project [id: d4e34ef3]
+2024-05-23 02:51:15,631 - __main__ - DEBUG - An assignee [user : kimia1381] removed from task.
+2024-05-23 02:51:15,631 - __main__ - DEBUG - Add new history to task [id : f71ab076]
+2024-05-23 02:52:06,788 - __main__ - DEBUG - Task [id : f71ab076] description has changed (current : sdgsgsd)
+2024-05-23 02:52:06,788 - __main__ - DEBUG - Add new history to task [id : f71ab076]
+2024-05-23 02:53:18,812 - __main__ - DEBUG - A member [user : kimia1381] removed from project [id : d4e34ef3] collaborators
+2024-05-23 02:54:00,671 - __main__ - INFO - User [admin1] logged out
+2024-05-23 02:54:17,301 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-23 02:55:03,466 - __main__ - INFO - User [kimia1381] logged out
+2024-05-23 02:55:05,403 - __main__ - INFO - EXIT (end of program)

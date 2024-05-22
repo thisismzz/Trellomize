@@ -4,7 +4,7 @@
     "tasks": {
         "f71ab076": {
             "title": "task 1",
-            "description": "No.1",
+            "description": "sdgsgsd",
             "priority": "LOW",
             "status": "BACKLOG",
             "ID": "f71ab076",
@@ -37,13 +37,34 @@
                     "action": "add comment",
                     "message": "sssalaslsa",
                     "timestamp": "2024-05-23 02:17:42"
+                },
+                {
+                    "user": "admin1",
+                    "action": "add assignee",
+                    "new assignees": [
+                        "kimia1381"
+                    ],
+                    "timestamp": "2024-05-23 02:47:02"
+                },
+                {
+                    "user": "admin1",
+                    "action": "remove assignee",
+                    "removed assignees": [
+                        "kimia1381"
+                    ],
+                    "timestamp": "2024-05-23 02:51:15"
+                },
+                {
+                    "user": "admin1",
+                    "action": "change description",
+                    "new description": "sdgsgsd",
+                    "timestamp": "2024-05-23 02:52:06"
                 }
             ]
         }
     },
     "collaborators": [
-        "admin1",
-        "kimia1381"
+        "admin1"
     ],
     "ID": "d4e34ef3"
 }

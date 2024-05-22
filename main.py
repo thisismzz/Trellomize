@@ -647,13 +647,13 @@ class Project:
         if member in self.collaborators:
             if member not in task.assignees:
                 task.assignees.append(member)
-                console.print("Member assigned to task successfully.", style="Notice")
+                console.print(f"Member ({member}) assigned to task successfully.", style="Notice")
                 self.save_project_data()
                 logger.debug(f"A new assignee [user : {member}] added to task.")
             else:
-                console.print("Member is already assigned to the task.", style="Error")
+                console.print(f"Member ({member}) is already assigned to the task.", style="Error")
         else:
-            console.print("User is not a member of the project.", style="Error")
+            console.print(f"User ({member}) is not a member of the project.", style="Error")
 
     def remove_assignee(self, username, task: Task):
         if username in task.assignees:
@@ -689,10 +689,12 @@ class Project:
             idx = int(idx_str)
             if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
                 member_usernames.append(self.collaborators[idx])
-                self.assign_member(self.collaborators[idx],task)
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
                 return
+            
+            for member in member_usernames:
+                self.assign_member(member,task)
             
             task.add_to_history(user.username, action="add assignee", members=member_usernames)
 
@@ -717,11 +719,13 @@ class Project:
                 return
             idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
-                self.remove_assignee(task.assignees[idx], task)
                 member_usernames.append(task.assignees[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
                 return
+            
+            for member in member_usernames:
+                self.remove_assignee(member,task)
 
             task.add_to_history(user.username, action="remove assignee", members=member_usernames)
 
@@ -762,6 +766,7 @@ class Project:
         for task in self.tasks.values():
             if task["ID"] == task_id:
                 self.task_menu(user, Task(**task))
+                flag = True
                 break
         if not flag:
             console.print("Invalid ID" , style="Error")
