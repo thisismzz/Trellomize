@@ -399,7 +399,7 @@ class Task:
         console.print("Comment added successfully.", style="Notice")
         logger.debug(f"A new comment added to task [id : {self.ID}] by user [{username}]")
 
-    def remove_comment(self):
+    def remove_comment(self , user : User):
         self.view_comments()
         if not self.comments:
             return
@@ -407,15 +407,18 @@ class Task:
         try:
             comment_idx = int(input("Enter the number of the comment to remove: ")) - 1
             if 0 <= comment_idx < len(self.comments):
-                removed_comment = self.comments.pop(comment_idx)
-                console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
-                logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
+                if self.comments[comment_idx]["user"] == user.username:
+                    removed_comment = self.comments.pop(comment_idx)
+                    console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
+                    logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
+                else:
+                    console.print("This comment in not belong to you." , style="Error")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
             console.print("Invalid input. Please enter a number.", style="Error")
 
-    def edit_comment(self):
+    def edit_comment(self , user : User):
         self.view_comments()
         if not self.comments:
             return
@@ -423,11 +426,14 @@ class Task:
         try:
             comment_idx = int(input("Enter the number of the comment to edit: ")) - 1
             if 0 <= comment_idx < len(self.comments):
-                new_comment = input("Enter new comment: ")
-                self.comments[comment_idx]['comment'] = new_comment
-                self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
-                console.print("Comment edited successfully.", style="Notice")
-                logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
+                if self.comments[comment_idx]["user"] == user.username:
+                    new_comment = input("Enter new comment: ")
+                    self.comments[comment_idx]['comment'] = new_comment
+                    self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
+                    console.print("Comment edited successfully.", style="Notice")
+                    logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
+                else:
+                    console.print("This comment in not belong to you." , style="Error")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
@@ -438,7 +444,17 @@ class Task:
             new_history = {"user" : username , "action" : action , "message" : message["comment"]}
             new_history["timestamp"] = str(datetime.now())[:19]
             self.history.append(new_history)
+        
+        elif action == "remove comment":
+            new_history = {"user" : username , "action" : action , "description" : new_amount}
+            new_history["timestamp"] = str(datetime.now())[:19]
+            self.history.append(new_history)
             
+        elif action == "edit comment":
+            new_history = {"user" : username , "action" : action , "description" : new_amount}
+            new_history["timestamp"] = str(datetime.now())[:19]
+            self.history.append(new_history)
+        
         elif action == "change status":
             new_history = {"user" : username , "action" : action , "new status" : new_amount}
             new_history["timestamp"] = str(datetime.now())[:19]
@@ -496,7 +512,7 @@ class Task:
         for index, entry in enumerate(self.history, start=1):
             user = entry.get("user", "")
             action = entry.get("action", "")
-            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(entry.get("new assignees", "")) or str(entry.get("removed assignees", "")) or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20]
+            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(entry.get("new assignees", "")) or str(entry.get("removed assignees", "")) or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
             timestamp = entry.get("timestamp", "")
             table.add_row(str(index), user, action, amount, timestamp)
 
@@ -941,11 +957,17 @@ class Project:
                 self.save_project_data()
 
             elif choice == "3":
-                task.edit_comment()
-
+                task.edit_comment(user)
+                task.add_to_history(user.username , action = "edit comment" , new_amount="VIEW EDITED MESSAGE IN VIEW COMMENTS")
+                self.update_task(task)
+                self.save_project_data()
+                
             elif choice == "4":
-                task.remove_comment()
-
+                task.remove_comment(user)
+                task.add_to_history(user.username , action= "remove comment" , new_amount="MESSAGE REMOVED")
+                self.update_task(task)
+                self.save_project_data()
+            
             elif choice == "5":
                 break
             else:
