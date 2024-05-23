@@ -6,23 +6,32 @@
             "title": "test kimia",
             "description": "kimia",
             "priority": "MEDIUM",
-            "status": "TODO",
+            "status": "DONE",
             "ID": "73809fa6",
             "start_time": "2024-05-22 22:08:15.518403",
             "end_time": "2024-05-23 22:08:15.518403",
-            "assignees": [],
+            "assignees": [
+                "admin1",
+                "admin"
+            ],
             "comments": [
                 {
                     "user": "kimia1381",
-                    "comment": "fafdhahjghagjgakjfgjkafjkha",
+                    "comment": "ifiojfjifjs",
                     "role": "owner",
-                    "timestamp": "2024-05-22 22:23:58"
+                    "timestamp": "2024-05-23 22:32:31"
                 },
                 {
                     "user": "kimia1381",
                     "comment": "ssqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
                     "role": "owner",
                     "timestamp": "2024-05-22 22:24:14"
+                },
+                {
+                    "user": "kimia1381",
+                    "comment": "hhahihdfihduah",
+                    "role": "owner",
+                    "timestamp": "2024-05-23 22:25:55"
                 }
             ],
             "history": [
@@ -55,12 +64,97 @@
                     "action": "change priority",
                     "new priority": "MEDIUM",
                     "timestamp": "2024-05-22 23:18:32"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "add comment",
+                    "message": "test",
+                    "timestamp": "2024-05-23 22:17:13"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "edit comment",
+                    "description": "VIEW EDITED MESSAGE IN VIEW COMMENTS",
+                    "timestamp": "2024-05-23 22:17:49"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "remove comment",
+                    "description": "MESSAGE REMOVED",
+                    "timestamp": "2024-05-23 22:17:56"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "add assignee",
+                    "new assignees": [
+                        "admin1"
+                    ],
+                    "timestamp": "2024-05-23 22:18:12"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "change status",
+                    "new status": "DONE",
+                    "timestamp": "2024-05-23 22:22:06"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "change start time",
+                    "new start time": "2024-05-22 22:08:15.518403",
+                    "timestamp": "2024-05-23 22:24:55"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "change title",
+                    "new title": "test kimia",
+                    "timestamp": "2024-05-23 22:25:34"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "add comment",
+                    "message": "hhahihdfihduah",
+                    "timestamp": "2024-05-23 22:25:55"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "edit comment",
+                    "description": "VIEW EDITED MESSAGE IN VIEW COMMENTS",
+                    "timestamp": "2024-05-23 22:29:19"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "add assignee",
+                    "new assignees": [
+                        "admin"
+                    ],
+                    "timestamp": "2024-05-23 22:31:45"
+                },
+                {
+                    "user": "kimia1381",
+                    "action": "edit comment",
+                    "description": "VIEW EDITED MESSAGE IN VIEW COMMENTS",
+                    "timestamp": "2024-05-23 22:32:31"
+                },
+                {
+                    "user": "admin",
+                    "action": "edit comment",
+                    "description": "VIEW EDITED MESSAGE IN VIEW COMMENTS",
+                    "timestamp": "2024-05-23 22:33:02"
+                },
+                {
+                    "user": "admin",
+                    "action": "remove comment",
+                    "description": "MESSAGE REMOVED",
+                    "timestamp": "2024-05-23 22:33:46"
                 }
             ]
         }
     },
     "collaborators": [
-        "kimia1381"
+        "kimia1381",
+        "admin1",
+        "owe",
+        "admin"
     ],
     "ID": "6a67a0c9"
 }

@@ -292,3 +292,45 @@
 2024-05-23 17:13:45,395 - __main__ - INFO - A new task [name : sample , id : [79b32a87]] created by [admin1]
 2024-05-23 17:17:43,515 - __main__ - INFO - User [admin1] logged out
 2024-05-23 17:17:44,508 - __main__ - INFO - EXIT (end of program)
+2024-05-23 21:54:27,789 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-23 21:54:49,094 - __main__ - INFO - User [kimiabayat] changed username from kimia1381 to kimiabayat
+2024-05-23 21:54:49,094 - __main__ - INFO - User [kimiabayat] updated username to kimiabayat
+2024-05-23 22:09:21,890 - __main__ - INFO - User [kimia1381] changed username from kimiabayat to kimia1381
+2024-05-23 22:09:21,890 - __main__ - INFO - User [kimia1381] updated username to kimia1381
+2024-05-23 22:10:47,262 - __main__ - DEBUG - User [kimia1381] is managing project [id: 6a67a0c9]
+2024-05-23 22:14:07,570 - __main__ - DEBUG - A new member [user : admin1] added to project [id : 6a67a0c9] collaborators by owner
+2024-05-23 22:14:07,570 - __main__ - DEBUG - A new member [user : owe] added to project [id : 6a67a0c9] collaborators by owner
+2024-05-23 22:16:11,531 - __main__ - DEBUG - User [kimia1381] is managing project [id: 6a67a0c9]
+2024-05-23 22:17:13,775 - __main__ - DEBUG - A new comment added to task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:17:13,775 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:17:49,114 - __main__ - DEBUG - Comment edited on task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:17:49,114 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:17:56,176 - __main__ - DEBUG - Comment removed from task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:17:56,176 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:18:12,209 - __main__ - DEBUG - A new assignee [user : admin1] added to task.
+2024-05-23 22:18:12,209 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:22:06,516 - __main__ - DEBUG - Task [id : 73809fa6] status has changed (current : DONE)
+2024-05-23 22:22:06,516 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:24:55,872 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:25:34,428 - __main__ - DEBUG - Task [id : 73809fa6] title has changed (current : test kimia)
+2024-05-23 22:25:34,429 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:25:55,030 - __main__ - DEBUG - A new comment added to task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:25:55,030 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:29:19,242 - __main__ - DEBUG - Comment edited on task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:29:19,242 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:30:11,888 - __main__ - INFO - User [kimia1381] logged out
+2024-05-23 22:30:55,446 - __main__ - INFO - A new user registered : admin
+2024-05-23 22:31:05,812 - __main__ - INFO - User [kimia1381] has logged in 
+2024-05-23 22:31:10,243 - __main__ - DEBUG - User [kimia1381] is managing project [id: 6a67a0c9]
+2024-05-23 22:31:20,001 - __main__ - DEBUG - A new member [user : admin] added to project [id : 6a67a0c9] collaborators by owner
+2024-05-23 22:31:45,376 - __main__ - DEBUG - A new assignee [user : admin] added to task.
+2024-05-23 22:31:45,376 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:32:31,204 - __main__ - DEBUG - Comment edited on task [id : 73809fa6] by user [kimia1381]
+2024-05-23 22:32:31,204 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:32:37,214 - __main__ - INFO - User [kimia1381] logged out
+2024-05-23 22:32:41,471 - __main__ - INFO - User [admin] has logged in 
+2024-05-23 22:32:44,827 - __main__ - DEBUG - User [admin] is managing project [id: 6a67a0c9]
+2024-05-23 22:33:02,195 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:33:46,472 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
+2024-05-23 22:34:59,500 - __main__ - INFO - User [admin] logged out
+2024-05-23 22:35:01,321 - __main__ - INFO - EXIT (end of program)

@@ -2,11 +2,13 @@
     "emails": [
         "kimia1381@gmail.com",
         "admin1@admin1.com",
-        "sdfsds@sdfsd.com"
+        "sdfsds@sdfsd.com",
+        "admin@gmail.com"
     ],
     "usernames": [
-        "kimia1381",
         "admin1",
-        "owe"
+        "owe",
+        "kimia1381",
+        "admin"
     ]
 }

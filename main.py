@@ -329,7 +329,7 @@ class Task:
         for idx, status in enumerate(Status, start=1):
             console.print(f"{idx}. {status.value}")
         console.print("0. BACK")
-        new_status_idx = int(input("Enter the number for the new status: "))
+        new_status_idx = int(input("Enter the number for the new status or '0' to go back: "))
         if new_status_idx == 0:
             return  
         new_status_idx -= 1
@@ -346,7 +346,7 @@ class Task:
         for idx, priority in enumerate(Priority, start=1):
             console.print(f"{idx}. {priority.value}")
         console.print("0. BACK")
-        new_priority_idx = int(input("Enter the number for the new priority: "))
+        new_priority_idx = int(input("Enter the number for the new priority or '0' to go back: "))
         if new_priority_idx == 0:
             return 
         new_priority_idx -= 1
@@ -405,14 +405,16 @@ class Task:
             return
 
         try:
-            comment_idx = int(input("Enter the number of the comment to remove: ")) - 1
+            comment_idx = int(input("Enter the number of the comment to remove or '0' to go back: ")) - 1
+            if comment_idx == -1:
+                return
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.username:
                     removed_comment = self.comments.pop(comment_idx)
                     console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
                     logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
                 else:
-                    console.print("This comment in not belong to you." , style="Error")
+                    console.print("This comment is not belong to you." , style="Error")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
@@ -424,7 +426,9 @@ class Task:
             return
 
         try:
-            comment_idx = int(input("Enter the number of the comment to edit: ")) - 1
+            comment_idx = int(input("Enter the number of the comment to edit or '0' to go back: ")) - 1
+            if comment_idx == -1:
+                return
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.username:
                     new_comment = input("Enter new comment: ")
@@ -433,7 +437,7 @@ class Task:
                     console.print("Comment edited successfully.", style="Notice")
                     logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
                 else:
-                    console.print("This comment in not belong to you." , style="Error")
+                    console.print("This comment is not belong to you." , style="Error")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
@@ -602,7 +606,7 @@ class Project:
             console.print(f"{idx}. {username}")
         console.print("0. Back")
 
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to add as members (e.g., '1,2') or '0' to go back: ").split(',')))
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         
         if selected_indices[0] == "0":
             return
@@ -632,7 +636,7 @@ class Project:
             console.print(f"{idx}. {member}")
         console.print("0. Back")
 
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from the project (e.g., '1,2') or '0' to go back: ").strip(',')))
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").strip(',')))
         
         if selected_indices[0] == "0":
             return
@@ -694,7 +698,7 @@ class Project:
         console.print("0. Back")
         
         
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g., '1,2') or '0' to go back: ").strip(',')))
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or '0' to go back: ").strip(',')))
         
         if selected_indices[0] == "0":
             return
@@ -726,7 +730,7 @@ class Project:
             console.print(f"{idx}. {member}")
         console.print("0. Back")
         
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g., '1,2') or '0' to go back: ").strip(',')))
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or '0' to go back: ").strip(',')))
         if selected_indices[0] == "0":
             return
         
@@ -828,7 +832,7 @@ class Project:
             console.print("What would you like to do?", style="Info")
             console.print("1. Create Task")
             console.print("2. View Tasks")
-            console.print("3. View Project Members")
+            console.print("3. View Members")
             console.print("4. Add Member")
             console.print("5. Remove Member")
             console.print("6. Delete Project")
@@ -1004,7 +1008,7 @@ class Project:
         data = User.load_user_projects(user.username)
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
-        table = Table(title="Projects details", style="cyan")
+        table = Table(title="Projects details")
         table.add_column("No.", style="cyan", justify="center")
         table.add_column("ID", style="magenta", justify="center")
         table.add_column("Name", style="green", justify="center")
@@ -1017,7 +1021,7 @@ class Project:
         console.print(table)
 
         while True:
-            project_number = input("Enter project number to manage (or 0 to go back): ")
+            project_number = input("Enter project number to manage (or '0' to go back): ")
             if project_number == "0":
                 return
             if project_number in project_map:
