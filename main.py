@@ -341,25 +341,35 @@ class Task:
         console.print(table)
 
     def change_end_time(self):
+        clear_screen()
+        console.print("|Changing EndTime|\n", style="Title")
         new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): ")
         try:
             self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
             console.print("End time changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] end time has changed (current : {self.end_time})")
+            wait_for_key_press()
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
+            wait_for_key_press()
 
     def change_start_time(self):
+        clear_screen()
+        console.print("|Changing StartTime|\n", style="Title")
         new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): ")
         try:
             self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
             console.print("Start time changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] start time has changed (current : {self.start_time})")
+            wait_for_key_press()
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
+            wait_for_key_press()
 
     def change_status(self):
-        console.print("Available statuses:", style="Title")
+        clear_screen()
+        console.print("|Changing Status|\n", style="Title")
+        console.print("Available statuses:", style="Info")
         for idx, status in enumerate(Status, start=1):
             console.print(f"{idx}. {status.value}")
         console.print("0. BACK")
@@ -372,11 +382,15 @@ class Task:
             self.status = new_status
             console.print("Task status changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] status has changed (current : {self.status})")
+            wait_for_key_press()
         else:
             console.print("Invalid status number.", style="Error")
+            wait_for_key_press()
 
     def change_priority(self):
-        console.print("Available priorities:", style="Title")
+        clear_screen()
+        console.print("|Changing Priority|\n", style="Title")
+        console.print("Available priorities:", style="Info")
         for idx, priority in enumerate(Priority, start=1):
             console.print(f"{idx}. {priority.value}")
         console.print("0. BACK")
@@ -389,20 +403,28 @@ class Task:
             self.priority = new_priority
             console.print("Task priority changed successfully.", style="Notice")
             logger.debug(f"Task [id : {self.ID}] priority has changed (current : {self.priority})")
+            wait_for_key_press()
         else:
             console.print("Invalid priority number.", style="Error")
+            wait_for_key_press()
 
     def change_title(self):
+        clear_screen()
+        console.print("|Changing Title|\n", style="Title")
         new_title = input("Enter new title: ")
         self.title = new_title
         console.print(f"Task title changed to {self.title}", style="Notice")
         logger.debug(f"Task [id : {self.ID}] title has changed (current : {self.title})")
+        wait_for_key_press()
 
     def change_description(self):
+        clear_screen()
+        console.print("|Changing Description|\n", style="Title")
         new_description = input("Enter new description: ")
         self.description = new_description
         console.print(f"Task description changed to {self.description}", style="Notice")
         logger.debug(f"Task [id : {self.ID}] description has changed (current : {self.description})")
+        wait_for_key_press()
 
     def view_comments(self):
         if not self.comments:
@@ -586,24 +608,27 @@ class Project:
     def view_members(self):
         if len(self.collaborators) == 1:  
             console.print("There are no project members to display.", style="Error")
+            wait_for_key_press()
             return
+        clear_screen()
+        console.print("|Project Members|\n", style="Title")
         console.print("Current project members:", style="Info")
         for member in self.collaborators:
             if member != self.owner:
                 console.print("-", member)
-        input_string = input("Enter 'back' to go back: ")
-        if input_string == "back":
-            return
+        wait_for_key_press()
 
     def add_member(self, member):
         if member not in self.collaborators:
             self.collaborators.append(member)
-            console.print(f"{member} added successfully.", style="Notice")
+            console.print(f"Member '{member}' added to project successfully.", style="Notice")
             User.add_my_project(member,self.ID)
             self.save_project_data()
             logger.debug(f"A new member [user : {member}] added to project [id : {self.ID}] collaborators by owner")
+            wait_for_key_press()
         else:
             console.print(f"User {member} has already been added" , style='Error')
+            wait_for_key_press()
 
     def remove_member(self, member):
         if member in self.collaborators:
@@ -618,35 +643,40 @@ class Project:
                     self.remove_assignee(member,Task(**task))
             
             self.save_project_data()
-            console.print(f"{member} removed successfully.", style="Notice")
+            console.print(f"Member '{member}' removed from project successfully.", style="Notice")
             logger.debug(f"A member [user : {member}] removed from project [id : {self.ID}] collaborators")
+            wait_for_key_press()
         else:
             console.print(f"{member} is not a member of the project.", style="Error")
+            wait_for_key_press()
 
     def add_member_menu(self, user: User):
         if self.owner != user.username:
             console.print("Only the project owner can add members.", style="Error")
+            wait_for_key_press()
             return
-            
-        console.print("Available users:", style='Info')
-        all_usernames = User.get_all_usernames()
-        all_usernames.remove(self.owner)
         
+        all_usernames = User.get_all_usernames()  # Move this line before checking its content
         if not all_usernames:
             console.print("There are no available users to add to the project.", style="Error")
+            wait_for_key_press()
             return
+        
+        clear_screen()
+        console.print("|Adding Member To Project|\n", style="Title")
+        console.print("Available users:", style='Info')
+        all_usernames.remove(self.owner)
 
         for idx, username in enumerate(all_usernames, start=1):
             console.print(f"{idx}. {username}")
         console.print("0. Back")
-
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
-        
+        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
             return
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(all_usernames):
@@ -654,23 +684,28 @@ class Project:
                 self.add_member(selected_username)
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                wait_for_key_press()
 
     def remove_member_menu(self, user: User):
         if self.owner != user.username:
             console.print("Only the project owner can remove members.", style="Error")
+            wait_for_key_press()
             return
-            
+        
         members_to_display = [member for member in self.collaborators if member != self.owner]
         if not members_to_display:
             console.print("There are no project members to remove.", style="Error")
+            wait_for_key_press()
             return
 
+        clear_screen()
+        console.print("|Removing Member From Project|\n", style="Title")
         console.print("Current project members:", style="Info")
         for idx, member in enumerate(members_to_display, start=1):
             console.print(f"{idx}. {member}")
         console.print("0. Back")
 
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").strip(',')))
+        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").split(',')))
         
         if selected_indices[0] == "0":
             return
@@ -678,6 +713,7 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(members_to_display):
@@ -685,6 +721,7 @@ class Project:
                 self.remove_member(selected_member)
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                wait_for_key_press()
 
     def view_assignees(self, task: Task):
         if not task.assignees:
@@ -806,6 +843,7 @@ class Project:
     def view_project_tasks(self, user:User):
         if not self.tasks:
             console.print("There are no tasks for this project.", style="Error")
+            wait_for_key_press()
         else:
             while True:
                 clear_screen()
@@ -850,24 +888,27 @@ class Project:
         console.print("Project created successfully.", style="Notice")
         wait_for_key_press()
 
-    def delete_project(self,user:User):
+    def delete_project(self, user: User):
         if self.owner != user.username:
             console.print("Only the project owner can delete project.", style="Error")
+            wait_for_key_press()
             return False
         file_path = f"projects/{self.ID}.json"
-    
+
         try:
-            if os.path.exists(file_path) :
+            if os.path.exists(file_path):
                 os.remove(file_path)
                 for member in self.collaborators:
-                    User.remove_project(member,self.ID)
-                console.print(f"Project '{self.title}' has been deleted successfully." , style="Notice")
+                    User.remove_project(member, self.ID)
+                console.print(f"Project '{self.title}' has been deleted successfully.", style="Notice")
                 logger.info(f"Project [id : {self.ID}] deleted by owner [user : {user.username}]")
+                wait_for_key_press()
                 return True
             else:
                 raise FileNotFoundError("No such Project")
         except FileNotFoundError as e:
-            console.print(e , style="Error")
+            console.print(e, style="Error")
+            wait_for_key_press()
             return False
 
     def manage_project_menu(self, user):
@@ -906,7 +947,10 @@ class Project:
 
     def change_task_fields(self, user : User , task : Task):
         while True:
-            console.print(f"|Updating Task: {task.title}|\n", style="Title")
+            clear_screen()
+            console.print("|Updating Task: ", end="", style="Title")
+            console.print(f"{task.title}", end="", style="cyan")
+            console.print("|\n", style="Title")
             task.view_task()
             console.print("Which task field do you want to change?", style="Info")
             console.print("1. Status")
@@ -959,7 +1003,10 @@ class Project:
             return
 
         while True:
-            console.print(f"|Managing Task: {task.title}|\n", style="Title")
+            clear_screen()
+            console.print("|Managing Task: ", end="", style="Title")
+            console.print(f"{task.title}", end="", style="cyan")
+            console.print("|\n", style="Title")
             task.view_task()
             console.print("What would you like to do?", style="Info")
             console.print("1. Change Task Fields")
@@ -1052,11 +1099,16 @@ class Project:
                 console.print("Invalid choice.", style="Error")
 
     def view_user_projects(user: User):
-        clear_screen()
-        console.print("|User's Projects|\n", style="Title")
         data = User.load_user_projects(user.username)
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
+        if not user_projects:
+            console.print("You don't have any projects to display.", style="Error")
+            wait_for_key_press()
+            return
+
+        clear_screen()
+        console.print("|User's Projects|\n", style="Title")
         table = Table(title="Projects details")
         table.add_column("No.", style="cyan", justify="center")
         table.add_column("ID", style="magenta", justify="center")
