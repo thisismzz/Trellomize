@@ -5,6 +5,7 @@ import bcrypt
 import re
 import logging
 import maskpass
+import platform
 from enum import Enum
 from datetime import datetime, timedelta
 from rich.console import Console
@@ -26,6 +27,25 @@ handler  = logging.FileHandler('logs.log' , mode='a')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def wait_for_key_press():
+    console.print("\nPress any key to continue...", style="yellow")
+    if platform.system().lower() == 'windows':
+        import msvcrt
+        return msvcrt.getch()
+    else:
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
 
 #........................#
 #        CLASSES         #
@@ -191,8 +211,9 @@ class User:
         logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
         
     def edit_profile_menu(self):
-        while(True):
-            console.print("Edit Profile", style="Title")
+        while True:
+            clear_screen()
+            console.print("|Editing Profile|\n", style="Title")
             console.print("What would you like to edit?", style="Info")
             console.print("1. Username")
             console.print("2. Password")
@@ -206,29 +227,36 @@ class User:
                     self.update_username(new_username)
                     console.print("Username updated successfully.", style="Notice")
                     logger.info(f"User [{self.username}] updated username to {new_username}")
+                    wait_for_key_press()
                 else:
                     console.print("Username already exists. Please choose a different one.", style="Error")
+                    wait_for_key_press()
             elif choice == "2":
                 new_password = input("Enter new password: ")
                 self.update_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
                 logger.info(f"User [{self.username}] updated password")
+                wait_for_key_press()
             elif choice == "3":
                 new_email = input("Enter new email: ")
                 if User.check_unique_email(new_email):
                     self.update_email(new_email)
                     console.print("Email updated successfully.", style="Notice")
                     logger.info(f"User [{self.username}] updated email to {new_email}")
+                    wait_for_key_press()
                 else:
                     console.print("Email already exists. Please choose a different one.", style="Error")
+                    wait_for_key_press()
             elif choice == "4":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
     def register():
-        while(True):
-            console.print("Registration", style="Title")
+        while True:
+            clear_screen()
+            console.print("|Registration|\n", style="Title")
             console.print("Please provide the following details to create your account:", style="Info")
             email = input("Email: ")
             username = input("Username: ")
@@ -251,30 +279,36 @@ class User:
                 User.add_email_username(email , username)
                 console.print("Account created successfully.", style="Notice")
                 logger.info(f"A new user registered : {new_user.username}")
+                wait_for_key_press()
                 break
 
             except ValueError as e:
-                console.print("Error: " + str(e), style="Error")
-
+                console.print(str(e), style="Error")
+                wait_for_key_press()
+                
     def login():
-        console.print("Login", style="Title")
-        console.print("Please provide your credentials to log in:", style="Info")
-        username = input("Username: ")
-        password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
-        path = f"users/{username}/{username}.json"
-        
-        if os.path.exists(path):
-            user_data = User.load_user_data(username)
-            if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
-                if not user_data["active"]:
-                    console.print("Your account is inactive.", style="Error")
-                    return None
-                console.print("Login successful.", style="Notice")
-                logger.info(f"User [{user_data['username']}] has logged in ")
-                return User(**user_data)
+        while True:
+            clear_screen()
+            console.print("|Login|\n", style="Title")
+            console.print("Please provide your credentials to log in:", style="Info")
+            username = input("Username: ")
+            password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
+            path = f"users/{username}/{username}.json"
+            
+            if os.path.exists(path):
+                user_data = User.load_user_data(username)
+                if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
+                    if not user_data["active"]:
+                        console.print("Your account is inactive.", style="Error")
+                        wait_for_key_press()
+                        return None
+                    console.print("Login successful.", style="Notice")
+                    logger.info(f"User [{user_data['username']}] has logged in ")
+                    wait_for_key_press()
+                    return User(**user_data)
 
-        console.print("Incorrect username or password.", style="Error")
-        return None
+            console.print("Incorrect username or password.", style="Error")
+            wait_for_key_press()
     
 #........................................................................#
     
@@ -756,6 +790,8 @@ class Project:
             console.print("Only the project owner can create tasks.", style="Error")
             return
         
+        clear_screen()
+        console.print("|Creating New Task|\n", style="Title")
         console.print("Please provide the following details to create a new task:", style="Info")
         title = input("Task Title: ")
         description = input("Task Description: ")
@@ -765,45 +801,54 @@ class Project:
         self.save_project_data()
         console.print("Task created successfully.", style="Notice")
         logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
+        wait_for_key_press()
 
     def view_project_tasks(self, user:User):
         if not self.tasks:
             console.print("There are no tasks for this project.", style="Error")
         else:
-            table = Table(title=f"Tasks for Project: {self.title}", style="cyan")
-            table.add_column("ID", justify="center")
-            table.add_column("Title", justify="center")
-            table.add_column("Description", justify="center")
-            table.add_column("Start Time", justify="center")
-            table.add_column("End Time", justify="center")
-            table.add_column("Priority", justify="center")
-            table.add_column("Status", justify="center")
-            
-            for task in self.tasks.values():
-                instance_task = Task(**task)
-                table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
-            console.print(table)
+            while True:
+                clear_screen()
+                console.print("|Tasks for Project: ", end="", style="Title")
+                console.print(f"{self.title}", end="", style="cyan")
+                console.print("|\n", style="Title")
+                table = Table(title="Tasks details", style="cyan")
+                table.add_column("ID", justify="center")
+                table.add_column("Title", justify="center")
+                table.add_column("Description", justify="center")
+                table.add_column("Start Time", justify="center")
+                table.add_column("End Time", justify="center")
+                table.add_column("Priority", justify="center")
+                table.add_column("Status", justify="center")
+                
+                for task in self.tasks.values():
+                    instance_task = Task(**task)
+                    table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
+                console.print(table)
 
-            task_id = input("Enter task ID to manage (or 'back' to go back): ")
-            if task_id == "back":
-                return
-            flag = False
-            for task in self.tasks.values():
-                if task["ID"] == task_id:
-                    self.task_menu(user, Task(**task))
-                    flag = True
-                    break
-            if not flag:
-                console.print("Invalid ID" , style="Error")
+                task_id = input("Enter task ID to manage (or 'back' to go back): ")
+                if task_id == "back":
+                    return
+                flag = False
+                for task in self.tasks.values():
+                    if task["ID"] == task_id:
+                        self.task_menu(user, Task(**task))
+                        flag = True
+                        break
+                if not flag:
+                    console.print("Invalid Task ID" , style="Error")
+                    wait_for_key_press()
 
     def create_project(user:User):
-        console.print("Create new Project" , style="Title")
+        clear_screen()
+        console.print("|Creating new Project|\n" , style="Title")
         title = input("Enter Project title: ")
         project = Project(title, user.username)
         project.save_project_data()
         logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
         User.add_my_project(user.username,project.ID)
         console.print("Project created successfully.", style="Notice")
+        wait_for_key_press()
 
     def delete_project(self,user:User):
         if self.owner != user.username:
@@ -827,8 +872,10 @@ class Project:
 
     def manage_project_menu(self, user):
         while True:
-            console.print(f"Managing Project:", end=" " ,style="Title")
-            console.print(f"{self.title}" , style="Info")
+            clear_screen()
+            console.print("|Managing Project: ", end="", style="Title")
+            console.print(f"{self.title}", end="", style="cyan")
+            console.print("|\n", style="Title")
             console.print("What would you like to do?", style="Info")
             console.print("1. Create Task")
             console.print("2. View Tasks")
@@ -859,7 +906,7 @@ class Project:
 
     def change_task_fields(self, user : User , task : Task):
         while True:
-            console.print(f"Updating Task: {task.title}", style="Title")
+            console.print(f"|Updating Task: {task.title}|\n", style="Title")
             task.view_task()
             console.print("Which task field do you want to change?", style="Info")
             console.print("1. Status")
@@ -912,7 +959,7 @@ class Project:
             return
 
         while True:
-            console.print(f"Managing Task: {task.title}", style="Title")
+            console.print(f"|Managing Task: {task.title}|\n", style="Title")
             task.view_task()
             console.print("What would you like to do?", style="Info")
             console.print("1. Change Task Fields")
@@ -943,7 +990,7 @@ class Project:
 
     def manage_comments(self, task: Task, user: User):
         while True:
-            console.print("Manage Comments", style="Title")
+            console.print("|Managing Comments|\n", style="Title")
             console.print("1. View Comments")
             console.print("2. Add Comment")
             console.print("3. Edit Comment")
@@ -979,7 +1026,7 @@ class Project:
 
     def manage_assignees(self, task: Task, user: User):
         while True:
-            console.print("Manage Assignees", style="Title")
+            console.print("|Managing Assignees|\n", style="Title")
             console.print("1. View Assignees")
             console.print("2. Assign Member")
             console.print("3. Remove Assignees")
@@ -1005,13 +1052,15 @@ class Project:
                 console.print("Invalid choice.", style="Error")
 
     def view_user_projects(user: User):
+        clear_screen()
+        console.print("|User's Projects|\n", style="Title")
         data = User.load_user_projects(user.username)
         user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         table = Table(title="Projects details")
         table.add_column("No.", style="cyan", justify="center")
         table.add_column("ID", style="magenta", justify="center")
-        table.add_column("Name", style="green", justify="center")
+        table.add_column("Title", style="green", justify="center")
         table.add_column("Owner", style="yellow", justify="center")
 
         project_map = {}
@@ -1039,7 +1088,8 @@ class Project:
 
 def main_menu():
     while True:
-        console.print("Welcome to the Project Management System", style="Title")
+        clear_screen()
+        console.print("|Welcome to the Project Management System|\n", style="Title")
         console.print("Already have an account? Login now. New user? Register to get started.", style="Info")
         console.print("1. Register")
         console.print("2. Login")
@@ -1058,10 +1108,13 @@ def main_menu():
             break
         else:
             console.print("Invalid choice.", style="Error")
+            wait_for_key_press()
+        
 
 def user_menu(user: User):
     while True:
-        console.print(f"Welcome, {user.username}!", style="Title")
+        clear_screen()
+        console.print(f"|Welcome, {user.username}!|\n", style="Title")
         console.print("What would you like to do?", style="Info")
         console.print("1. Create Project")
         console.print("2. View Projects")
@@ -1078,9 +1131,11 @@ def user_menu(user: User):
         elif choice == "4":
             console.print("You have been successfully logged out.", style="Notice")
             logger.info(f"User [{user.username}] logged out")
+            wait_for_key_press()
             break
         else:
             console.print("Invalid choice.", style="Error")
+            wait_for_key_press()
 
 #.........................#
 #      START POINT        #
