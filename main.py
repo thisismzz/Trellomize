@@ -205,17 +205,20 @@ class User:
                 if User.check_unique_username(new_username):
                     self.update_username(new_username)
                     console.print("Username updated successfully.", style="Notice")
+                    logger.info(f"User [{self.username}] updated username to {new_username}")
                 else:
                     console.print("Username already exists. Please choose a different one.", style="Error")
             elif choice == "2":
                 new_password = input("Enter new password: ")
                 self.update_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
+                logger.info(f"User [{self.username}] updated password")
             elif choice == "3":
                 new_email = input("Enter new email: ")
                 if User.check_unique_email(new_email):
                     self.update_email(new_email)
                     console.print("Email updated successfully.", style="Notice")
+                    logger.info(f"User [{self.username}] updated email to {new_email}")
                 else:
                     console.print("Email already exists. Please choose a different one.", style="Error")
             elif choice == "4":
@@ -394,7 +397,7 @@ class Task:
         comment = input("Enter comment: ")
         self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
-        logger.debug(f"A new comment added to task [id : {self.ID}]")
+        logger.debug(f"A new comment added to task [id : {self.ID}] by user [{username}]")
 
     def remove_comment(self):
         self.view_comments()
@@ -406,7 +409,7 @@ class Task:
             if 0 <= comment_idx < len(self.comments):
                 removed_comment = self.comments.pop(comment_idx)
                 console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
-                logger.debug(f"Comment removed from task [id : {self.ID}]")
+                logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
@@ -424,7 +427,7 @@ class Task:
                 self.comments[comment_idx]['comment'] = new_comment
                 self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
                 console.print("Comment edited successfully.", style="Notice")
-                logger.debug(f"Comment edited on task [id : {self.ID}]")
+                logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
             else:
                 console.print("Invalid comment number.", style="Error")
         except ValueError:
@@ -522,14 +525,6 @@ class Project:
         json_file_path = os.path.join(project_folder, f"{ID}.json")
         with open(json_file_path, "r") as json_file:
             return json.load(json_file)
-        
-    def create_project(user:User):
-        console.print("Create new Project" , style="Title")
-        title = input("Enter Project title: ")
-        project = Project(title, user.username)
-        project.save_project_data()
-        User.add_my_project(user.username,project.ID)
-        console.print("Project created successfully.", style="Notice")
 
     def update_task(self,new_task:Task):
         self.tasks[new_task.ID] = vars(new_task)
@@ -636,7 +631,6 @@ class Project:
                 self.remove_member(selected_member)
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-
 
     def view_assignees(self, task: Task):
         if not task.assignees:
@@ -781,6 +775,15 @@ class Project:
                     break
             if not flag:
                 console.print("Invalid ID" , style="Error")
+
+    def create_project(user:User):
+        console.print("Create new Project" , style="Title")
+        title = input("Enter Project title: ")
+        project = Project(title, user.username)
+        project.save_project_data()
+        logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
+        User.add_my_project(user.username,project.ID)
+        console.print("Project created successfully.", style="Notice")
 
     def delete_project(self,user:User):
         if self.owner != user.username:
@@ -974,15 +977,6 @@ class Project:
                 break
             else:
                 console.print("Invalid choice.", style="Error")
-
-    def create_project(user:User):
-        console.print("Create new Project" , style="Title")
-        title = input("Enter Project title: ")
-        project = Project(title, user.username)
-        project.save_project_data()
-        logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
-        User.add_my_project(user.username,project.ID)
-        console.print("Project created successfully.", style="Notice")
 
     def view_user_projects(user: User):
         data = User.load_user_projects(user.username)
