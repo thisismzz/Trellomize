@@ -274,3 +274,21 @@
 2024-05-23 02:54:17,301 - __main__ - INFO - User [kimia1381] has logged in 
 2024-05-23 02:55:03,466 - __main__ - INFO - User [kimia1381] logged out
 2024-05-23 02:55:05,403 - __main__ - INFO - EXIT (end of program)
+2024-05-23 03:05:25,411 - __main__ - INFO - User [admin1] has logged in 
+2024-05-23 03:05:29,719 - __main__ - DEBUG - User [admin1] is managing project [id: d4e34ef3]
+2024-05-23 03:05:40,458 - __main__ - INFO - A new task [name : task 2 , id : [ffea050a]] created by [admin1]
+2024-05-23 03:05:48,075 - __main__ - DEBUG - A new member [user : kimia1381] added to project [id : d4e34ef3] collaborators by owner
+2024-05-23 03:06:22,737 - __main__ - DEBUG - A new assignee [user : kimia1381] added to task.
+2024-05-23 03:06:22,737 - __main__ - DEBUG - Add new history to task [id : ffea050a]
+2024-05-23 03:06:32,382 - __main__ - DEBUG - A member [user : kimia1381] removed from project [id : d4e34ef3] collaborators
+2024-05-23 14:38:25,687 - __main__ - INFO - A new user registered : owe
+2024-05-23 14:38:27,215 - __main__ - INFO - EXIT (end of program)
+2024-05-23 15:59:51,867 - __main__ - INFO - User [admin1] has logged in 
+2024-05-23 16:00:09,636 - __main__ - INFO - A new project [name : project test1 , id : 31b40328] created by [admin1]
+2024-05-23 16:00:15,208 - __main__ - INFO - User [admin1] logged out
+2024-05-23 16:00:15,681 - __main__ - INFO - EXIT (end of program)
+2024-05-23 17:13:26,949 - __main__ - INFO - User [admin1] has logged in 
+2024-05-23 17:13:30,807 - __main__ - DEBUG - User [admin1] is managing project [id: 31b40328]
+2024-05-23 17:13:45,395 - __main__ - INFO - A new task [name : sample , id : [79b32a87]] created by [admin1]
+2024-05-23 17:17:43,515 - __main__ - INFO - User [admin1] logged out
+2024-05-23 17:17:44,508 - __main__ - INFO - EXIT (end of program)
