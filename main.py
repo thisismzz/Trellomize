@@ -753,31 +753,34 @@ class Project:
         logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
 
     def view_project_tasks(self, user:User):
-        table = Table(title=f"Tasks for Project: {self.title}", style="cyan")
-        table.add_column("ID", justify="center")
-        table.add_column("Title", justify="center")
-        table.add_column("Description", justify="center")
-        table.add_column("Start Time", justify="center")
-        table.add_column("End Time", justify="center")
-        table.add_column("Priority", justify="center")
-        table.add_column("Status", justify="center")
-        
-        for task in self.tasks.values():
-            instance_task = Task(**task)
-            table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
-        console.print(table)
+        if not self.tasks:
+            console.print("There are no tasks for this project.", style="Error")
+        else:
+            table = Table(title=f"Tasks for Project: {self.title}", style="cyan")
+            table.add_column("ID", justify="center")
+            table.add_column("Title", justify="center")
+            table.add_column("Description", justify="center")
+            table.add_column("Start Time", justify="center")
+            table.add_column("End Time", justify="center")
+            table.add_column("Priority", justify="center")
+            table.add_column("Status", justify="center")
+            
+            for task in self.tasks.values():
+                instance_task = Task(**task)
+                table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
+            console.print(table)
 
-        task_id = input("Enter task ID to manage (or 'back' to go back): ")
-        if task_id == "back":
-            return
-        flag = False
-        for task in self.tasks.values():
-            if task["ID"] == task_id:
-                self.task_menu(user, Task(**task))
-                flag = True
-                break
-        if not flag:
-            console.print("Invalid ID" , style="Error")
+            task_id = input("Enter task ID to manage (or 'back' to go back): ")
+            if task_id == "back":
+                return
+            flag = False
+            for task in self.tasks.values():
+                if task["ID"] == task_id:
+                    self.task_menu(user, Task(**task))
+                    flag = True
+                    break
+            if not flag:
+                console.print("Invalid ID" , style="Error")
 
     def delete_project(self,user:User):
         if self.owner != user.username:
@@ -890,15 +893,10 @@ class Project:
             task.view_task()
             console.print("What would you like to do?", style="Info")
             console.print("1. Change Task Fields")
-            console.print("2. View Comments")
-            console.print("3. Add Comment")
-            console.print("4. Edit Comment")
-            console.print("5. Remove comment")
-            console.print("6. View Assignees")
-            console.print("7. Assign Member")
-            console.print("8. Remove Assignees")
-            console.print("9. View History")
-            console.print("10. Back")
+            console.print("2. Manage Comments")
+            console.print("3. Manage Assignees")
+            console.print("4. View History")
+            console.print("5. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -907,41 +905,75 @@ class Project:
                 self.save_project_data()
 
             elif choice == "2":
-                task.view_comments()
-        
+                self.manage_comments(task, user)
+
             elif choice == "3":
+                self.manage_assignees(task, user)
+
+            elif choice == "4":
+                task.view_history()
+
+            elif choice == "5":
+                break
+            else:
+                console.print("Invalid choice.", style="Error")
+
+    def manage_comments(self, task: Task, user: User):
+        while True:
+            console.print("Manage Comments", style="Title")
+            console.print("1. View Comments")
+            console.print("2. Add Comment")
+            console.print("3. Edit Comment")
+            console.print("4. Remove Comment")
+            console.print("5. Back")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                task.view_comments()
+            
+            elif choice == "2":
                 task.add_comment(user.username, user.username == self.owner)
                 task.add_to_history(user.username, action="add comment", message=task.comments[-1])
                 self.update_task(task)
                 self.save_project_data()
 
-            elif choice == "4":
+            elif choice == "3":
                 task.edit_comment()
 
-            elif choice == "5":
+            elif choice == "4":
                 task.remove_comment()
 
-            elif choice == "6":
-                self.view_assignees(task)
-
-            elif choice == "7":
-                self.assign_member_menu(task,user)
-                self.update_task(task)
-                self.save_project_data()
-
-            elif choice == "8":
-                self.remove_assignee_menu(task,user)
-                self.update_task(task)
-                self.save_project_data()
-            
-            elif choice == "9":
-                task.view_history()
-
-            elif choice == "10":
+            elif choice == "5":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
 
+    def manage_assignees(self, task: Task, user: User):
+        while True:
+            console.print("Manage Assignees", style="Title")
+            console.print("1. View Assignees")
+            console.print("2. Assign Member")
+            console.print("3. Remove Assignees")
+            console.print("4. Back")
+
+            choice = input("Enter your choice: ")
+            if choice == "1":
+                self.view_assignees(task)
+
+            elif choice == "2":
+                self.assign_member_menu(task, user)
+                self.update_task(task)
+                self.save_project_data()
+
+            elif choice == "3":
+                self.remove_assignee_menu(task, user)
+                self.update_task(task)
+                self.save_project_data()
+
+            elif choice == "4":
+                break
+            else:
+                console.print("Invalid choice.", style="Error")
 
     def create_project(user:User):
         console.print("Create new Project" , style="Title")
