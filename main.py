@@ -337,13 +337,13 @@ class Task:
 
     def view_task(self):
         table = Table(title=f"Task: {self.title}", style="cyan")
-        table.add_column("ID", justify="center")
-        table.add_column("Title", justify="center")
-        table.add_column("Description", justify="center")
-        table.add_column("Start Time", justify="center")
-        table.add_column("End Time", justify="center")
-        table.add_column("Priority", justify="center")
-        table.add_column("Status", justify="center")
+        table.add_column("ID", justify="center", width=15)
+        table.add_column("Title", justify="center", width=15)
+        table.add_column("Description", justify="center", width=15)
+        table.add_column("Start Time", justify="center", width=25)
+        table.add_column("End Time", justify="center", width=25)
+        table.add_column("Priority", justify="center", width=15)
+        table.add_column("Status", justify="center", width=15)
 
         table.add_row(self.ID, self.title, self.description, self.start_time[:19], self.end_time[:19], self.priority, self.status)
         console.print(table)
@@ -450,11 +450,11 @@ class Task:
             console.print("|Task's Comments|\n", style="Title")
 
             table = Table(title="Comments")
-            table.add_column("No.", justify="center", style="White")
-            table.add_column("Username", justify="center", style="cyan", no_wrap=True)
-            table.add_column("Role", justify="center", style="magenta")
+            table.add_column("No.", justify="center", style="White", width=5)
+            table.add_column("Username", justify="center", style="cyan", no_wrap=True, width=15)
+            table.add_column("Role", justify="center", style="magenta", width=15)
             table.add_column("Comment", justify="center", style="green")
-            table.add_column("Timestamp", justify="center", style="yellow")
+            table.add_column("Timestamp", justify="center", style="yellow", width=25)
 
             for idx, comment in enumerate(self.comments, start=1):
                 table.add_row(str(idx),get_username(comment['user']),comment['role'],comment['comment'],comment['timestamp'])
@@ -604,11 +604,11 @@ class Task:
         clear_screen()
         console.print("|Task's History|\n", style="Title")
         table = Table(title="Task's History")
-        table.add_column("No.", style="white", justify="center")
-        table.add_column("User", style="cyan", justify="center")
-        table.add_column("Action", style="magenta", justify="center")
-        table.add_column("Amount", style="green", justify="center")
-        table.add_column("Timestamp", style="yellow", justify="center")  
+        table.add_column("No.", style="white", justify="center", width=5)
+        table.add_column("User", style="cyan", justify="center", width=15)
+        table.add_column("Action", style="magenta", justify="center", width=15)
+        table.add_column("Amount", style="green", justify="center", width=15)
+        table.add_column("Timestamp", style="yellow", justify="center", width=25)  
 
         for index, entry in enumerate(self.history, start=1):
             user = get_username(entry.get("user", ""))
@@ -667,10 +667,8 @@ class Project:
             User.add_my_project(get_username(member),self.ID)
             self.save_project_data()
             logger.debug(f"A new member [user : {member}] added to project [id : {self.ID}] collaborators by owner")
-            wait_for_key_press()
         else:
             console.print(f"User {get_username(member)} has already been added" , style='Error')
-            wait_for_key_press()
 
     def remove_member(self, member):
         if member in self.collaborators:
@@ -687,10 +685,8 @@ class Project:
             self.save_project_data()
             console.print(f"Member '{get_username(member)}' removed from project successfully.", style="Notice")
             logger.debug(f"A member [user : {member}] removed from project [id : {self.ID}] collaborators")
-            wait_for_key_press()
         else:
             console.print(f"{get_username(member)} is not a member of the project.", style="Error")
-            wait_for_key_press()
 
     def add_member_menu(self, user: User):
         if self.owner != user.ID:
@@ -786,13 +782,10 @@ class Project:
                 console.print(f"Member ({get_username(member)}) assigned to task successfully.", style="Notice")
                 self.save_project_data()
                 logger.debug(f"A new assignee [user : {member}] added to task.")
-                wait_for_key_press()
             else:
                 console.print(f"Member ({get_username(member)}) is already assigned to the task.", style="Error")
-                wait_for_key_press()
         else:
             console.print(f"User ({get_username(member)}) is not a member of the project.", style="Error")
-            wait_for_key_press()
 
     def remove_assignee(self, userID, task: Task):
         if userID in task.assignees:
@@ -800,10 +793,8 @@ class Project:
             console.print(f"Member '{get_username(userID)}' removed from task successfully.", style="Notice")
             self.save_project_data()
             logger.debug(f"An assignee [user : {userID}] removed from task.")
-            wait_for_key_press()
         else:
             console.print(f"Member '{get_username(userID)}' is not assigned to the task.", style="Error")
-            wait_for_key_press()
         
     def assign_member_menu(self, task: Task , user : User):
         if user.ID != self.owner:
@@ -901,7 +892,7 @@ class Project:
         logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
         wait_for_key_press()
 
-    def view_project_tasks(self, user:User):
+    def view_project_tasks(self, user: User):
         if not self.tasks:
             console.print("There are no tasks for this project.", style="Error")
             wait_for_key_press()
@@ -912,22 +903,31 @@ class Project:
                 console.print(f"{self.title}", end="", style="cyan")
                 console.print("|\n", style="Title")
 
-                table = Table(title="Tasks details", style="cyan")
-                table.add_column("ID", justify="center")
-                table.add_column("Title", justify="center")
-                table.add_column("Description", justify="center")
-                table.add_column("Start Time", justify="center")
-                table.add_column("End Time", justify="center")
-                table.add_column("Priority", justify="center")
-                table.add_column("Status", justify="center")
-                
+                table = Table(title="Tasks based on their status")
+                table.add_column("BACKLOG", style="cyan", justify="center", width=15)
+                table.add_column("TODO", style="yellow", justify="center", width=15)
+                table.add_column("DOING", style="magenta", justify="center", width=15)
+                table.add_column("DONE", style="green", justify="center", width=15)
+                table.add_column("ARCHIVED", style="blue", justify="center", width=15)
+
                 for task in self.tasks.values():
                     instance_task = Task(**task)
-                    table.add_row(instance_task.ID, instance_task.title, instance_task.description, instance_task.start_time[:19], instance_task.end_time[:19], instance_task.priority, instance_task.status)  
-                console.print(table)
+                    task_title_id = f"ID: {instance_task.ID}, Title: {instance_task.title}"
+                    if instance_task.status == "BACKLOG":
+                        table.add_row(task_title_id, None, None, None, None)
+                    elif instance_task.status == "TODO":
+                        table.add_row(None, task_title_id, None, None, None)
+                    elif instance_task.status == "DOING":
+                        table.add_row(None, None, task_title_id, None, None)
+                    elif instance_task.status == "DONE":
+                        table.add_row(None, None, None, task_title_id, None)
+                    else:
+                        table.add_row(None, None, None, None, task_title_id)
 
-                task_id = input("Enter task ID to manage (or 'back' to go back): ")
-                if task_id == "back":
+                console.print(table)
+            
+                task_id = input("Enter task ID to manage (or '0' to go back): ")
+                if task_id == "0":
                     return
                 flag = False
                 for task in self.tasks.values():
@@ -936,8 +936,9 @@ class Project:
                         flag = True
                         break
                 if not flag:
-                    console.print("Invalid Task ID" , style="Error")
+                    console.print("Invalid Task ID", style="Error")
                     wait_for_key_press()
+
 
     def create_project(user:User):
         clear_screen()
@@ -997,8 +998,10 @@ class Project:
                 self.view_members()
             elif choice == "4":
                 self.add_member_menu(user)
+                wait_for_key_press()
             elif choice == "5":
                 self.remove_member_menu(user)
+                wait_for_key_press()
             elif choice == "6":
                 if self.delete_project(user):
                     break
@@ -1155,11 +1158,13 @@ class Project:
                 self.assign_member_menu(task, user)
                 self.update_task(task)
                 self.save_project_data()
+                wait_for_key_press()
 
             elif choice == "3":
                 self.remove_assignee_menu(task, user)
                 self.update_task(task)
                 self.save_project_data()
+                wait_for_key_press()
 
             elif choice == "4":
                 break
@@ -1178,10 +1183,10 @@ class Project:
         clear_screen()
         console.print("|User's Projects|\n", style="Title")
         table = Table(title="Projects details")
-        table.add_column("No.", style="cyan", justify="center")
-        table.add_column("ID", style="magenta", justify="center")
-        table.add_column("Title", style="green", justify="center")
-        table.add_column("Owner", style="yellow", justify="center")
+        table.add_column("No.", style="cyan", justify="center", width=5)
+        table.add_column("ID", style="magenta", justify="center", width=15)
+        table.add_column("Title", style="green", justify="center", width=15)
+        table.add_column("Owner", style="yellow", justify="center", width=15)
 
         project_map = {}
         for i, project in enumerate(user_projects, start=1):
