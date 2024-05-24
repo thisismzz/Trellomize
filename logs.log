@@ -334,3 +334,77 @@
 2024-05-23 22:33:46,472 - __main__ - DEBUG - Add new history to task [id : 73809fa6]
 2024-05-23 22:34:59,500 - __main__ - INFO - User [admin] logged out
 2024-05-23 22:35:01,321 - __main__ - INFO - EXIT (end of program)
+2024-05-24 19:58:14,292 - main - DEBUG - A new comment added to task [id : 98ef5d76] by user [user1]
+2024-05-24 19:58:21,977 - main - DEBUG - Task [id : 9f40a249] priority has changed (current : HIGH)
+2024-05-24 20:01:18,549 - main - DEBUG - A new comment added to task [id : 0ac4ec07] by user [user1]
+2024-05-24 20:01:20,439 - main - DEBUG - Task [id : 0ca6a667] priority has changed (current : CRITICAL)
+2024-05-24 20:01:22,098 - main - DEBUG - Task [id : 0dcefe07] status has changed (current : TODO)
+2024-05-24 20:04:43,404 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:04:48,390 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:04:57,601 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:05:08,142 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:05:43,851 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:05:47,214 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:06:29,311 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:06:31,878 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:10:34,376 - main - DEBUG - A new comment added to task [id : 543607c6] by user [user1]
+2024-05-24 20:10:36,450 - main - DEBUG - Task [id : 57f03df7] priority has changed (current : CRITICAL)
+2024-05-24 20:10:50,347 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:10:52,681 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:13:49,116 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:13:50,824 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:14:08,694 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:14:10,185 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:19:12,808 - main - DEBUG - A new comment added to task [id : 8ac790d9] by user [user1]
+2024-05-24 20:19:14,813 - main - DEBUG - Task [id : 8cda96c0] priority has changed (current : CRITICAL)
+2024-05-24 20:20:57,378 - main - DEBUG - Task [id : c99e57d5] priority has changed (current : CRITICAL)
+2024-05-24 20:22:27,634 - main - DEBUG - Task [id : ffed89d3] priority has changed (current : CRITICAL)
+2024-05-24 20:22:47,998 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:22:50,560 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:23:02,818 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:23:05,015 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:24:46,577 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:24:48,647 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:24:55,862 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:24:57,999 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:27:55,523 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:27:57,864 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:28:22,173 - main - DEBUG - Task [id : tester] description has changed (current : New Task Description)
+2024-05-24 20:28:23,912 - main - DEBUG - Task [id : tester] title has changed (current : New Task Title)
+2024-05-24 20:51:22,158 - main - DEBUG - A new comment added to task [id : tester] by user [This is a test comment]
+2024-05-24 20:52:28,625 - main - DEBUG - A new comment added to task [id : tester] by user [This is a test comment]
+2024-05-24 20:53:07,033 - main - DEBUG - A new comment added to task [id : tester] by user [This is a test comment]
+2024-05-24 20:57:03,758 - main - DEBUG - A new comment added to task [id : tester] by user [This is a test comment]
+2024-05-24 20:57:05,656 - main - DEBUG - Task [id : tester] description has changed (current : hhhh)
+2024-05-24 20:57:09,733 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 20:57:14,003 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-24 20:57:15,907 - main - DEBUG - Task [id : tester] title has changed (current : ggg)
+2024-05-24 20:58:20,952 - main - DEBUG - A new comment added to task [id : tester] by user [This is a test comment]
+2024-05-24 20:58:22,561 - main - DEBUG - Task [id : tester] description has changed (current : hhh)
+2024-05-24 20:58:25,785 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 20:58:29,207 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-24 20:58:31,199 - main - DEBUG - Task [id : tester] title has changed (current : hhh)
+2024-05-24 20:59:50,322 - main - DEBUG - Task [id : tester] description has changed (current : & C:/Users/Kimiaa/AppData/Local/Programs/Python/Python312/python.exe c:/Users/Kimiaa/Documents/GitHub/Trellomize/test.py)
+2024-05-24 21:00:42,985 - main - DEBUG - Task [id : tester] description has changed (current : ffff)
+2024-05-24 21:00:46,488 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 21:00:49,381 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-24 21:00:50,890 - main - DEBUG - Task [id : tester] title has changed (current : ddd)
+2024-05-24 21:03:33,602 - main - DEBUG - A new comment added to task [id : tester] by user [test_user]
+2024-05-24 21:03:36,322 - main - DEBUG - A new comment added to task [id : tester] by user [test_user]
+2024-05-24 21:03:40,935 - main - DEBUG - Task [id : tester] description has changed (current : 1111)
+2024-05-24 21:03:44,118 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 21:03:48,229 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-24 21:03:49,938 - main - DEBUG - Task [id : tester] title has changed (current : ddd)
+2024-05-24 21:04:20,915 - main - DEBUG - A new comment added to task [id : tester] by user [test_user]
+2024-05-24 21:04:31,306 - main - DEBUG - A new comment added to task [id : tester] by user [test_user]
+2024-05-24 21:04:37,046 - main - DEBUG - Task [id : tester] description has changed (current : gggg)
+2024-05-24 21:04:39,624 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 21:04:41,681 - main - DEBUG - Task [id : tester] title has changed (current : )
+2024-05-24 21:04:54,037 - main - DEBUG - A new comment added to task [id : tester] by user [test_user]
+2024-05-24 21:04:56,423 - main - DEBUG - Task [id : tester] description has changed (current : zzz)
+2024-05-24 21:04:59,614 - main - DEBUG - Task [id : tester] priority has changed (current : CRITICAL)
+2024-05-24 21:05:03,484 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-24 21:05:05,093 - main - DEBUG - Task [id : tester] title has changed (current : zzz)
+2024-05-24 21:05:25,361 - main - DEBUG - Task [id : tester] description has changed (current : ddd)
+2024-05-24 21:05:28,972 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-24 21:05:33,411 - main - DEBUG - Task [id : tester] title has changed (current : ddd)
