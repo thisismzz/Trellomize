@@ -891,44 +891,45 @@ class Project:
                 console.print("|\n", style="Title")
 
                 main_table = Table(title="Tasks based on their status")
-                main_table.add_column("BACKLOG", style="cyan", justify="center", width=15)
-                main_table.add_column("TODO", style="yellow", justify="center", width=15)
-                main_table.add_column("DOING", style="magenta", justify="center", width=15)
-                main_table.add_column("DONE", style="green", justify="center", width=15)
-                main_table.add_column("ARCHIVED", style="blue", justify="center", width=15)
+                main_table.add_column("BACKLOG", style="cyan", justify="center", width=50)
+                main_table.add_column("TODO", style="yellow", justify="center", width=50)
+                main_table.add_column("DOING", style="magenta", justify="center", width=50)
+                main_table.add_column("DONE", style="green", justify="center", width=50)
+                main_table.add_column("ARCHIVED", style="blue", justify="center", width=50)
 
-                backlog_table = Table(title = "BACKLOG")
-                todo_table = Table(title = "TODO")
-                doing_table = Table(title = "DOING")
-                done_table = Table(title = "DONE")
-                archived_table = Table(title = "ARCHIVED")
+                backlog_table = Table()
+                todo_table = Table()
+                doing_table = Table()
+                done_table = Table()
+                archived_table = Table()
                 
-                backlog_table.add_column("Task title",justify="center", width=15)
-                backlog_table.add_column("Tack ID",justify="center", width=15)
-                todo_table.add_column("Task title",justify="center", width=15)
-                todo_table.add_column("Tack ID",justify="center", width=15)
-                doing_table.add_column("Task title",justify="center", width=15)
-                doing_table.add_column("Tack ID",justify="center", width=15)
-                done_table.add_column("Task title",justify="center", width=15)
-                done_table.add_column("Tack ID",justify="center", width=15)
-                archived_table.add_column("Task title",justify="center", width=15)
-                archived_table.add_column("Tack ID",justify="center", width=15)
+                backlog_table.add_column("Tack ID",justify="center", width=50)
+                backlog_table.add_column("Task title",justify="center", width=50)
+                todo_table.add_column("Tack ID",justify="center", width=50)
+                todo_table.add_column("Task title",justify="center", width=50)
+                doing_table.add_column("Tack ID",justify="center", width=50)
+                doing_table.add_column("Task title",justify="center", width=50)
+                done_table.add_column("Tack ID",justify="center", width=50)
+                done_table.add_column("Task title",justify="center", width=50)
+                archived_table.add_column("Tack ID",justify="center", width=50)
+                archived_table.add_column("Task title",justify="center", width=50)
                 
                 for task in self.tasks.values():
                     instance_task = Task(**task)
-                    task_title_id = f"ID: {instance_task.ID}, Title: {instance_task.title}"
+                    # task_title_id = f"ID: {instance_task.ID}, Title: {instance_task.title}"
                     if instance_task.status == "BACKLOG":
-                        table.add_row(task_title_id, None, None, None, None)
+                        backlog_table.add_row(instance_task.ID,instance_task.title)
                     elif instance_task.status == "TODO":
-                        table.add_row(None, task_title_id, None, None, None)
+                        todo_table.add_row(instance_task.ID,instance_task.title)
                     elif instance_task.status == "DOING":
-                        table.add_row(None, None, task_title_id, None, None)
+                        doing_table.add_row(instance_task.ID,instance_task.title)
                     elif instance_task.status == "DONE":
-                        table.add_row(None, None, None, task_title_id, None)
+                        done_table.add_row(instance_task.ID,instance_task.title)
                     else:
-                        table.add_row(None, None, None, None, task_title_id)
+                        archived_table.add_row(instance_task.ID,instance_task.title)
 
-                console.print(table)
+                main_table.add_row(backlog_table,todo_table,doing_table,done_table,archived_table)
+                console.print(main_table)
             
                 task_id = input("Enter task ID to manage (or '0' to go back): ")
                 if task_id == "0":

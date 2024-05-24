@@ -419,3 +419,9 @@
 2024-05-25 01:31:48,624 - __main__ - INFO - A new task [name : tet , id : [37e7afc4]] created by [mahdi2]
 2024-05-25 01:33:59,386 - __main__ - INFO - User [mahdi2] has logged in 
 2024-05-25 01:34:01,949 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:57:51,999 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:57:55,103 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:59:18,085 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:59:20,777 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 02:01:04,191 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 02:01:06,022 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
