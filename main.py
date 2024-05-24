@@ -428,10 +428,12 @@ class Task:
 
     def view_comments(self):
         if not self.comments:
-            console.print("No comments available.", style="bold red")
+            console.print("No comments available for this task to display.", style="Error")
         else:
-            table = Table(title="Comments")
+            clear_screen()
+            console.print("|Task's Comments|\n", style="Title")
 
+            table = Table(title="Comments")
             table.add_column("No.", justify="center", style="White")
             table.add_column("Username", justify="center", style="cyan", no_wrap=True)
             table.add_column("Role", justify="center", style="magenta")
@@ -450,17 +452,24 @@ class Task:
             console.print(table)
 
     def add_comment(self, username, is_owner: bool):
-        comment = input("Enter comment: ")
+        clear_screen()
+        console.print("|Adding Comment To Task|\n", style="Title")
+        comment = input("Enter new comment: ")
         self.comments.append({"user": username, "comment": comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
         logger.debug(f"A new comment added to task [id : {self.ID}] by user [{username}]")
+        wait_for_key_press()
 
     def remove_comment(self , user : User):
-        self.view_comments()
         if not self.comments:
+            console.print("No comments available for this task to remove.", style="Error")
+            wait_for_key_press()
             return
 
         try:
+            clear_screen()
+            console.print("|Removing Comment From Task|\n", style="Title")
+            self.view_comments()
             comment_idx = int(input("Enter the number of the comment to remove or '0' to go back: ")) - 1
             if comment_idx == -1:
                 return
@@ -469,19 +478,27 @@ class Task:
                     removed_comment = self.comments.pop(comment_idx)
                     console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
                     logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
+                    wait_for_key_press()
                 else:
                     console.print("This comment is not belong to you." , style="Error")
+                    wait_for_key_press()
             else:
                 console.print("Invalid comment number.", style="Error")
+                wait_for_key_press()
         except ValueError:
             console.print("Invalid input. Please enter a number.", style="Error")
+            wait_for_key_press()
 
     def edit_comment(self , user : User):
-        self.view_comments()
         if not self.comments:
+            console.print("No comments available for this task to edit.", style="Error")
+            wait_for_key_press()
             return
 
         try:
+            clear_screen()
+            console.print("|Editing Comment|\n", style="Title")
+            self.view_comments()
             comment_idx = int(input("Enter the number of the comment to edit or '0' to go back: ")) - 1
             if comment_idx == -1:
                 return
@@ -492,12 +509,16 @@ class Task:
                     self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
                     console.print("Comment edited successfully.", style="Notice")
                     logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
+                    wait_for_key_press()
                 else:
                     console.print("This comment is not belong to you." , style="Error")
+                    wait_for_key_press()
             else:
                 console.print("Invalid comment number.", style="Error")
+                wait_for_key_press()
         except ValueError:
             console.print("Invalid input. Please enter a number.", style="Error")
+            wait_for_key_press()
 
     def add_to_history(self , username , action , message = None , members = None , new_amount = None) :
         if action == "add comment":
@@ -560,9 +581,11 @@ class Task:
     def view_history(self):
         if not self.history:
             console.print("No history available for this task.", style="Info")
+            wait_for_key_press()
             return
-
-        table = Table(title="Task History")
+        clear_screen()
+        console.print("|Task's History|\n", style="Title")
+        table = Table(title="Task's History")
         table.add_column("No.", style="white", justify="center")
         table.add_column("User", style="cyan", justify="center")
         table.add_column("Action", style="magenta", justify="center")
@@ -577,6 +600,7 @@ class Task:
             table.add_row(str(index), user, action, amount, timestamp)
 
         console.print(table)
+        wait_for_key_press()
 
 #........................................................................#
 
@@ -670,9 +694,11 @@ class Project:
         for idx, username in enumerate(all_usernames, start=1):
             console.print(f"{idx}. {username}")
         console.print("0. Back")
-        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
+
+        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
             return
+        
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
@@ -705,8 +731,7 @@ class Project:
             console.print(f"{idx}. {member}")
         console.print("0. Back")
 
-        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").split(',')))
-        
+        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
             return
 
@@ -726,15 +751,15 @@ class Project:
     def view_assignees(self, task: Task):
         if not task.assignees:
             console.print("There are no assignees for this task.", style="Error")
+            wait_for_key_press()
             return
-            
-        console.print("Current task assignees:")
+        clear_screen()
+        console.print("|Task Assignees|\n", style="Title")
+        console.print("Current task assignees:", style="Info")
         for member in task.assignees:
             if member != self.owner:
                 console.print("-", member)
-        input_string = input("Enter 'back' to go back: ")
-        if input_string == "back":
-            return
+        wait_for_key_press()
 
     def assign_member(self, member, task: Task):
         if member in self.collaborators:
@@ -743,10 +768,13 @@ class Project:
                 console.print(f"Member ({member}) assigned to task successfully.", style="Notice")
                 self.save_project_data()
                 logger.debug(f"A new assignee [user : {member}] added to task.")
+                wait_for_key_press()
             else:
                 console.print(f"Member ({member}) is already assigned to the task.", style="Error")
+                wait_for_key_press()
         else:
             console.print(f"User ({member}) is not a member of the project.", style="Error")
+            wait_for_key_press()
 
     def remove_assignee(self, username, task: Task):
         if username in task.assignees:
@@ -754,23 +782,25 @@ class Project:
             console.print(f"Member '{username}' removed from task successfully.", style="Notice")
             self.save_project_data()
             logger.debug(f"An assignee [user : {username}] removed from task.")
+            wait_for_key_press()
         else:
             console.print(f"Member '{username}' is not assigned to the task.", style="Error")
+            wait_for_key_press()
         
     def assign_member_menu(self, task: Task , user : User):
         if len(self.collaborators) == 1: 
             console.print("There are no project members to assign.", style="Error")
+            wait_for_key_press()
             return
-
-        console.print("Project Members:")
+        clear_screen()
+        console.print("|Assigning Member To Task|\n", style="Title")
+        console.print("Project Members:", style="Info")
         for idx, member in enumerate(self.collaborators[1:], start=1):
             if member != self.owner:
                 console.print(f"{idx}. {member}")
         console.print("0. Back")
-        
-        
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or '0' to go back: ").strip(',')))
-        
+
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
             return
         
@@ -778,30 +808,33 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                wait_for_key_press()
                 return
             idx = int(idx_str)
             if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
                 member_usernames.append(self.collaborators[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                wait_for_key_press()
                 return
             
             for member in member_usernames:
                 self.assign_member(member,task)
-            
             task.add_to_history(user.username, action="add assignee", members=member_usernames)
 
     def remove_assignee_menu(self, task: Task ,user : User):
         if not task.assignees:
             console.print("There are no assignees for this task to remove.", style="Error")
+            wait_for_key_press()
             return
-        
+        clear_screen()
+        console.print("|Removing Assignees From Task|\n", style="Title")
         console.print("Current task assignees:", style="Info")
         for idx, member in enumerate(task.assignees, start=1):
             console.print(f"{idx}. {member}")
         console.print("0. Back")
         
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or '0' to go back: ").strip(',')))
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
             return
         
@@ -809,22 +842,24 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
+                wait_for_key_press()
                 return
             idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
                 member_usernames.append(task.assignees[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                wait_for_key_press()
                 return
             
             for member in member_usernames:
                 self.remove_assignee(member,task)
-
             task.add_to_history(user.username, action="remove assignee", members=member_usernames)
 
     def create_task_menu(self, user:User):
         if self.owner != user.username:
             console.print("Only the project owner can create tasks.", style="Error")
+            wait_for_key_press()
             return
         
         clear_screen()
@@ -850,6 +885,7 @@ class Project:
                 console.print("|Tasks for Project: ", end="", style="Title")
                 console.print(f"{self.title}", end="", style="cyan")
                 console.print("|\n", style="Title")
+
                 table = Table(title="Tasks details", style="cyan")
                 table.add_column("ID", justify="center")
                 table.add_column("Title", justify="center")
@@ -999,7 +1035,8 @@ class Project:
 
     def task_menu(self, user: User, task: Task):
         if user.username not in task.assignees and user.username != self.owner:
-            console.print("You don't have access to modify this task", style='Error')
+            console.print("You don't have access to modify this task.", style='Error')
+            wait_for_key_press()
             return
 
         while True:
@@ -1037,7 +1074,9 @@ class Project:
 
     def manage_comments(self, task: Task, user: User):
         while True:
+            clear_screen()
             console.print("|Managing Comments|\n", style="Title")
+            console.print("What would you like to do?", style="Info")
             console.print("1. View Comments")
             console.print("2. Add Comment")
             console.print("3. Edit Comment")
@@ -1047,6 +1086,7 @@ class Project:
             choice = input("Enter your choice: ")
             if choice == "1":
                 task.view_comments()
+                wait_for_key_press()
             
             elif choice == "2":
                 task.add_comment(user.username, user.username == self.owner)
@@ -1073,7 +1113,9 @@ class Project:
 
     def manage_assignees(self, task: Task, user: User):
         while True:
+            clear_screen()
             console.print("|Managing Assignees|\n", style="Title")
+            console.print("What would you like to do?", style="Info")
             console.print("1. View Assignees")
             console.print("2. Assign Member")
             console.print("3. Remove Assignees")
