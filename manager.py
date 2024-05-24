@@ -194,7 +194,7 @@ class Manager:
                 logger.info("All users has been deleted")
                 os.makedirs(users_path)
                 with open ("emails and usernames.json" , 'w') as file:
-                    data = {'emails' : [] , 'usernames' : []}
+                    data = {'emails' : [] , 'usernames' : {}}
                     json.dump(data,file,indent=4)
         
 

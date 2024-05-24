@@ -1,14 +1,10 @@
 {
     "emails": [
-        "kimia1381@gmail.com",
-        "admin1@admin1.com",
-        "sdfsds@sdfsd.com",
-        "admin@gmail.com"
+        "mahdi@mahdi.com",
+        "mahdi1@mahdi1.com"
     ],
-    "usernames": [
-        "admin1",
-        "owe",
-        "kimia1381",
-        "admin"
-    ]
+    "usernames": {
+        "27dc7135": "shadd",
+        "8c772040": "mahdi1"
+    }
 }
