@@ -175,6 +175,9 @@ class User:
                 return json.load(file)
         
     def update_username(self, new_username):
+        if new_username == self.username:
+            console.print("choose a new username not your old username" , style='Error')
+            return
         old_username = self.username
         self.username = new_username
         
@@ -192,11 +195,17 @@ class User:
         logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
 
     def update_password(self, new_password):
+        if bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8') ==  self.password:
+            console.print("choose a new password not your old password!" , style="Error")
+            return
         self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.save_user_data()
         logger.info(f"User [{self.username}] changed password")
 
     def update_email(self, new_email):
+        if new_email == self.email:
+            console.print("choose a new email not your old email" , style='Error')
+            return
         old_email = self.email
         self.email = new_email
         self.save_user_data()
@@ -788,6 +797,10 @@ class Project:
             wait_for_key_press()
         
     def assign_member_menu(self, task: Task , user : User):
+        if user.username != self.owner:
+            console.print("Only the project owner can assign members.", style="Error")
+            wait_for_key_press()
+            return
         if len(self.collaborators) == 1: 
             console.print("There are no project members to assign.", style="Error")
             wait_for_key_press()
@@ -823,6 +836,10 @@ class Project:
             task.add_to_history(user.username, action="add assignee", members=member_usernames)
 
     def remove_assignee_menu(self, task: Task ,user : User):
+        if user.username != self.owner:
+            console.print("Only the project owner can remove assignees.", style="Error")
+            wait_for_key_press()
+            return
         if not task.assignees:
             console.print("There are no assignees for this task to remove.", style="Error")
             wait_for_key_press()
