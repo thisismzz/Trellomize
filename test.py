@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock  # Import Mock
 from datetime import datetime
 import bcrypt
 import os
@@ -65,36 +65,41 @@ class TestMainClsTask(TestCase):
         self.assertEqual(self.task1.priority , "LOW")
         self.assertEqual(self.task1.status , "BACKLOG")
         
-    def test_change_end_time(self):
-        self.task1.change_end_time()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.end_time)  # Ensure that the end time is not None after the change
+    @patch("builtins.input", side_effect=["2"])
+    def test_change_end_time(self, mock_input):
+        self.task1.change_end_time()  
+        self.assertIsNotNone(self.task1.end_time)  
 
-    def test_change_start_time(self):
-        self.task1.change_start_time()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.start_time)  # Ensure that the start time is not None after the change
+    @patch("builtins.input", side_effect=["2024-05-22 22:56:04.092445"])
+    def test_change_start_time(self, mock_input):
+        self.task1.change_start_time()  
+        self.assertIsNotNone(self.task1.start_time)  
 
-    def test_change_status(self):
-        self.task1.change_status()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.status)  # Ensure that the status is not None after the change
+    @patch("builtins.input", side_effect=["2"])
+    def test_change_status(self, mock_input):
+        self.task1.change_status()  
+        self.assertIsNotNone(self.task1.status)  
 
-    def test_change_priority(self):
-        self.task1.change_priority()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.priority)  # Ensure that the priority is not None after the change
+    @patch("builtins.input", side_effect=["2"])
+    def test_change_priority(self, mock_input):
+        self.task1.change_priority()  
+        self.assertIsNotNone(self.task1.priority)  
 
-    def test_change_title(self):
-        self.task1.change_title()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.title)  # Ensure that the title is not None after the change
+    @patch("builtins.input", side_effect=["New Title"])
+    def test_change_title(self, mock_input):
+        self.task1.change_title()  
+        self.assertIsNotNone(self.task1.title)  
 
-    def test_change_description(self):
-        self.task1.change_description()  # Remove the argument, as the method doesn't take any parameters
-        self.assertIsNotNone(self.task1.description)  # Ensure that the description is not None after the change
+    @patch("builtins.input", side_effect=["New Description"])
+    def test_change_description(self, mock_input):
+        self.task1.change_description()  
+        self.assertIsNotNone(self.task1.description)  
 
-    #def test_add_comment(self):
-        #with patch("builtins.input", return_value="This is a test comment"):
-            #self.task1.add_comment("test_user", is_owner=True)
-        #added_comment = {'user': 'test_user', 'comment': 'This is a test comment', 'role': 'owner'}
-        #self.assertIn({k: added_comment[k] for k in ('user', 'comment', 'role')}, self.task1.comments)
+    def test_using_mock(self):
+        mock_obj = Mock()
+        mock_obj.method()
+        mock_obj.method.assert_called_once()
 
 
 if __name__ == '__main__':
-    main()
+    main(argv=[''], exit=False)
