@@ -1,10 +1,11 @@
-import unittest
+from unittest import TestCase , main
+from unittest.mock import patch , Mock
 import bcrypt
 import os
 import shutil
 from main import User , Project , Task
 
-class TestMain_cls_User(unittest.TestCase):
+class TestMain_cls_User(TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -28,7 +29,7 @@ class TestMain_cls_User(unittest.TestCase):
         self.assertEqual(expected_data_user1 , User.load_user_data(self.user1.username))
 
 
-class TestMain_cls_Project(unittest.TestCase):
+class TestMain_cls_Project(TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -57,15 +58,57 @@ class TestMain_cls_Project(unittest.TestCase):
         
     # def test_remove_member(self):
     #     sample_user = "sample user"
-    #     self.project1.remove_member(sample_user)
-    #     self.assertNotIn(sample_user , self.project1.collaborators)
+    #     self.project1.collaborators.append(sample_user)
+    #     with patch("builtins.input" , return_value = "sample user"):
+    #         self.project1.remove_member(sample_user)
+    # self.assertNotIn(sample_user , self.project1.collaborators)
 
-
-class TestMain_cls_Task(unittest.TestCase):
-    pass
+class TestMain_cls_Task(TestCase):
     
+    @classmethod
+    def setUpClass(cls):
+        pass
     
-
+    @classmethod
+    def tearDownClass(cls):
+        pass
+    
+    def setUp(self):
+        self.task1 = Task("task1 test" , "test No.1" , ID = "tester" , start_time="2024-05-22 22:56:04.092445" , end_time="2024-05-23 22:56:04.092445")
+    
+    def tearDown(self):
+        pass
+    
+    def test_create_task(self):
+        self.assertEqual(self.task1.title , "task1 test")
+        self.assertEqual(self.task1.description , "test No.1")
+        self.assertEqual(self.task1.ID , "tester")
+        self.assertEqual(self.task1.start_time, "2024-05-22 22:56:04.092445")
+        self.assertEqual(self.task1.end_time , "2024-05-23 22:56:04.092445")
+        self.assertEqual(self.task1.priority , "LOW")
+        self.assertEqual(self.task1.status , "BACKLOG")
+        
+    def test_change_end_time(self):
+        pass
+    
+    def test_change_start_time(self):
+        pass
+    
+    def test_change_status(self):
+        pass
+    
+    def test_change_priority(self):
+        pass
+    
+    def test_change_title(self):
+        pass
+    
+    def test_change_description(self):
+        pass
+    
+    def test_add_comment(self):
+        pass
+    
         
 if __name__ == '__main__':
-    unittest.main()
+    main()
