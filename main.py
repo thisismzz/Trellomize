@@ -171,8 +171,12 @@ class User:
     
     def load_user_projects(username):
         path = "users/" + username + "/projects.json"
-        with open(path, "r") as file:
-                return json.load(file)
+        try:
+            with open(path, "r") as file:
+                    return json.load(file)
+        except FileNotFoundError:
+            return None
+        
         
     def update_username(self, new_username):
         if new_username == self.username:
@@ -262,61 +266,57 @@ class User:
                 wait_for_key_press()
 
     def register():
-        while True:
-            clear_screen()
-            console.print("|Registration|\n", style="Title")
-            console.print("Please provide the following details to create your account:", style="Info")
-            email = input("Email: ")
-            username = input("Username: ")
-            password = input("Password: ")
-            try:
-                if not User.validate_email_format(email):
-                    raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
-                # if not User.validate_username_format(username):
-                #     raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
-                if not User.check_unique_username(username):
-                    raise ValueError("Username already exists! Please choose a different username.")
-                # if not User.validate_password_strength(password):
-                #     raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
-                if not User.check_unique_email(email):
-                    raise ValueError("Email already exists! Please enter a different email.")
-
-                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-                new_user = User(email, username, hashed_password)
-                new_user.save_user_data()
-                new_user.add_email_username()
-                console.print("Account created successfully.", style="Notice")
-                logger.info(f"A new user registered : {new_user.username}")
-                wait_for_key_press()
-                break
-
-            except ValueError as e:
-                console.print(str(e), style="Error")
-                wait_for_key_press()
-                
-    def login():
-        while True:
-            clear_screen()
-            console.print("|Login|\n", style="Title")
-            console.print("Please provide your credentials to log in:", style="Info")
-            username = input("Username: ")
-            password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
-            path = f"users/{username}/{username}.json"
-            
-            if os.path.exists(path):
-                user_data = User.load_user_data(username)
-                if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
-                    if not user_data["active"]:
-                        console.print("Your account is inactive.", style="Error")
-                        wait_for_key_press()
-                        return None
-                    console.print("Login successful.", style="Notice")
-                    logger.info(f"User [{user_data['username']}] has logged in ")
-                    wait_for_key_press()
-                    return User(**user_data)
-
-            console.print("Incorrect username or password.", style="Error")
+        clear_screen()
+        console.print("|Registration|\n", style="Title")
+        console.print("Please provide the following details to create your account:", style="Info")
+        email = input("Email: ")
+        username = input("Username: ")
+        password = input("Password: ")
+        try:
+            if not User.validate_email_format(email):
+                raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
+            # if not User.validate_username_format(username):
+            #     raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
+            if not User.check_unique_username(username):
+                raise ValueError("Username already exists! Please choose a different username.")
+            # if not User.validate_password_strength(password):
+            #     raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
+            if not User.check_unique_email(email):
+                raise ValueError("Email already exists! Please enter a different email.")
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            new_user = User(email, username, hashed_password)
+            new_user.save_user_data()
+            new_user.add_email_username()
+            console.print("Account created successfully.", style="Notice")
+            logger.info(f"A new user registered : {new_user.username}")
             wait_for_key_press()
+        
+        except ValueError as e:
+            console.print(str(e), style="Error")
+            wait_for_key_press()
+            
+    def login():
+        clear_screen()
+        console.print("|Login|\n", style="Title")
+        console.print("Please provide your credentials to log in:", style="Info")
+        username = input("Username: ")
+        password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
+        path = f"users/{username}/{username}.json"
+        
+        if os.path.exists(path):
+            user_data = User.load_user_data(username)
+            if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
+                if not user_data["active"]:
+                    console.print("Your account is inactive.", style="Error")
+                    wait_for_key_press()
+                    return None
+                console.print("Login successful.", style="Notice")
+                logger.info(f"User [{user_data['username']}] has logged in ")
+                wait_for_key_press()
+                return User(**user_data)
+
+        console.print("Incorrect username or password.", style="Error")
+        wait_for_key_press()
     
 #........................................................................#
     
@@ -691,13 +691,11 @@ class Project:
     def add_member_menu(self, user: User):
         if self.owner != user.ID:
             console.print("Only the project owner can add members.", style="Error")
-            wait_for_key_press()
             return
         
         all_usernames = User.get_all_usernames()
         if not all_usernames:
             console.print("There are no available users to add to the project.", style="Error")
-            wait_for_key_press()
             return
         
         clear_screen()
@@ -716,7 +714,6 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(all_usernames):
@@ -724,18 +721,15 @@ class Project:
                 self.add_member(get_ID(selected_username))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
 
     def remove_member_menu(self, user: User):
         if self.owner != user.ID:
             console.print("Only the project owner can remove members.", style="Error")
-            wait_for_key_press()
             return
         
         members_to_display = [get_username(member) for member in self.collaborators if member != self.owner]
         if not members_to_display:
             console.print("There are no project members to remove.", style="Error")
-            wait_for_key_press()
             return
 
         clear_screen()
@@ -752,7 +746,6 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(members_to_display):
@@ -760,7 +753,6 @@ class Project:
                 self.remove_member(get_ID(selected_member))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
 
     def view_assignees(self, task: Task):
         if not task.assignees:
@@ -817,32 +809,29 @@ class Project:
         if selected_indices[0] == "0":
             return
         
-        member_usernames = []
+        member_ID = []
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str)
-            if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
-                member_usernames.append(get_username(self.collaborators[idx]))
+            if idx >= 1 and idx < len(self.collaborators):
+                member_ID.append(self.collaborators[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
                 return
             
-            for member in member_usernames:
-                self.assign_member(get_ID(member),task)
-            task.add_to_history(user.ID, action="add assignee", members=member_usernames)
+        for member in member_ID:
+            self.assign_member(member,task)
+        
+        task.add_to_history(user.ID, action="add assignee", members=member_ID)
 
     def remove_assignee_menu(self, task: Task ,user : User):
         if user.ID != self.owner:
             console.print("Only the project owner can remove assignees.", style="Error")
-            wait_for_key_press()
             return
         if not task.assignees:
             console.print("There are no assignees for this task to remove.", style="Error")
-            wait_for_key_press()
             return
         clear_screen()
         console.print("|Removing Assignees From Task|\n", style="Title")
@@ -855,23 +844,21 @@ class Project:
         if selected_indices[0] == "0":
             return
         
-        member_usernames = []
+        member_ID = []
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
-                member_usernames.append(get_username(task.assignees[idx]))
+                member_ID.append(task.assignees[idx])
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
                 return
             
-            for member in member_usernames:
-                self.remove_assignee(get_ID(member),task)
-            task.add_to_history(user.ID, action="remove assignee", members=member_usernames)
+        for member in member_ID:
+            self.remove_assignee(member,task)
+        task.add_to_history(user.ID, action="remove assignee", members=member_ID)
 
     def create_task_menu(self, user:User):
         if self.owner != user.ID:
@@ -903,13 +890,30 @@ class Project:
                 console.print(f"{self.title}", end="", style="cyan")
                 console.print("|\n", style="Title")
 
-                table = Table(title="Tasks based on their status")
-                table.add_column("BACKLOG", style="cyan", justify="center", width=15)
-                table.add_column("TODO", style="yellow", justify="center", width=15)
-                table.add_column("DOING", style="magenta", justify="center", width=15)
-                table.add_column("DONE", style="green", justify="center", width=15)
-                table.add_column("ARCHIVED", style="blue", justify="center", width=15)
+                main_table = Table(title="Tasks based on their status")
+                main_table.add_column("BACKLOG", style="cyan", justify="center", width=15)
+                main_table.add_column("TODO", style="yellow", justify="center", width=15)
+                main_table.add_column("DOING", style="magenta", justify="center", width=15)
+                main_table.add_column("DONE", style="green", justify="center", width=15)
+                main_table.add_column("ARCHIVED", style="blue", justify="center", width=15)
 
+                backlog_table = Table(title = "BACKLOG")
+                todo_table = Table(title = "TODO")
+                doing_table = Table(title = "DOING")
+                done_table = Table(title = "DONE")
+                archived_table = Table(title = "ARCHIVED")
+                
+                backlog_table.add_column("Task title",justify="center", width=15)
+                backlog_table.add_column("Tack ID",justify="center", width=15)
+                todo_table.add_column("Task title",justify="center", width=15)
+                todo_table.add_column("Tack ID",justify="center", width=15)
+                doing_table.add_column("Task title",justify="center", width=15)
+                doing_table.add_column("Tack ID",justify="center", width=15)
+                done_table.add_column("Task title",justify="center", width=15)
+                done_table.add_column("Tack ID",justify="center", width=15)
+                archived_table.add_column("Task title",justify="center", width=15)
+                archived_table.add_column("Tack ID",justify="center", width=15)
+                
                 for task in self.tasks.values():
                     instance_task = Task(**task)
                     task_title_id = f"ID: {instance_task.ID}, Title: {instance_task.title}"
@@ -1173,15 +1177,17 @@ class Project:
 
     def view_user_projects(user: User):
         data = User.load_user_projects(user.username)
-        user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
+        if data  is not None:
+            user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
-        if not user_projects:
+        else:
             console.print("You don't have any projects to display.", style="Error")
+            console.print("Create a project first." , style='Error')
             wait_for_key_press()
             return
 
         clear_screen()
-        console.print("|User's Projects|\n", style="Title")
+        console.print(f"|{user.username}'s Projects|\n", style="Title")
         table = Table(title="Projects details")
         table.add_column("No.", style="cyan", justify="center", width=5)
         table.add_column("ID", style="magenta", justify="center", width=15)
@@ -1190,7 +1196,7 @@ class Project:
 
         project_map = {}
         for i, project in enumerate(user_projects, start=1):
-            table.add_row(str(i), project["ID"], project["title"], project["owner"])
+            table.add_row(str(i), project["ID"], project["title"], get_username(project["owner"]))
             project_map[str(i)] = project
         console.print(table)
 

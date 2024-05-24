@@ -1,10 +1,12 @@
 {
     "emails": [
         "mahdi@mahdi.com",
-        "mahdi1@mahdi1.com"
+        "mahdi1@mahdi1.com",
+        "mahdi2@mahdi2.com"
     ],
     "usernames": {
         "27dc7135": "shadd",
-        "8c772040": "mahdi1"
+        "8c772040": "mahdi1",
+        "cb8a7261": "mahdi2"
     }
 }
