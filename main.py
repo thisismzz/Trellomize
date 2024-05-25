@@ -176,7 +176,7 @@ class User:
         
     def update_username(self, new_username):
         if new_username == self.username:
-            console.print("choose a new username not your old username" , style='Error')
+            console.print("Enter a new username not your old username!" , style='Error')
             return
         old_username = self.username
         self.username = new_username
@@ -195,7 +195,7 @@ class User:
 
     def update_password(self, new_password):
         if bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8') ==  self.password:
-            console.print("choose a new password not your old password!" , style="Error")
+            console.print("Enter a new password not your old password!" , style="Error")
             return
         self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.save_user_data()
@@ -203,7 +203,7 @@ class User:
 
     def update_email(self, new_email):
         if new_email == self.email:
-            console.print("choose a new email not your old email" , style='Error')
+            console.print("Enter a new email not your old email!" , style='Error')
             return
         old_email = self.email
         self.email = new_email
@@ -230,7 +230,11 @@ class User:
 
             choice = input("Enter your choice: ")
             if choice == "1":
-                new_username = input("Enter new username: ")
+                clear_screen()
+                console.print("|Editing Username|\n", style="Title")
+                new_username = input("Enter new username (or '0' to go back): ")
+                if new_username == "0":
+                    return
                 if User.check_unique_username(new_username):
                     self.update_username(new_username)
                     console.print("Username updated successfully.", style="Notice")
@@ -240,13 +244,21 @@ class User:
                     console.print("Username already exists. Please choose a different one.", style="Error")
                     wait_for_key_press()
             elif choice == "2":
-                new_password = input("Enter new password: ")
+                clear_screen()
+                console.print("|Editing Password|\n", style="Title")
+                new_password = input("Enter new password (or '0' to go back): ")
+                if new_password == "0":
+                    return
                 self.update_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
                 logger.info(f"User [{self.username}] updated password")
                 wait_for_key_press()
             elif choice == "3":
-                new_email = input("Enter new email: ")
+                clear_screen()
+                console.print("|Editing Email|\n", style="Title")
+                new_email = input("Enter new email (or '0' to go back): ")
+                if new_email == "0":
+                    return
                 if User.check_unique_email(new_email):
                     self.update_email(new_email)
                     console.print("Email updated successfully.", style="Notice")
@@ -384,7 +396,6 @@ class Task:
         console.print("Available statuses:", style="Info")
         for idx, status in enumerate(Status, start=1):
             console.print(f"{idx}. {status.value}")
-        console.print("0. BACK")
         new_status_idx = int(input("Enter the number for the new status or '0' to go back: "))
         if new_status_idx == 0:
             return  
@@ -407,7 +418,6 @@ class Task:
         console.print("Available priorities:", style="Info")
         for idx, priority in enumerate(Priority, start=1):
             console.print(f"{idx}. {priority.value}")
-        console.print("0. BACK")
         new_priority_idx = int(input("Enter the number for the new priority or '0' to go back: "))
         if new_priority_idx == 0:
             return 
@@ -606,8 +616,8 @@ class Task:
         table = Table(title="Task's History")
         table.add_column("No.", style="white", justify="center", width=5)
         table.add_column("User", style="cyan", justify="center", width=15)
-        table.add_column("Action", style="magenta", justify="center", width=15)
-        table.add_column("Amount", style="green", justify="center", width=15)
+        table.add_column("Action", style="magenta", justify="center", width=20)
+        table.add_column("Amount", style="green", justify="center")
         table.add_column("Timestamp", style="yellow", justify="center", width=25)  
 
         for index, entry in enumerate(self.history, start=1):
@@ -707,7 +717,6 @@ class Project:
 
         for idx, username in enumerate(all_usernames, start=1):
             console.print(f"{idx}. {username}")
-        console.print("0. Back")
 
         selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
@@ -716,7 +725,6 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(all_usernames):
@@ -724,7 +732,6 @@ class Project:
                 self.add_member(get_ID(selected_username))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
 
     def remove_member_menu(self, user: User):
         if self.owner != user.ID:
@@ -743,7 +750,6 @@ class Project:
         console.print("Current project members:", style="Info")
         for idx, member in enumerate(members_to_display, start=1):
             console.print(f"{idx}. {member}")
-        console.print("0. Back")
 
         selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
@@ -752,7 +758,6 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(members_to_display):
@@ -760,7 +765,6 @@ class Project:
                 self.remove_member(get_ID(selected_member))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
 
     def view_assignees(self, task: Task):
         if not task.assignees:
@@ -811,7 +815,6 @@ class Project:
         for idx, member in enumerate(self.collaborators[1:], start=1):
             if member != self.owner:
                 console.print(f"{idx}. {get_username(member)}")
-        console.print("0. Back")
 
         selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
@@ -821,14 +824,12 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str)
             if idx >= 0 and idx < len(self.collaborators) and self.collaborators[idx] != self.owner:
                 member_usernames.append(get_username(self.collaborators[idx]))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
                 return
             
             for member in member_usernames:
@@ -849,7 +850,6 @@ class Project:
         console.print("Current task assignees:", style="Info")
         for idx, member in enumerate(task.assignees, start=1):
             console.print(f"{idx}. {get_username(member)}")
-        console.print("0. Back")
         
         selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or '0' to go back: ").split(',')))
         if selected_indices[0] == "0":
@@ -859,14 +859,12 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                wait_for_key_press()
                 return
             idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
                 member_usernames.append(get_username(task.assignees[idx]))
             else:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
-                wait_for_key_press()
                 return
             
             for member in member_usernames:
@@ -878,19 +876,23 @@ class Project:
             console.print("Only the project owner can create tasks.", style="Error")
             wait_for_key_press()
             return
-        
-        clear_screen()
-        console.print("|Creating New Task|\n", style="Title")
-        console.print("Please provide the following details to create a new task:", style="Info")
-        title = input("Task Title: ")
-        description = input("Task Description: ")
-        
-        new_task = Task(title , description)
-        self.tasks[new_task.ID]=vars(new_task)
-        self.save_project_data()
-        console.print("Task created successfully.", style="Notice")
-        logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
-        wait_for_key_press()
+        while True:
+            clear_screen()
+            console.print("|Creating New Task|\n", style="Title")
+            console.print("Please provide the following details to create a new task:", style="Info")
+            title = input("Task Title: ")
+            if not title:
+                console.print("Title cannot be empty. Please enter a valid title.", style="Error")
+                wait_for_key_press()
+                continue
+            description = input("Task Description: ")
+            new_task = Task(title , description)
+            self.tasks[new_task.ID]=vars(new_task)
+            self.save_project_data()
+            console.print("Task created successfully.", style="Notice")
+            logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
+            wait_for_key_press()
+            break
 
     def view_project_tasks(self, user: User):
         if not self.tasks:
@@ -941,9 +943,18 @@ class Project:
 
 
     def create_project(user:User):
-        clear_screen()
-        console.print("|Creating new Project|\n" , style="Title")
-        title = input("Enter Project title: ")
+        while True:
+            clear_screen()
+            console.print("|Creating new Project|\n" , style="Title")
+            title = input("Enter project title (or '0' to go back): ")
+            if title == '0':
+                return  
+            if title:  
+                break
+            else:
+                console.print("Title cannot be empty. Please enter a valid title.", style="Error")
+                wait_for_key_press()
+    
         project = Project(title, user.ID)
         project.save_project_data()
         logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
