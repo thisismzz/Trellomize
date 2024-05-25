@@ -579,3 +579,9 @@
 2024-05-25 23:47:22,116 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
 2024-05-25 23:51:13,782 - __main__ - INFO - User [test] has logged in 
 2024-05-25 23:51:16,500 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 00:08:32,288 - __manager__ - INFO - Manager has logged in successfully
+2024-05-26 00:12:27,874 - __manager__ - INFO - Manager has logged in successfully
+2024-05-26 00:13:56,056 - __manager__ - INFO - Manager has logged in successfully
+2024-05-26 00:14:04,597 - __manager__ - INFO - User (shadd) deactivated by Manager
+2024-05-26 00:14:17,747 - __manager__ - INFO - User (shadd) activated by Manager
+2024-05-26 00:14:22,217 - __manager__ - INFO - End of Manager program

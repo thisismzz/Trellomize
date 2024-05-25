@@ -117,7 +117,7 @@ class Manager:
         
         with open("emails and usernames.json", "r") as user_file:
             users_data = json.load(user_file)
-        return users_data["usernames"]
+        return list(users_data["usernames"].values())
 
     def deactive_user(username):
         path = 'users/' + username + '/' + username + ".json"
@@ -196,6 +196,31 @@ class Manager:
                 with open ("emails and usernames.json" , 'w') as file:
                     data = {'emails' : [] , 'usernames' : {}}
                     json.dump(data,file,indent=4)
+
+
+def get_username(ID):
+    data = {}
+    try : 
+        with open ("emails and usernames.json" , 'r') as file:
+             data = json.load(file)
+    except FileNotFoundError:
+        logger.error("Problem with [emails and usernames.json]")
+        raise FileNotFoundError("File Error. Terminating Program")
+    return data["usernames"][ID]
+    
+def get_ID(username):
+    data = {}
+    try : 
+        with open ("emails and usernames.json" , 'r') as file:
+             data = json.load(file)
+    except FileNotFoundError:
+        logger.error("Problem with [emails and usernames.json]")
+        raise FileNotFoundError("File Error. Terminating Program")
+         
+    for ID in data['usernames']:
+        if data['usernames'][ID] == username:
+            return ID 
+
         
 
 if __name__ == "__main__":
