@@ -6,6 +6,7 @@ import os
 import shutil
 from main import User, Project, Task
 
+
 class TestMainClsUser(TestCase):
     
     @classmethod
@@ -36,7 +37,7 @@ class TestMainClsProject(TestCase):
     
     @classmethod
     def tearDownClass(cls):
-        pass
+        os.remove(f"projects/tester.json")
     
     def test_create_project(self):
         self.assertEqual(self.project1.title, "project test1")
@@ -65,35 +66,35 @@ class TestMainClsTask(TestCase):
         self.assertEqual(self.task1.priority , "LOW")
         self.assertEqual(self.task1.status , "BACKLOG")
         
-    @patch("builtins.input", side_effect=["2"])
+    @patch("builtins.input", side_effect=["2024-05-22 22:56:04"])
     def test_change_end_time(self, mock_input):
         self.task1.change_end_time()  
-        self.assertIsNotNone(self.task1.end_time)  
+        self.assertEqual(self.task1.end_time , "2024-05-22 22:56:04")  
 
-    @patch("builtins.input", side_effect=["2024-05-22 22:56:04.092445"])
+    @patch("builtins.input", side_effect=["2024-05-22 22:56:04"])
     def test_change_start_time(self, mock_input):
         self.task1.change_start_time()  
-        self.assertIsNotNone(self.task1.start_time)  
+        self.assertEqual(self.task1.start_time , "2024-05-22 22:56:04")  
 
     @patch("builtins.input", side_effect=["2"])
     def test_change_status(self, mock_input):
         self.task1.change_status()  
-        self.assertIsNotNone(self.task1.status)  
+        self.assertEqual(self.task1.status , "TODO")  
 
     @patch("builtins.input", side_effect=["2"])
     def test_change_priority(self, mock_input):
         self.task1.change_priority()  
-        self.assertIsNotNone(self.task1.priority)  
+        self.assertEqual(self.task1.priority , "HIGH")  
 
     @patch("builtins.input", side_effect=["New Title"])
     def test_change_title(self, mock_input):
         self.task1.change_title()  
-        self.assertIsNotNone(self.task1.title)  
+        self.assertEqual(self.task1.title , "New Title")  
 
     @patch("builtins.input", side_effect=["New Description"])
     def test_change_description(self, mock_input):
         self.task1.change_description()  
-        self.assertIsNotNone(self.task1.description)  
+        self.assertEqual(self.task1.description , "New Description")  
 
     def test_using_mock(self):
         mock_obj = Mock()

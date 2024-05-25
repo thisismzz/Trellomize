@@ -87,8 +87,12 @@ class User:
 
     def check_unique_email(email):
         data = {}
-        with open ('emails and usernames.json' , 'r') as file:
-            data = json.load(file)
+        try : 
+            with open ('emails and usernames.json' , 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
         
         if email in data['emails']:
             return False
@@ -96,10 +100,15 @@ class User:
 
     def check_unique_username(username):
         data = {}
-        with open ('emails and usernames.json' , 'r') as file:
-            data = json.load(file)
         
-        if username in data['usernames']:
+        try:
+            with open ('emails and usernames.json' , 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError as e:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
+        
+        if username in list(data['usernames'].values()):
             return False
         return True
     
@@ -118,33 +127,49 @@ class User:
     
     def get_all_usernames():
         data = {}
-        with open ('emails and usernames.json' , 'r') as file:
-            data = json.load(file)
+        try:
+            with open ('emails and usernames.json' , 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
         return list(data['usernames'].values())
     
     def add_email_username(self):
         data = {}
-        with open ('emails and usernames.json' , 'r') as file:
-            data = json.load(file)
-        
-        data['emails'].append(self.email)
-        data['usernames'][self.ID] = self.username
-        
-        with open ('emails and usernames.json' , 'w') as file:
-            data = json.dump(data , file , indent=4)
+        try:
+            with open ('emails and usernames.json' , 'r') as file:
+                data = json.load(file)
+
+            data['emails'].append(self.email)
+            data['usernames'][self.ID] = self.username
+
+            with open ('emails and usernames.json' , 'w') as file:
+                data = json.dump(data , file , indent=4)
+        except FileNotFoundError:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
 
     def save_user_data (self):
         user_folder = "users/" + self.username
         os.makedirs(user_folder, exist_ok=True)
         json_file_path = os.path.join(user_folder, f"{self.username}.json")
-        with open(json_file_path, "w") as json_file:
-            json.dump(vars(self), json_file, indent=4)
+        try:
+            with open(json_file_path, "w") as json_file:
+                json.dump(vars(self), json_file, indent=4)
+        except FileNotFoundError:
+            logger.error(f"Problem with [{json_file_path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
 
     def load_user_data (username):
         user_folder = "users/" + username
         json_file_path = os.path.join(user_folder, f"{username}.json")
-        with open(json_file_path, "r") as json_file:
-            return json.load(json_file)
+        try : 
+            with open(json_file_path, "r") as json_file:
+                return json.load(json_file)
+        except FileNotFoundError:
+            logger.error(f"Problem with [{json_file_path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
         
     def add_my_project(username,project_id):
         path = "users/" + username + "/projects.json"
@@ -155,19 +180,26 @@ class User:
             data['projects'].append(project_id)
         else:
             data = {'projects' : [project_id]}
-        
-        with open(path, "w") as file:
-            json.dump(data , file , indent=4)
+        try:
+            with open(path, "w") as file:
+                json.dump(data , file , indent=4)
+        except FileNotFoundError:
+            logger.error(f"Problem with [{path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
 
     def remove_project(username , project_id):
         path = "users/" + username + "/projects.json"
         data = {}
-        with open(path, "r") as file:
-            data = json.load(file)
-            
-        data['projects'].remove(project_id)
-        with open(path, "w") as file:
-            json.dump(data,file,indent=4)
+        try : 
+            with open(path, "r") as file:
+                data = json.load(file)
+
+            data['projects'].remove(project_id)
+            with open(path, "w") as file:
+                json.dump(data,file,indent=4)
+        except FileNotFoundError:
+            logger.error(f"Problem with [{path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
     
     def load_user_projects(username):
         path = "users/" + username + "/projects.json"
@@ -175,29 +207,33 @@ class User:
             with open(path, "r") as file:
                     return json.load(file)
         except FileNotFoundError:
-            return None
+            logger.error(f"Problem with [{path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
         
         
-    def update_username(self, new_username):
+    def change_username(self, new_username):
         if new_username == self.username:
             console.print("choose a new username not your old username" , style='Error')
             return
+        
         old_username = self.username
         self.username = new_username
-        
         os.rename(f"users/{old_username}",f"users/{new_username}")
         os.rename(f"users/{new_username}/{old_username}.json",f"users/{new_username}/{new_username}.json")
         self.save_user_data()
-        
         data = {}
-        with open('emails and usernames.json', 'r') as file:
-            data = json.load(file)
-        data['usernames'][self.ID] = new_username
-        with open('emails and usernames.json', 'w') as file:
-            json.dump(data, file, indent=4)
-        logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
-
-    def update_password(self, new_password):
+        try:
+            with open('emails and usernames.json', 'r') as file:
+                data = json.load(file)
+            data['usernames'][self.ID] = new_username
+            with open('emails and usernames.json', 'w') as file:
+                json.dump(data, file, indent=4)
+            logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
+        except FileNotFoundError:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
+    
+    def change_password(self, new_password):
         if bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8') ==  self.password:
             console.print("choose a new password not your old password!" , style="Error")
             return
@@ -205,7 +241,7 @@ class User:
         self.save_user_data()
         logger.info(f"User [{self.username}] changed password")
 
-    def update_email(self, new_email):
+    def change_email(self, new_email):
         if new_email == self.email:
             console.print("choose a new email not your old email" , style='Error')
             return
@@ -214,13 +250,17 @@ class User:
         self.save_user_data()
 
         data = {}
-        with open('emails and usernames.json', 'r') as file:
-            data = json.load(file)
-        data['emails'].remove(old_email)
-        data['emails'].append(new_email)
-        with open('emails and usernames.json', 'w') as file:
-            json.dump(data, file, indent=4)
-        logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
+        try :
+            with open('emails and usernames.json', 'r') as file:
+                data = json.load(file)
+            data['emails'].remove(old_email)
+            data['emails'].append(new_email)
+            with open('emails and usernames.json', 'w') as file:
+                json.dump(data, file, indent=4)
+            logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
+        except FileNotFoundError:
+            logger.error("Problem with [emails and usernames.json]")
+            raise FileNotFoundError("File Error. Terminating Program")
         
     def edit_profile_menu(self):
         while True:
@@ -236,7 +276,7 @@ class User:
             if choice == "1":
                 new_username = input("Enter new username: ")
                 if User.check_unique_username(new_username):
-                    self.update_username(new_username)
+                    self.change_username(new_username)
                     console.print("Username updated successfully.", style="Notice")
                     logger.info(f"User [{self.username}] updated username to {new_username}")
                     wait_for_key_press()
@@ -245,14 +285,14 @@ class User:
                     wait_for_key_press()
             elif choice == "2":
                 new_password = input("Enter new password: ")
-                self.update_password(new_password)
+                self.change_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
                 logger.info(f"User [{self.username}] updated password")
                 wait_for_key_press()
             elif choice == "3":
                 new_email = input("Enter new email: ")
                 if User.check_unique_email(new_email):
-                    self.update_email(new_email)
+                    self.change_email(new_email)
                     console.print("Email updated successfully.", style="Notice")
                     logger.info(f"User [{self.username}] updated email to {new_email}")
                     wait_for_key_press()
@@ -294,6 +334,9 @@ class User:
         except ValueError as e:
             console.print(str(e), style="Error")
             wait_for_key_press()
+        except FileNotFoundError as e:
+            console.print(e , style="Error")
+            exit()
             
     def login():
         clear_screen()
@@ -635,14 +678,21 @@ class Project:
         project_folder = "projects/"
         os.makedirs(project_folder, exist_ok=True)
         json_file_path = os.path.join(project_folder, f"{self.ID}.json")
-        with open(json_file_path, "w") as json_file:
-            json.dump(vars(self), json_file, indent=4)
+        try : 
+            with open(json_file_path, "w") as json_file:
+                json.dump(vars(self), json_file, indent=4)
+        except FileNotFoundError:
+            raise FileNotFoundError("File Error. Teminating Program.")
 
     def load_project_data(ID):
         project_folder = "projects/"
         json_file_path = os.path.join(project_folder, f"{ID}.json")
-        with open(json_file_path, "r") as json_file:
-            return json.load(json_file)
+        try:
+            with open(json_file_path, "r") as json_file:
+                return json.load(json_file)
+        except FileNotFoundError:
+            logger.error(f"Problem with [{json_file_path}]")
+            raise FileNotFoundError("File Error. Terminating Program")
 
     def update_task(self,new_task:Task):
         self.tasks[new_task.ID] = vars(new_task)
@@ -928,7 +978,9 @@ class Project:
                     else:
                         archived_table.add_row(instance_task.ID,instance_task.title)
 
-                main_table.add_row(backlog_table,todo_table,doing_table,done_table,archived_table)
+                main_table.add_row(backlog_table if len(backlog_table.rows) != 0 else "No task Available" ,todo_table if len(todo_table.rows) != 0 else "No task Available"
+                ,doing_table if len(doing_table.rows) != 0 else "No task Available",done_table if len(done_table.rows) != 0 else "No task Available",archived_table if len(archived_table.rows) != 0 else "No task Available")
+                
                 console.print(main_table)
             
                 task_id = input("Enter task ID to manage (or '0' to go back): ")
@@ -1271,14 +1323,22 @@ def user_menu(user: User):
             
 def get_username(ID):
     data = {}
-    with open ("emails and usernames.json" , 'r') as file:
-         data = json.load(file)
+    try : 
+        with open ("emails and usernames.json" , 'r') as file:
+             data = json.load(file)
+    except FileNotFoundError:
+        logger.error("Problem with [emails and usernames.json]")
+        raise FileNotFoundError("File Error. Terminating Program")
     return data["usernames"][ID]
     
 def get_ID(username):
     data = {}
-    with open ("emails and usernames.json" , 'r') as file:
-         data = json.load(file)
+    try : 
+        with open ("emails and usernames.json" , 'r') as file:
+             data = json.load(file)
+    except FileNotFoundError:
+        logger.error("Problem with [emails and usernames.json]")
+        raise FileNotFoundError("File Error. Terminating Program")
          
     for ID in data['usernames']:
         if data['usernames'][ID] == username:

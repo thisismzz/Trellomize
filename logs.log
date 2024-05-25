@@ -425,3 +425,76 @@
 2024-05-25 01:59:20,777 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
 2024-05-25 02:01:04,191 - __main__ - INFO - User [mahdi2] has logged in 
 2024-05-25 02:01:06,022 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 20:44:12,176 - __main__ - INFO - User [shadd] has logged in 
+2024-05-25 20:44:17,657 - __main__ - DEBUG - User [shadd] is managing project [id: 415f81f9]
+2024-05-25 20:50:39,147 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:50:46,818 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:50:47,690 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:50:48,114 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:52:22,060 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:52:24,040 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:52:28,672 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:52:29,792 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:53:23,081 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:53:24,037 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:53:31,291 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:53:31,966 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:53:40,078 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:53:40,782 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:53:53,039 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:53:53,592 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:54:05,678 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:54:06,936 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:54:07,384 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:54:08,003 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:54:08,473 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:54:09,003 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:57:04,580 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:57:05,788 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:57:06,175 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:57:07,098 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:57:07,470 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:57:08,102 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:57:42,413 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:57:43,837 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:57:44,074 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:57:44,276 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:57:44,682 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:57:44,928 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 20:58:06,539 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 20:58:07,409 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:58:07,548 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 20:58:07,774 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 20:58:07,866 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 20:58:08,246 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 21:03:58,447 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 21:03:59,784 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:04:00,168 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 21:04:00,684 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:04:01,304 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 21:04:01,712 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 21:15:23,200 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 21:15:24,898 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:15:25,330 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 21:15:25,944 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:15:26,352 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 21:15:27,018 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 21:15:44,752 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 21:15:45,805 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:15:46,018 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 21:15:46,274 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 21:15:46,579 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 21:15:46,894 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 21:29:43,121 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:45:00,831 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:53:36,238 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:56:00,554 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:58:25,710 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:58:25,710 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:59:01,715 - __main__ - INFO - User [shadd] has logged in 
+2024-05-25 21:59:21,123 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 21:59:21,123 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 22:01:10,362 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 22:01:10,363 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 22:21:54,349 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 22:23:45,563 - __main__ - ERROR - Problem with [emails and usernames.json]
