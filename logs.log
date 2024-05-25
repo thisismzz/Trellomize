@@ -498,3 +498,84 @@
 2024-05-25 22:01:10,363 - __main__ - ERROR - Problem with [emails and usernames.json]
 2024-05-25 22:21:54,349 - __main__ - ERROR - Problem with [emails and usernames.json]
 2024-05-25 22:23:45,563 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-25 22:35:05,939 - __main__ - INFO - EXIT (end of program)
+2024-05-25 22:36:15,756 - __main__ - INFO - User [shadd] has logged in 
+2024-05-25 22:36:23,977 - __main__ - INFO - User [shadd] logged out
+2024-05-25 22:41:16,218 - __main__ - INFO - User [shadd] has logged in 
+2024-05-25 22:42:14,241 - __main__ - INFO - User [shadd] logged out
+2024-05-25 22:45:02,705 - __main__ - INFO - A new user registered : test
+2024-05-25 22:45:07,876 - __main__ - INFO - User [test] has logged in 
+2024-05-25 22:45:09,216 - __main__ - ERROR - Problem with [users/test/projects.json]
+2024-05-25 22:48:40,792 - __main__ - INFO - User [test] has logged in 
+2024-05-25 22:48:42,683 - __main__ - ERROR - Problem with [users/test/projects.json]
+2024-05-25 22:50:20,354 - __main__ - INFO - User [test] has logged in 
+2024-05-25 22:50:25,389 - __main__ - INFO - User [test] changed password
+2024-05-25 22:50:25,390 - __main__ - INFO - User [test] updated password
+2024-05-25 22:51:13,784 - __main__ - INFO - User [test] changed password
+2024-05-25 22:51:13,786 - __main__ - INFO - User [test] updated password
+2024-05-25 22:55:38,567 - __main__ - INFO - User [test] has logged in 
+2024-05-25 22:57:22,977 - __main__ - INFO - User [test] has logged in 
+2024-05-25 22:59:38,506 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:01:42,156 - main - DEBUG - Task [id : tester] description has changed (current : New Description)
+2024-05-25 23:01:43,282 - main - DEBUG - Task [id : tester] end time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 23:01:53,713 - main - DEBUG - Task [id : tester] priority has changed (current : HIGH)
+2024-05-25 23:01:54,462 - main - DEBUG - Task [id : tester] start time has changed (current : 2024-05-22 22:56:04)
+2024-05-25 23:01:54,905 - main - DEBUG - Task [id : tester] status has changed (current : TODO)
+2024-05-25 23:01:55,317 - main - DEBUG - Task [id : tester] title has changed (current : New Title)
+2024-05-25 23:03:46,432 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:03:51,884 - __main__ - ERROR - Problem with [users/test/projects.json]
+2024-05-25 23:04:21,135 - __main__ - INFO - A new project [name : test , id : c8ce0d6a] created by [test]
+2024-05-25 23:05:15,059 - __main__ - DEBUG - User [test] is managing project [id: c8ce0d6a]
+2024-05-25 23:05:50,076 - __main__ - INFO - A new task [name : No.1 , id : [fdd11324]] created by [test]
+2024-05-25 23:06:14,197 - __main__ - ERROR - Problem with [users/16534d0e/projects.json]
+2024-05-25 23:08:11,412 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:08:14,475 - __main__ - ERROR - Problem with [projects/c8ce0d6a.json]
+2024-05-25 23:09:03,743 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:11:10,844 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:13:01,026 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:13:21,739 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:13:51,414 - __main__ - INFO - A new project [name : test , id : 1cb7d650] created by [test]
+2024-05-25 23:13:58,557 - __main__ - DEBUG - User [test] is managing project [id: 1cb7d650]
+2024-05-25 23:14:02,954 - __main__ - INFO - Project [id : 1cb7d650] deleted by owner [user : test]
+2024-05-25 23:14:14,084 - __main__ - INFO - A new project [name : test , id : 2a3aeee0] created by [test]
+2024-05-25 23:14:18,495 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-25 23:14:25,527 - __main__ - INFO - A new task [name : No.1 , id : [310cd268]] created by [test]
+2024-05-25 23:14:35,354 - __main__ - INFO - A new task [name : No.2 , id : [36e83839]] created by [test]
+2024-05-25 23:15:05,290 - __main__ - DEBUG - A new member [user : 27dc7135] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:15:05,296 - __main__ - DEBUG - A new member [user : 8c772040] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:24:21,696 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:24:29,679 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-25 23:24:34,567 - __main__ - DEBUG - A member [user : 27dc7135] removed from project [id : 2a3aeee0] collaborators
+2024-05-25 23:24:34,573 - __main__ - DEBUG - A member [user : 8c772040] removed from project [id : 2a3aeee0] collaborators
+2024-05-25 23:24:44,507 - __main__ - DEBUG - A new member [user : 27dc7135] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:29:31,277 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:29:33,292 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-25 23:29:39,095 - __main__ - DEBUG - A member [user : 27dc7135] removed from project [id : 2a3aeee0] collaborators
+2024-05-25 23:29:54,337 - __main__ - DEBUG - A new member [user : 27dc7135] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:29:54,345 - __main__ - DEBUG - A new member [user : 8c772040] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:30:38,952 - __main__ - DEBUG - A member [user : 27dc7135] removed from project [id : 2a3aeee0] collaborators
+2024-05-25 23:30:38,957 - __main__ - DEBUG - A member [user : 8c772040] removed from project [id : 2a3aeee0] collaborators
+2024-05-25 23:30:50,748 - __main__ - DEBUG - A new member [user : 27dc7135] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:30:50,754 - __main__ - DEBUG - A new member [user : 8c772040] added to project [id : 2a3aeee0] collaborators by owner
+2024-05-25 23:31:19,990 - __main__ - DEBUG - A new assignee [user : 27dc7135] added to task.
+2024-05-25 23:31:19,993 - __main__ - DEBUG - A new assignee [user : 8c772040] added to task.
+2024-05-25 23:31:19,993 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:35:10,556 - __main__ - DEBUG - An assignee [user : 27dc7135] removed from task.
+2024-05-25 23:35:10,560 - __main__ - DEBUG - An assignee [user : 8c772040] removed from task.
+2024-05-25 23:35:10,560 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:36:07,900 - __main__ - DEBUG - A new comment added to task [id : 310cd268] by user [16534d0e]
+2024-05-25 23:36:10,230 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:38:31,595 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:38:35,382 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-25 23:38:54,061 - __main__ - DEBUG - Comment edited on task [id : 310cd268] by user [16534d0e]
+2024-05-25 23:38:54,611 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:39:12,000 - __main__ - DEBUG - A new comment added to task [id : 310cd268] by user [16534d0e]
+2024-05-25 23:40:01,474 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:40:16,528 - __main__ - DEBUG - A new comment added to task [id : 310cd268] by user [16534d0e]
+2024-05-25 23:40:17,174 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:40:56,843 - __main__ - DEBUG - Comment removed from task [id : 310cd268] by user [16534d0e]
+2024-05-25 23:41:45,651 - __main__ - DEBUG - Add new history to task [id : 310cd268]
+2024-05-25 23:47:19,773 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:47:22,116 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-25 23:51:13,782 - __main__ - INFO - User [test] has logged in 
+2024-05-25 23:51:16,500 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]

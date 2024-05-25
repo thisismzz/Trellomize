@@ -187,8 +187,8 @@ class User:
             logger.error(f"Problem with [{path}]")
             raise FileNotFoundError("File Error. Terminating Program")
 
-    def remove_project(username , project_id):
-        path = "users/" + username + "/projects.json"
+    def remove_project(ID , project_id):
+        path = "users/" + get_username(ID) + "/projects.json"
         data = {}
         try : 
             with open(path, "r") as file:
@@ -208,9 +208,9 @@ class User:
                     return json.load(file)
         except FileNotFoundError:
             logger.error(f"Problem with [{path}]")
-            raise FileNotFoundError("File Error. Terminating Program")
+            return None
         
-        
+
     def change_username(self, new_username):
         if new_username == self.username:
             console.print("Enter a new username not your old username!" , style='Error')
@@ -276,8 +276,8 @@ class User:
             if choice == "1":
                 clear_screen()
                 console.print("|Editing Username|\n", style="Title")
-                new_username = input("Enter new username (or '0' to go back): ")
-                if new_username == "0":
+                new_username = input("Enter new username (or press enter to go back): ")
+                if new_username == "":
                     return
                 if User.check_unique_username(new_username):
                     self.change_username(new_username)
@@ -290,18 +290,18 @@ class User:
             elif choice == "2":
                 clear_screen()
                 console.print("|Editing Password|\n", style="Title")
-                new_password = input("Enter new password (or '0' to go back): ")
-                if new_password == "0":
+                new_password = input("Enter new password (or press enter to go back): ")
+                if new_password == "":
                     return
-                self.update_password(new_password)
+                self.change_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
                 logger.info(f"User [{self.username}] updated password")
                 wait_for_key_press()
             elif choice == "3":
                 clear_screen()
                 console.print("|Editing Email|\n", style="Title")
-                new_email = input("Enter new email (or '0' to go back): ")
-                if new_email == "0":
+                new_email = input("Enter new email (or press enter to go back): ")
+                if new_email == "":
                     return
                 if User.check_unique_email(new_email):
                     self.change_email(new_email)
@@ -321,7 +321,10 @@ class User:
         clear_screen()
         console.print("|Registration|\n", style="Title")
         console.print("Please provide the following details to create your account:", style="Info")
+        console.print("(or press enter to go back)" , style='Info')
         email = input("Email: ")
+        if email =="":
+            return
         username = input("Username: ")
         password = input("Password: ")
         try:
@@ -354,7 +357,10 @@ class User:
         clear_screen()
         console.print("|Login|\n", style="Title")
         console.print("Please provide your credentials to log in:", style="Info")
+        console.print("(or press enter to go back)" , style='Info')
         username = input("Username: ")
+        if username == "":
+            return
         password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
         path = f"users/{username}/{username}.json"
         
@@ -537,9 +543,9 @@ class Task:
             if comment_idx == -1:
                 return False
             if 0 <= comment_idx < len(self.comments):
-                if self.comments[comment_idx]["user"] == user.username:
+                if self.comments[comment_idx]["user"] == user.ID:
                     removed_comment = self.comments.pop(comment_idx)
-                    console.print(f"Comment by {removed_comment['user']} removed successfully.", style="Notice")
+                    console.print(f"Comment by {get_username(removed_comment['user'])} removed successfully.", style="Notice")
                     logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
                     wait_for_key_press()
                     return True
@@ -570,7 +576,7 @@ class Task:
             if comment_idx == -1:
                 return False
             if 0 <= comment_idx < len(self.comments):
-                if self.comments[comment_idx]["user"] == user.username:
+                if self.comments[comment_idx]["user"] == user.ID:
                     new_comment = input("Enter new comment: ")
                     self.comments[comment_idx]['comment'] = new_comment
                     self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
@@ -666,9 +672,11 @@ class Task:
         for index, entry in enumerate(self.history, start=1):
             user = get_username(entry.get("user", ""))
             action = entry.get("action", "")
-            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(entry.get("new assignees", "")) or str(entry.get("removed assignees", "")) or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
+            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(list(map(lambda x:get_username(x),entry.get("new assignees", "")))) if not entry.get("new assignees",'') else or str(list(map(lambda x:get_username(x),entry.get("removed assignees", "")))) if not entry.get("removed assignees", "") or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
             timestamp = entry.get("timestamp", "")
             table.add_row(str(index), user, action, amount, timestamp)
+            
+            
 
         console.print(table)
         wait_for_key_press()
@@ -730,23 +738,23 @@ class Project:
         else:
             console.print(f"User {get_username(member)} has already been added" , style='Error')
 
-    def remove_member(self, member):
-        if member in self.collaborators:
-            self.collaborators.remove(member)
+    def remove_member(self, user_ID):
+        if user_ID in self.collaborators:
+            self.collaborators.remove(user_ID)
             
             #delete project id from user's project.json
-            User.remove_project(get_username(member),self.ID)
+            User.remove_project(user_ID,self.ID)
             
             #erase user's name from any tasks
             for task in self.tasks.values():
-                if member in task["assignees"]:
-                    self.remove_assignee(member,Task(**task))
+                if user_ID in task["assignees"]:
+                    self.remove_assignee(user_ID,Task(**task))
             
             self.save_project_data()
-            console.print(f"Member '{get_username(member)}' removed from project successfully.", style="Notice")
-            logger.debug(f"A member [user : {member}] removed from project [id : {self.ID}] collaborators")
+            console.print(f"Member '{get_username(user_ID)}' removed from project successfully.", style="Notice")
+            logger.debug(f"A member [user : {user_ID}] removed from project [id : {self.ID}] collaborators")
         else:
-            console.print(f"{get_username(member)} is not a member of the project.", style="Error")
+            console.print(f"{get_username(user_ID)} is not a member of the project.", style="Error")
 
     def add_member_menu(self, user: User):
         if self.owner != user.ID:
@@ -773,7 +781,7 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                return
+                continue
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(all_usernames):
                 selected_username = all_usernames[idx]
@@ -804,7 +812,7 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                return
+                continue
             idx = int(idx_str) - 1
             if idx >= 0 and idx < len(members_to_display):
                 selected_member = members_to_display[idx]
@@ -849,7 +857,6 @@ class Project:
     def assign_member_menu(self, task: Task , user : User):
         if user.ID != self.owner:
             console.print("Only the project owner can assign members.", style="Error")
-            wait_for_key_press()
             return
         if len(self.collaborators) == 1: 
             console.print("There are no project members to assign.", style="Error")
@@ -870,12 +877,12 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                return
+                continue
             idx = int(idx_str)
             if idx >= 1 and idx < len(self.collaborators):
                 member_ID.append(self.collaborators[idx])
             else:
-                console.print(f"Invalid user number: {idx + 1}.", style="Error")
+                console.print(f"Invalid user number: {idx}.", style="Error")
                 return
             
         for member in member_ID:
@@ -904,7 +911,7 @@ class Project:
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
-                return
+                continue
             idx = int(idx_str) -1
             if idx >= 0 and idx < len(task.assignees):
                 member_ID.append(task.assignees[idx])
@@ -1249,7 +1256,7 @@ class Project:
 
     def view_user_projects(user: User):
         data = User.load_user_projects(user.username)
-        if data  is not None:
+        if data is not None and len(data['projects']) != 0:
             user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         else:
