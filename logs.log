@@ -383,3 +383,45 @@
 2024-05-24 23:11:27,037 - __main__ - DEBUG - Add new history to task [id : 5de69a1a]
 2024-05-24 23:12:06,729 - __main__ - INFO - User [shadd] logged out
 2024-05-24 23:12:19,191 - __main__ - INFO - EXIT (end of program)
+2024-05-25 00:45:49,838 - __main__ - INFO - A new user registered : mahdi2
+2024-05-25 00:53:52,829 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:06:14,344 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:07:13,721 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:07:33,668 - __main__ - INFO - A new project [name : alaki , id : d4af6798] created by [mahdi2]
+2024-05-25 01:07:42,291 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:07:55,805 - __main__ - DEBUG - A new member [user : 27dc7135] added to project [id : d4af6798] collaborators by owner
+2024-05-25 01:07:55,809 - __main__ - DEBUG - A new member [user : 8c772040] added to project [id : d4af6798] collaborators by owner
+2024-05-25 01:08:35,850 - __main__ - INFO - A new task [name : test , id : [f9bf972e]] created by [mahdi2]
+2024-05-25 01:09:07,482 - __main__ - DEBUG - A new assignee [user : 27dc7135] added to task.
+2024-05-25 01:09:07,482 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:09:07,487 - __main__ - DEBUG - A new assignee [user : 8c772040] added to task.
+2024-05-25 01:09:07,487 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:14:26,302 - __main__ - DEBUG - An assignee [user : 27dc7135] removed from task.
+2024-05-25 01:14:26,302 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:20:50,194 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:20:52,743 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:21:15,197 - __main__ - DEBUG - An assignee [user : 8c772040] removed from task.
+2024-05-25 01:21:15,197 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:21:30,129 - __main__ - DEBUG - A new assignee [user : 27dc7135] added to task.
+2024-05-25 01:21:30,129 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:21:30,133 - __main__ - DEBUG - A new assignee [user : 8c772040] added to task.
+2024-05-25 01:21:30,133 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:24:45,759 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:24:49,167 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:25:38,253 - __main__ - DEBUG - An assignee [user : 27dc7135] removed from task.
+2024-05-25 01:25:38,255 - __main__ - DEBUG - An assignee [user : 8c772040] removed from task.
+2024-05-25 01:25:38,255 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:25:42,976 - __main__ - DEBUG - A new assignee [user : 27dc7135] added to task.
+2024-05-25 01:25:42,979 - __main__ - DEBUG - A new assignee [user : 8c772040] added to task.
+2024-05-25 01:25:42,979 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-25 01:31:39,435 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:31:42,463 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:31:48,624 - __main__ - INFO - A new task [name : tet , id : [37e7afc4]] created by [mahdi2]
+2024-05-25 01:33:59,386 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:34:01,949 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:57:51,999 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:57:55,103 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 01:59:18,085 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 01:59:20,777 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
+2024-05-25 02:01:04,191 - __main__ - INFO - User [mahdi2] has logged in 
+2024-05-25 02:01:06,022 - __main__ - DEBUG - User [mahdi2] is managing project [id: d4af6798]
