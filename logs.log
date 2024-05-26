@@ -585,3 +585,23 @@
 2024-05-26 00:14:04,597 - __manager__ - INFO - User (shadd) deactivated by Manager
 2024-05-26 00:14:17,747 - __manager__ - INFO - User (shadd) activated by Manager
 2024-05-26 00:14:22,217 - __manager__ - INFO - End of Manager program
+2024-05-26 12:49:07,095 - __manager__ - INFO - Manager has logged in successfully
+2024-05-26 12:49:12,674 - __manager__ - INFO - User (test) deactivated by Manager
+2024-05-26 12:49:21,300 - __manager__ - INFO - User (test) activated by Manager
+2024-05-26 12:49:34,321 - __manager__ - INFO - End of Manager program
+2024-05-26 12:55:09,484 - __main__ - INFO - User [test] has logged in 
+2024-05-26 12:55:15,212 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 13:01:47,303 - __main__ - INFO - User [test] has logged in 
+2024-05-26 13:01:50,400 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 13:05:48,004 - __main__ - INFO - User [test] has logged in 
+2024-05-26 13:05:51,021 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 13:33:18,912 - __main__ - INFO - User [test] logged out
+2024-05-26 13:52:05,948 - __main__ - INFO - EXIT (end of program)
+2024-05-26 13:52:13,653 - __main__ - INFO - User [test] has logged in 
+2024-05-26 13:52:16,936 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 13:52:27,786 - __main__ - DEBUG - Task [id = 310cd268] deleted by user [user = test]
+2024-05-26 13:53:22,497 - __main__ - INFO - User [test] has logged in 
+2024-05-26 13:53:24,637 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 13:53:37,184 - __main__ - DEBUG - Task [id = 36e83839] deleted by user [user = test]
+2024-05-26 13:53:48,731 - __main__ - INFO - User [test] logged out
+2024-05-26 13:53:52,260 - __main__ - INFO - EXIT (end of program)

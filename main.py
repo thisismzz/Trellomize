@@ -282,7 +282,6 @@ class User:
                 if User.check_unique_username(new_username):
                     self.change_username(new_username)
                     console.print("Username updated successfully.", style="Notice")
-                    logger.info(f"User [{self.username}] updated username to {new_username}")
                     wait_for_key_press()
                 else:
                     console.print("Username already exists. Please choose a different one.", style="Error")
@@ -295,7 +294,6 @@ class User:
                     return
                 self.change_password(new_password)
                 console.print("Password updated successfully.", style="Notice")
-                logger.info(f"User [{self.username}] updated password")
                 wait_for_key_press()
             elif choice == "3":
                 clear_screen()
@@ -306,7 +304,6 @@ class User:
                 if User.check_unique_email(new_email):
                     self.change_email(new_email)
                     console.print("Email updated successfully.", style="Notice")
-                    logger.info(f"User [{self.username}] updated email to {new_email}")
                     wait_for_key_press()
                 else:
                     console.print("Email already exists. Please choose a different one.", style="Error")
@@ -526,7 +523,7 @@ class Task:
         comment = input("Enter new comment: ")
         self.comments.append({"user": userID, "comment": comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
-        logger.debug(f"A new comment added to task [id : {self.ID}] by user [{userID}]")
+        logger.debug(f"A new comment added to task [id : {self.ID}] by user [{get_username(userID)}]")
         wait_for_key_press()
 
     def remove_comment(self , user : User):
@@ -546,7 +543,7 @@ class Task:
                 if self.comments[comment_idx]["user"] == user.ID:
                     removed_comment = self.comments.pop(comment_idx)
                     console.print(f"Comment by {get_username(removed_comment['user'])} removed successfully.", style="Notice")
-                    logger.debug(f"Comment removed from task [id : {self.ID}] by user [{removed_comment['user']}]")
+                    logger.debug(f"Comment removed from task [id : {self.ID}] by user [{get_username(removed_comment['user'])}]")
                     wait_for_key_press()
                     return True
                 else:
@@ -581,7 +578,7 @@ class Task:
                     self.comments[comment_idx]['comment'] = new_comment
                     self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
                     console.print("Comment edited successfully.", style="Notice")
-                    logger.debug(f"Comment edited on task [id : {self.ID}] by user [{self.comments[comment_idx]['user']}]")
+                    logger.debug(f"Comment edited on task [id : {self.ID}] by user [{get_username(self.comments[comment_idx]['user'])}]")
                     wait_for_key_press()
                     return True
                 else:
@@ -672,8 +669,12 @@ class Task:
         for index, entry in enumerate(self.history, start=1):
             user = get_username(entry.get("user", ""))
             action = entry.get("action", "")
-            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or str(list(map(lambda x:get_username(x),entry.get("new assignees", "")))) if not entry.get("new assignees",'') else or str(list(map(lambda x:get_username(x),entry.get("removed assignees", "")))) if not entry.get("removed assignees", "") or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
-            timestamp = entry.get("timestamp", "")
+            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
+            if amount == None:
+                amount = str(list(map(lambda x:get_username(x),entry.get("new assignees", ""))))
+            if amount == "[]":
+                amount = str(list(map(lambda x:get_username(x),entry.get("removed assignees", ""))))
+            timestamp = entry.get("timestamp", "")                                                                                                                                                                                                                                                                                                                                                                                                                                                      
             table.add_row(str(index), user, action, amount, timestamp)
             
             
@@ -734,7 +735,7 @@ class Project:
             console.print(f"Member '{get_username(member)}' added to project successfully.", style="Notice")
             User.add_my_project(get_username(member),self.ID)
             self.save_project_data()
-            logger.debug(f"A new member [user : {member}] added to project [id : {self.ID}] collaborators by owner")
+            logger.debug(f"A new member [user : {get_username(member)}] added to project [id : {self.ID}] collaborators by owner")
         else:
             console.print(f"User {get_username(member)} has already been added" , style='Error')
 
@@ -752,7 +753,7 @@ class Project:
             
             self.save_project_data()
             console.print(f"Member '{get_username(user_ID)}' removed from project successfully.", style="Notice")
-            logger.debug(f"A member [user : {user_ID}] removed from project [id : {self.ID}] collaborators")
+            logger.debug(f"A member [user : {get_username(user_ID)}] removed from project [id : {self.ID}] collaborators")
         else:
             console.print(f"{get_username(user_ID)} is not a member of the project.", style="Error")
 
@@ -839,7 +840,7 @@ class Project:
                 task.assignees.append(member)
                 console.print(f"Member ({get_username(member)}) assigned to task successfully.", style="Notice")
                 self.save_project_data()
-                logger.debug(f"A new assignee [user : {member}] added to task.")
+                logger.debug(f"A new assignee [user : {get_username(member)}] added to task.")
             else:
                 console.print(f"Member ({get_username(member)}) is already assigned to the task.", style="Error")
         else:
@@ -850,7 +851,7 @@ class Project:
             task.assignees.remove(userID)
             console.print(f"Member '{get_username(userID)}' removed from task successfully.", style="Notice")
             self.save_project_data()
-            logger.debug(f"An assignee [user : {userID}] removed from task.")
+            logger.debug(f"An assignee [user : {get_username(userID)}] removed from task.")
         else:
             console.print(f"Member '{get_username(userID)}' is not assigned to the task.", style="Error")
         
@@ -945,6 +946,15 @@ class Project:
             logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
             wait_for_key_press()
             break
+        
+    def delete_task(self,task : Task , user : User):
+        if user.ID == self.owner :
+            del self.tasks[task.ID]
+            console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
+            logger.debug(f"Task [id = {task.ID}] deleted by user [user = {user.username}]")
+        else:
+            console.print("Only the project owner can delete project.", style="Error")
+        wait_for_key_press()
 
     def view_project_tasks(self, user: User):
         if not self.tasks:
@@ -1162,7 +1172,8 @@ class Project:
             console.print("2. Manage Comments")
             console.print("3. Manage Assignees")
             console.print("4. View History")
-            console.print("5. Back")
+            console.print("5. Delete Task")
+            console.print("6. Back")
 
             choice = input("Enter your choice: ")
             if choice == "1":
@@ -1180,6 +1191,10 @@ class Project:
                 task.view_history()
 
             elif choice == "5":
+                self.delete_task(task,user)
+                self.save_project_data()
+                break
+            elif choice == "6":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
