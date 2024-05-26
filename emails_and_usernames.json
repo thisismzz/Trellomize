@@ -1,16 +1,4 @@
 {
-    "emails": [
-        "mahdi@mahdi.com",
-        "mahdi1@mahdi1.com",
-        "mahdi2@mahdi2.com",
-        "test@test.com",
-        "kimia@gmail.com"
-    ],
-    "usernames": {
-        "27dc7135": "shadd",
-        "8c772040": "mahdi1",
-        "cb8a7261": "mahdi2",
-        "16534d0e": "test",
-        "ca7bf863": "kimia"
-    }
+    "emails": [],
+    "usernames": {}
 }

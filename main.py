@@ -690,7 +690,7 @@ class Task:
 
     def view_history(self):
         if not self.history:
-            console.print("No history available for this task.", style="Info")
+            console.print("No history available for this task.", style="Error")
             wait_for_key_press()
             return
         clear_screen()
@@ -988,12 +988,18 @@ class Project:
         
     def delete_task(self,task : Task , user : User):
         if user.ID == self.owner :
-            del self.tasks[task.ID]
-            console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
-            logger.debug(f"Task [id = {task.ID}] deleted by user [user = {user.username}]")
+            console.print("Are you sure? (y/n)" , style='Info')
+            choice = input()
+            if choice == 'y':
+                del self.tasks[task.ID]
+                console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
+                logger.debug(f"Task [id = {task.ID}] deleted by user [user = {user.username}]")
+                wait_for_key_press()
+                return True
         else:
             console.print("Only the project owner can delete project.", style="Error")
         wait_for_key_press()
+        return False
 
     def view_project_tasks(self, user: User):
         if not self.tasks:
@@ -1089,23 +1095,28 @@ class Project:
             console.print("Only the project owner can delete project.", style="Error")
             wait_for_key_press()
             return False
-        file_path = f"projects/{self.ID}.json"
-
-        try:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-                for member in self.collaborators:
-                    User.remove_project(member, self.ID)
-                console.print(f"Project '{self.title}' has been deleted successfully.", style="Notice")
-                logger.info(f"Project [id: {self.ID}] deleted by owner [user: {user.username}]")
+        
+        console.print("Are you sure? (y/n)" , style='Info')
+        choice = input()
+        if choice == 'y':
+            file_path = f"projects/{self.ID}.json"
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    for member in self.collaborators:
+                        User.remove_project(member, self.ID)
+                    console.print(f"Project '{self.title}' has been deleted successfully.", style="Notice")
+                    logger.info(f"Project [id: {self.ID}] deleted by owner [user: {user.username}]")
+                    wait_for_key_press()
+                    return True
+                else:
+                    raise FileNotFoundError("No such Project")
+            except FileNotFoundError as e:
+                console.print(e, style="Error")
                 wait_for_key_press()
-                return True
-            else:
-                raise FileNotFoundError("No such Project")
-        except FileNotFoundError as e:
-            console.print(e, style="Error")
-            wait_for_key_press()
-            return False
+                return False
+        return False
+            
 
     def manage_project_menu(self, user):
         while True:
@@ -1233,9 +1244,9 @@ class Project:
                 task.view_history()
 
             elif choice == "5":
-                self.delete_task(task, user)
-                self.save_project_data()
-                break
+                if self.delete_task(task, user):
+                    self.save_project_data()
+                    break
             elif choice == "6":
                 break
             else:
@@ -1412,20 +1423,20 @@ def user_menu(user: User):
 def get_username(ID):
     data = {}
     try:
-        with open("emails and usernames.json", 'r') as file:
+        with open("emails_and_usernames.json", 'r') as file:
             data = json.load(file)
     except FileNotFoundError:
-        logger.error("Problem with [emails and usernames.json]")
+        logger.error("Problem with [emails_and_usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
     return data["usernames"][ID]
     
 def get_ID(username):
     data = {}
     try:
-        with open("emails and usernames.json", 'r') as file:
+        with open("emails_and_usernames.json", 'r') as file:
             data = json.load(file)
     except FileNotFoundError:
-        logger.error("Problem with [emails and usernames.json]")
+        logger.error("Problem with [emails_and_usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
          
     for ID in data['usernames']:

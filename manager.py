@@ -5,7 +5,6 @@ import base64
 import shutil
 import logging
 from rich.console import Console
-from rich.table import Table
 from rich.theme import Theme
 
 custom_theme = Theme({
@@ -65,39 +64,19 @@ class Manager:
             
     def manager_menu(self):
         while True:
-            console.print(f"welcome Manager {self.username}" , style='Title')
+            console.print(f"|welcome Manager {self.username}|" , style='Title')
             console.print("What would you like to do?", style="Info")
             console.print("1. Deactivate a user")
-            console.print("2. Activated a user")
+            console.print("2. Activate a user")
             console.print("3. Delete database")
             console.print("4. Log out")
 
             choice = input("Enter your choice: ")
             if choice == '1':
-                console.print("Available users:" , style='Info')
-                all_usernames = Manager.load_users()
-                for username in all_usernames:
-                    console.print("-", username)
-                selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to deactive (format:'user1,user2') or 'back' to go back: ").split(',')))
-                
-                if selected_usernames[0] == 'back':
-                    self.manager_menu()
-                
-                for username in selected_usernames:
-                    Manager.deactive_user(username)
-                
+                Manager.deactivate_user_menu()
+
             elif choice == '2':
-                console.print("Available users:" , style='Info')
-                all_usernames = Manager.load_users()
-                for username in all_usernames:
-                    console.print("-", username)
-                selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to activate (format:'user1,user2') or 'back' to go back: ").split(',')))
-                
-                if selected_usernames[0] == 'back':
-                    self.manager_menu()
-                
-                for username in selected_usernames:
-                    Manager.activate_user(username)
+                Manager.activate_user_menu()
             
             elif choice == '3':
                 self.purge_data(is_run=True)
@@ -110,12 +89,13 @@ class Manager:
             else:
                 console.print("Invalid choice.", style="Error")
         
+
     def load_users():
-        if not os.path.exists("emails and usernames.json"):
+        if not os.path.exists("emails_and_usernames.json"):
             print("Error: User info file not found.")
             return
         
-        with open("emails and usernames.json", "r") as user_file:
+        with open("emails_and_usernames.json", "r") as user_file:
             users_data = json.load(user_file)
         return list(users_data["usernames"].values())
 
@@ -137,6 +117,19 @@ class Manager:
         console.print(f"User ({username}) has been deactivated successfully", style='Notice')
         logger.info(f"User ({username}) deactivated by Manager")
 
+    def deactivate_user_menu():
+        console.print("Available users:" , style='Info')
+        all_usernames = Manager.load_users()
+        for username in all_usernames:
+            console.print("-", username)
+        selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to deactive (format:'user1,user2') or press ENTER to go back: ").split(',')))
+        
+        if selected_usernames[0] == '':
+            return
+        
+        for username in selected_usernames:
+            Manager.deactive_user(username)
+
     def activate_user(username):
         path = 'users/' + username + '/' + username + ".json"
         user_data = {}
@@ -155,7 +148,19 @@ class Manager:
         console.print(f"User ({username}) has been activated successfully", style='Notice')
         logger.info(f"User ({username}) activated by Manager")
         
+    def activate_user_menu():
+        console.print("Available users:" , style='Info')
+        all_usernames = Manager.load_users()
+        for username in all_usernames:
+            console.print("-", username)
+        selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to activate (format:'user1,user2') or press ENTER to go back: ").split(',')))
         
+        if selected_usernames[0] == '':
+            return
+        
+        for username in selected_usernames:
+            Manager.activate_user(username)
+            
     def purge_data(self,is_run = False):
         if not is_run:
             data = {}
@@ -172,49 +177,51 @@ class Manager:
             else:
                 console.print("Invalid username or password." , style='Error')
                 exit()
-            
-        project_path = 'projects/'
-        with os.scandir(project_path) as entries:
-            if not any(entries):
-                console.print("There is no project data" , style='Error')
-            else:
-                shutil.rmtree(project_path)
-                console.print("All projects has been deleted" , style='Notice')
-                logger.info("All projects has been deleted")
-                os.makedirs(project_path)
-        
-        users_path = 'users/'
-        with os.scandir(users_path) as entries:
-            if not any(entries):
-                console.print("There is no user data" , style='Error')
-            else:
-                shutil.rmtree(users_path)
-                os.remove("emails and usernames.json")
-                console.print("All users has been deleted" , style='Notice')
-                logger.info("All users has been deleted")
-                os.makedirs(users_path)
-                with open ("emails and usernames.json" , 'w') as file:
-                    data = {'emails' : [] , 'usernames' : {}}
-                    json.dump(data,file,indent=4)
+        console.print("Are you sure? (y/n)" , style='Info')
+        choice = input()
+        if choice == 'y':
+            project_path = 'projects/'
+            with os.scandir(project_path) as entries:
+                if not any(entries):
+                    console.print("There is no project data" , style='Error')
+                else:
+                    shutil.rmtree(project_path)
+                    console.print("All projects has been deleted" , style='Notice')
+                    logger.info("All projects has been deleted")
+                    os.makedirs(project_path)
+
+            users_path = 'users/'
+            with os.scandir(users_path) as entries:
+                if not any(entries):
+                    console.print("There is no user data" , style='Error')
+                else:
+                    shutil.rmtree(users_path)
+                    os.remove("emails_and_usernames.json")
+                    console.print("All users has been deleted" , style='Notice')
+                    logger.info("All users has been deleted")
+                    os.makedirs(users_path)
+                    with open ("emails_and_usernames.json" , 'w') as file:
+                        data = {'emails' : [] , 'usernames' : {}}
+                        json.dump(data,file,indent=4)
 
 
 def get_username(ID):
     data = {}
     try : 
-        with open ("emails and usernames.json" , 'r') as file:
+        with open ("emails_and_usernames.json" , 'r') as file:
              data = json.load(file)
     except FileNotFoundError:
-        logger.error("Problem with [emails and usernames.json]")
+        logger.error("Problem with [emails_and_usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
     return data["usernames"][ID]
     
 def get_ID(username):
     data = {}
     try : 
-        with open ("emails and usernames.json" , 'r') as file:
+        with open ("emails_and_usernames.json" , 'r') as file:
              data = json.load(file)
     except FileNotFoundError:
-        logger.error("Problem with [emails and usernames.json]")
+        logger.error("Problem with [emails_and_usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
          
     for ID in data['usernames']:

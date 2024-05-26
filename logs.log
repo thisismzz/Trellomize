@@ -646,3 +646,87 @@
 2024-05-26 23:14:05,147 - __main__ - ERROR - Problem with [emails_and_usernames.json]
 2024-05-26 23:17:31,803 - __main__ - INFO - A new user registered: kimia
 2024-05-26 23:17:39,927 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:24:41,176 - __main__ - ERROR - Problem with [users/kimia/projects.json]
+2024-05-26 23:24:48,681 - __main__ - INFO - A new project [name: kimia, id: cee36890] created by [kimia]
+2024-05-26 23:24:51,200 - __main__ - ERROR - Problem with [emails and usernames.json]
+2024-05-26 23:26:09,650 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:26:14,758 - __main__ - DEBUG - User [kimia] is managing project [id: cee36890]
+2024-05-26 23:26:27,514 - __main__ - DEBUG - A new member [user : shadd] added to project [id : cee36890] collaborators by owner
+2024-05-26 23:26:27,514 - __main__ - DEBUG - A new member [user : mahdi1] added to project [id : cee36890] collaborators by owner
+2024-05-26 23:26:31,228 - __main__ - DEBUG - A member [user : shadd] removed from project [id : cee36890] collaborators
+2024-05-26 23:26:51,508 - __main__ - DEBUG - A new member [user : shadd] added to project [id : cee36890] collaborators by owner
+2024-05-26 23:26:51,508 - __main__ - DEBUG - A new member [user : mahdi2] added to project [id : cee36890] collaborators by owner
+2024-05-26 23:27:27,411 - __main__ - INFO - A new task [name : kimkim , id : [2d80f2a5]] created by [kimia]
+2024-05-26 23:28:09,669 - __main__ - DEBUG - Task [id: 2d80f2a5] status has changed (current: TODO)
+2024-05-26 23:28:10,296 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:28:14,659 - __main__ - DEBUG - Task [id: 2d80f2a5] priority has changed (current: MEDIUM)
+2024-05-26 23:28:15,726 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:28:43,532 - __main__ - DEBUG - Task [id: 2d80f2a5] start time has changed (current: 2024-05-26 23:38:55)
+2024-05-26 23:28:45,134 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:28:59,874 - __main__ - DEBUG - Task [id: 2d80f2a5] description has changed (current: kkkk)
+2024-05-26 23:29:01,616 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:30:01,799 - __main__ - DEBUG - A new comment added to task [id: 2d80f2a5] by user [kimia]
+2024-05-26 23:30:02,371 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:30:14,236 - __main__ - DEBUG - Comment edited on task [id: 2d80f2a5] by user [kimia]
+2024-05-26 23:30:14,895 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:30:32,770 - __main__ - DEBUG - A new assignee [user : mahdi1] added to task.
+2024-05-26 23:30:32,770 - __main__ - DEBUG - A new assignee [user : shadd] added to task.
+2024-05-26 23:30:32,786 - __main__ - DEBUG - A new assignee [user : mahdi2] added to task.
+2024-05-26 23:30:32,786 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:30:40,371 - __main__ - DEBUG - An assignee [user : mahdi1] removed from task.
+2024-05-26 23:30:40,371 - __main__ - DEBUG - Add new history to task [id : 2d80f2a5]
+2024-05-26 23:31:06,174 - __main__ - DEBUG - Task [id = 2d80f2a5] deleted by user [user = kimia]
+2024-05-26 23:31:18,568 - __main__ - INFO - Project [id: cee36890] deleted by owner [user: kimia]
+2024-05-26 23:31:23,602 - __main__ - INFO - User [kimia] logged out
+2024-05-26 23:31:31,554 - __main__ - INFO - User [shadd] has logged in
+2024-05-26 23:31:46,346 - __main__ - DEBUG - User [shadd] is managing project [id: d4af6798]
+2024-05-26 23:31:56,828 - __main__ - DEBUG - Task [id: f9bf972e] status has changed (current: DOING)
+2024-05-26 23:31:57,239 - __main__ - DEBUG - Add new history to task [id : f9bf972e]
+2024-05-26 23:35:11,577 - __main__ - INFO - User [shadd] has logged in
+2024-05-26 23:35:17,665 - __main__ - DEBUG - User [shadd] is managing project [id: 415f81f9]
+2024-05-26 23:35:41,846 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:35:48,079 - __main__ - INFO - A new project [name: kimia, id: 57ecc5e8] created by [kimia]
+2024-05-26 23:35:56,273 - __main__ - DEBUG - User [kimia] is managing project [id: 57ecc5e8]
+2024-05-26 23:36:01,120 - __main__ - INFO - A new task [name : kkkkk , id : [5fb1f4a1]] created by [kimia]
+2024-05-26 23:36:37,384 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:36:40,630 - __main__ - INFO - User [kimia] logged out
+2024-05-26 23:36:48,173 - __main__ - INFO - User [shadd] has logged in
+2024-05-26 23:36:52,327 - __main__ - DEBUG - User [shadd] is managing project [id: 415f81f9]
+2024-05-26 23:37:30,848 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:44:15,076 - __main__ - INFO - User [kimia] has logged in
+2024-05-26 23:44:17,589 - __main__ - DEBUG - User [kimia] is managing project [id: 57ecc5e8]
+2024-05-26 23:45:23,224 - __main__ - DEBUG - Task [id: 5fb1f4a1] status has changed (current: DOING)
+2024-05-26 23:45:23,805 - __main__ - DEBUG - Add new history to task [id : 5fb1f4a1]
+2024-05-26 23:45:29,974 - __main__ - DEBUG - Task [id: 5fb1f4a1] title has changed (current: kkk)
+2024-05-26 23:45:31,907 - __main__ - DEBUG - Add new history to task [id : 5fb1f4a1]
+2024-05-26 23:45:53,404 - __main__ - INFO - User [kimia] logged out
+2024-05-26 23:46:15,338 - __main__ - INFO - User [shadd] has logged in
+2024-05-26 23:46:25,948 - __main__ - DEBUG - User [shadd] is managing project [id: 415f81f9]
+2024-05-26 23:51:28,833 - __manager__ - INFO - All projects has been deleted
+2024-05-27 00:01:49,501 - __main__ - INFO - A new user registered: kimia
+2024-05-27 00:02:03,091 - __main__ - INFO - EXIT (end of program)
+2024-05-27 00:02:59,649 - __manager__ - INFO - All users has been deleted
+2024-05-27 00:10:33,405 - __main__ - INFO - A new user registered: kimia
+2024-05-27 00:10:38,768 - __main__ - INFO - User [kimia] has logged in
+2024-05-27 00:10:42,485 - __main__ - ERROR - Problem with [users/kimia/projects.json]
+2024-05-27 00:10:46,867 - __main__ - INFO - A new project [name: kimia, id: 3ae68414] created by [kimia]
+2024-05-27 00:10:52,066 - __main__ - DEBUG - User [kimia] is managing project [id: 3ae68414]
+2024-05-27 00:11:10,021 - __main__ - INFO - Project [id: 3ae68414] deleted by owner [user: kimia]
+2024-05-27 00:11:21,100 - __main__ - INFO - A new project [name: kimia, id: 4f4bb248] created by [kimia]
+2024-05-27 00:11:23,253 - __main__ - DEBUG - User [kimia] is managing project [id: 4f4bb248]
+2024-05-27 00:11:26,873 - __main__ - INFO - A new task [name : ksfjkjfklf , id : [52bee646]] created by [kimia]
+2024-05-27 00:11:54,714 - __main__ - DEBUG - Task [id = 52bee646] deleted by user [user = kimia]
+2024-05-27 00:18:40,296 - __manager__ - INFO - Manager has logged in successfully
+2024-05-27 00:20:14,096 - __manager__ - INFO - User (kimia) deactivated by Manager
+2024-05-27 00:20:41,798 - __manager__ - INFO - End of Manager program
+2024-05-27 00:21:04,416 - __main__ - INFO - EXIT (end of program)
+2024-05-27 00:21:36,234 - __manager__ - INFO - Manager has logged in successfully
+2024-05-27 00:21:41,198 - __manager__ - INFO - User (kimia) activated by Manager
+2024-05-27 00:21:47,414 - __manager__ - INFO - End of Manager program
+2024-05-27 00:21:59,280 - __main__ - INFO - User [kimia] has logged in
+2024-05-27 00:22:20,256 - __main__ - INFO - User [kimia] logged out
+2024-05-27 00:29:38,876 - __manager__ - INFO - Manager has logged in successfully
+2024-05-27 00:30:40,887 - __manager__ - INFO - Manager has logged in successfully
+2024-05-27 00:31:32,753 - __manager__ - INFO - All projects has been deleted
+2024-05-27 00:31:32,762 - __manager__ - INFO - All users has been deleted
+2024-05-27 00:31:41,556 - __manager__ - INFO - End of Manager program
