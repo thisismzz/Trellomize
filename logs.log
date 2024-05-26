@@ -730,3 +730,21 @@
 2024-05-27 00:31:32,753 - __manager__ - INFO - All projects has been deleted
 2024-05-27 00:31:32,762 - __manager__ - INFO - All users has been deleted
 2024-05-27 00:31:41,556 - __manager__ - INFO - End of Manager program
+2024-05-27 01:06:18,970 - main - DEBUG - Task [id: tester] description has changed (current: New Description)
+2024-05-27 01:06:20,794 - main - DEBUG - Task [id: tester] end time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:06:20,927 - main - DEBUG - Task [id: tester] priority has changed (current: HIGH)
+2024-05-27 01:06:21,115 - main - DEBUG - Task [id: tester] start time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:06:21,306 - main - DEBUG - Task [id: tester] status has changed (current: TODO)
+2024-05-27 01:06:21,669 - main - DEBUG - Task [id: tester] title has changed (current: New Title)
+2024-05-27 01:06:44,831 - main - DEBUG - Task [id: tester] description has changed (current: New Description)
+2024-05-27 01:06:46,343 - main - DEBUG - Task [id: tester] end time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:06:46,539 - main - DEBUG - Task [id: tester] priority has changed (current: HIGH)
+2024-05-27 01:06:46,875 - main - DEBUG - Task [id: tester] start time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:06:47,396 - main - DEBUG - Task [id: tester] status has changed (current: TODO)
+2024-05-27 01:06:47,657 - main - DEBUG - Task [id: tester] title has changed (current: New Title)
+2024-05-27 01:07:47,315 - main - DEBUG - Task [id: tester] description has changed (current: New Description)
+2024-05-27 01:07:48,543 - main - DEBUG - Task [id: tester] end time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:07:48,677 - main - DEBUG - Task [id: tester] priority has changed (current: HIGH)
+2024-05-27 01:07:48,902 - main - DEBUG - Task [id: tester] start time has changed (current: 2024-05-22 22:56:04)
+2024-05-27 01:07:49,152 - main - DEBUG - Task [id: tester] status has changed (current: TODO)
+2024-05-27 01:07:49,406 - main - DEBUG - Task [id: tester] title has changed (current: New Title)
