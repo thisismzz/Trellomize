@@ -74,12 +74,12 @@ class Priority(Enum):
 
 class User:
 
-    def __init__(self, email, username, password, active=True, user_id=None):
+    def __init__(self, email, username, password, active=True, ID = None):
         self.email = email
         self.username = username
         self.password = password
         self.active = active
-        self.id = user_id if user_id is not None else str(uuid.uuid1())[:8]
+        self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
 
     @staticmethod
     def validate_email_format(email):
@@ -153,7 +153,7 @@ class User:
                 data = json.load(file)
 
             data['emails'].append(self.email)
-            data['usernames'][self.id] = self.username
+            data['usernames'][self.ID] = self.username
 
             with open('emails_and_usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
@@ -236,7 +236,7 @@ class User:
         try:
             with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
-            data['usernames'][self.id] = new_username
+            data['usernames'][self.ID] = new_username
             with open('emails_and_usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
             console.print("Username updated successfully.", style="Notice")

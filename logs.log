@@ -643,3 +643,6 @@
 2024-05-26 15:00:45,957 - __main__ - INFO - User [test] has logged in 
 2024-05-26 15:00:51,124 - __main__ - INFO - User [test] logged out
 2024-05-26 15:00:52,522 - __main__ - INFO - EXIT (end of program)
+2024-05-26 23:14:05,147 - __main__ - ERROR - Problem with [emails_and_usernames.json]
+2024-05-26 23:17:31,803 - __main__ - INFO - A new user registered: kimia
+2024-05-26 23:17:39,927 - __main__ - INFO - User [kimia] has logged in
