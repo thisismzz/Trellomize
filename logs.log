@@ -605,3 +605,41 @@
 2024-05-26 13:53:37,184 - __main__ - DEBUG - Task [id = 36e83839] deleted by user [user = test]
 2024-05-26 13:53:48,731 - __main__ - INFO - User [test] logged out
 2024-05-26 13:53:52,260 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:06:12,916 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:07:15,987 - __main__ - INFO - User [test] logged out
+2024-05-26 14:07:18,554 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:07:49,828 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:07:58,090 - __main__ - INFO - User [test] logged out
+2024-05-26 14:07:59,792 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:08:16,615 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:15:21,018 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:15:30,369 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:17:33,968 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:17:37,937 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:17:48,414 - __main__ - INFO - A new task [name : No.1 , id : [647d0c44]] created by [test]
+2024-05-26 14:41:13,997 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:41:19,225 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:42:29,611 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:42:31,238 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:42:50,032 - __main__ - DEBUG - Task [id : 647d0c44] status has changed (current : DOING)
+2024-05-26 14:42:50,803 - __main__ - DEBUG - Add new history to task [id : 647d0c44]
+2024-05-26 14:46:35,748 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:47:51,753 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:51:03,199 - __main__ - INFO - User [test] logged out
+2024-05-26 14:51:10,275 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:51:18,958 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:51:23,837 - __main__ - DEBUG - User [test] is managing project [id: 2a3aeee0]
+2024-05-26 14:51:49,202 - __main__ - INFO - User [test] logged out
+2024-05-26 14:51:51,015 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:54:50,423 - __main__ - INFO - User [test] has logged in 
+2024-05-26 14:58:38,816 - __main__ - INFO - User [test] logged out
+2024-05-26 14:58:41,111 - __main__ - INFO - EXIT (end of program)
+2024-05-26 14:59:45,697 - __main__ - INFO - User [test] has logged in 
+2024-05-26 15:00:00,303 - __main__ - INFO - User [test] changed password
+2024-05-26 15:00:06,649 - __main__ - INFO - User [test] logged out
+2024-05-26 15:00:17,182 - __main__ - INFO - User [test] has logged in 
+2024-05-26 15:00:28,661 - __main__ - INFO - User [test] changed password
+2024-05-26 15:00:38,162 - __main__ - INFO - User [test] logged out
+2024-05-26 15:00:45,957 - __main__ - INFO - User [test] has logged in 
+2024-05-26 15:00:51,124 - __main__ - INFO - User [test] logged out
+2024-05-26 15:00:52,522 - __main__ - INFO - EXIT (end of program)

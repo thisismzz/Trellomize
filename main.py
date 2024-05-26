@@ -212,10 +212,6 @@ class User:
         
 
     def change_username(self, new_username):
-        if new_username == self.username:
-            console.print("Enter a new username not your old username!" , style='Error')
-            return
-        
         old_username = self.username
         self.username = new_username
         os.rename(f"users/{old_username}",f"users/{new_username}")
@@ -228,35 +224,38 @@ class User:
             data['usernames'][self.ID] = new_username
             with open('emails and usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
+            console.print("Username updated successfully.", style="Notice")
             logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
         except FileNotFoundError:
             logger.error("Problem with [emails and usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
     
     def change_password(self, new_password):
-        if bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8') ==  self.password:
+        if bcrypt.checkpw(new_password.encode('utf-8'), self.password.encode('utf-8')):
             console.print("Enter a new password not your old password!" , style="Error")
             return
         self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.save_user_data()
+        console.print("Password updated successfully.", style="Notice")
         logger.info(f"User [{self.username}] changed password")
 
     def change_email(self, new_email):
         if new_email == self.email:
             console.print("Enter a new email not your old email!" , style='Error')
             return
-        old_email = self.email
-        self.email = new_email
-        self.save_user_data()
-
+        
         data = {}
         try :
+            old_email = self.email
+            self.email = new_email
+            self.save_user_data()
             with open('emails and usernames.json', 'r') as file:
                 data = json.load(file)
             data['emails'].remove(old_email)
             data['emails'].append(new_email)
             with open('emails and usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
+            console.print("Email updated successfully.", style="Notice")
             logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
         except FileNotFoundError:
             logger.error("Problem with [emails and usernames.json]")
@@ -276,12 +275,11 @@ class User:
             if choice == "1":
                 clear_screen()
                 console.print("|Editing Username|\n", style="Title")
-                new_username = input("Enter new username (or press enter to go back): ")
+                new_username = input("Enter new username (or press ENTER to go back): ")
                 if new_username == "":
                     return
                 if User.check_unique_username(new_username):
                     self.change_username(new_username)
-                    console.print("Username updated successfully.", style="Notice")
                     wait_for_key_press()
                 else:
                     console.print("Username already exists. Please choose a different one.", style="Error")
@@ -289,21 +287,19 @@ class User:
             elif choice == "2":
                 clear_screen()
                 console.print("|Editing Password|\n", style="Title")
-                new_password = input("Enter new password (or press enter to go back): ")
+                new_password = input("Enter new password (or press ENTER to go back): ")
                 if new_password == "":
                     return
                 self.change_password(new_password)
-                console.print("Password updated successfully.", style="Notice")
                 wait_for_key_press()
             elif choice == "3":
                 clear_screen()
                 console.print("|Editing Email|\n", style="Title")
-                new_email = input("Enter new email (or press enter to go back): ")
+                new_email = input("Enter new email (or press ENTER to go back): ")
                 if new_email == "":
                     return
                 if User.check_unique_email(new_email):
                     self.change_email(new_email)
-                    console.print("Email updated successfully.", style="Notice")
                     wait_for_key_press()
                 else:
                     console.print("Email already exists. Please choose a different one.", style="Error")
@@ -318,7 +314,7 @@ class User:
         clear_screen()
         console.print("|Registration|\n", style="Title")
         console.print("Please provide the following details to create your account:", style="Info")
-        console.print("(or press enter to go back)" , style='Info')
+        console.print("(or press ENTER to go back)" , style='Info')
         email = input("Email: ")
         if email =="":
             return
@@ -354,7 +350,7 @@ class User:
         clear_screen()
         console.print("|Login|\n", style="Title")
         console.print("Please provide your credentials to log in:", style="Info")
-        console.print("(or press enter to go back)" , style='Info')
+        console.print("(or press ENTER to go back)" , style='Info')
         username = input("Username: ")
         if username == "":
             return
@@ -409,7 +405,9 @@ class Task:
     def change_end_time(self):
         clear_screen()
         console.print("|Changing EndTime|\n", style="Title")
-        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): ")
+        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back)")
+        if new_end_time == "":
+            return False
         try:
             self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
             console.print("End time changed successfully.", style="Notice")
@@ -424,7 +422,9 @@ class Task:
     def change_start_time(self):
         clear_screen()
         console.print("|Changing StartTime|\n", style="Title")
-        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): ")
+        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back)")
+        if new_start_time == "":
+            return False
         try:
             self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
             console.print("Start time changed successfully.", style="Notice")
@@ -442,10 +442,10 @@ class Task:
         console.print("Available statuses:", style="Info")
         for idx, status in enumerate(Status, start=1):
             console.print(f"{idx}. {status.value}")
-        new_status_idx = int(input("Enter the number for the new status or '0' to go back: "))
-        if new_status_idx == 0:
-            return  
-        new_status_idx -= 1
+        new_status = input("Enter the number for the new status or press ENTER to go back: ")
+        if new_status == "":
+            return False
+        new_status_idx = int(new_status) - 1
         if 0 <= new_status_idx < len(Status):
             new_status = list(Status)[new_status_idx].name
             self.status = new_status
@@ -464,10 +464,10 @@ class Task:
         console.print("Available priorities:", style="Info")
         for idx, priority in enumerate(Priority, start=1):
             console.print(f"{idx}. {priority.value}")
-        new_priority_idx = int(input("Enter the number for the new priority or '0' to go back: "))
-        if new_priority_idx == 0:
-            return 
-        new_priority_idx -= 1
+        new_priority = input("Enter the number for the new priority or press ENTER to go back: ")
+        if new_priority == "":
+            return False
+        new_priority_idx = int(new_priority) - 1
         if 0 <= new_priority_idx < len(Priority):
             new_priority = list(Priority)[new_priority_idx].name
             self.priority = new_priority
@@ -483,20 +483,26 @@ class Task:
     def change_title(self):
         clear_screen()
         console.print("|Changing Title|\n", style="Title")
-        new_title = input("Enter new title: ")
+        new_title = input("Enter new title: (or press ENTER to go back)")
+        if new_title == "":
+            return False
         self.title = new_title
         console.print(f"Task title changed to {self.title}", style="Notice")
         logger.debug(f"Task [id : {self.ID}] title has changed (current : {self.title})")
         wait_for_key_press()
+        return True
 
     def change_description(self):
         clear_screen()
         console.print("|Changing Description|\n", style="Title")
-        new_description = input("Enter new description: ")
+        new_description = input("Enter new description: (or press ENTER to go back)")
+        if new_description == "":
+            return False
         self.description = new_description
         console.print(f"Task description changed to {self.description}", style="Notice")
         logger.debug(f"Task [id : {self.ID}] description has changed (current : {self.description})")
         wait_for_key_press()
+        return True
 
     def view_comments(self):
         if not self.comments:
@@ -520,11 +526,14 @@ class Task:
     def add_comment(self, userID, is_owner: bool):
         clear_screen()
         console.print("|Adding Comment To Task|\n", style="Title")
-        comment = input("Enter new comment: ")
-        self.comments.append({"user": userID, "comment": comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
+        new_comment = input("Enter new comment: (or press ENTER to go back)")
+        if new_comment == "":
+            return False
+        self.comments.append({"user": userID, "comment": new_comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
         console.print("Comment added successfully.", style="Notice")
         logger.debug(f"A new comment added to task [id : {self.ID}] by user [{get_username(userID)}]")
         wait_for_key_press()
+        return True
 
     def remove_comment(self , user : User):
         if not self.comments:
@@ -536,9 +545,10 @@ class Task:
             clear_screen()
             console.print("|Removing Comment From Task|\n", style="Title")
             self.view_comments()
-            comment_idx = int(input("Enter the number of the comment to remove or '0' to go back: ")) - 1
-            if comment_idx == -1:
+            comment_idx = int(input("Enter the number of the comment to remove or press ENTER to go back: "))
+            if comment_idx == "":
                 return False
+            comment_idx = comment_idx - 1
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.ID:
                     removed_comment = self.comments.pop(comment_idx)
@@ -569,9 +579,10 @@ class Task:
             clear_screen()
             console.print("|Editing Comment|\n", style="Title")
             self.view_comments()
-            comment_idx = int(input("Enter the number of the comment to edit or '0' to go back: ")) - 1
-            if comment_idx == -1:
+            comment = int(input("Enter the number of the comment to edit or press Enter to go back: "))
+            if comment == "":
                 return False
+            comment_idx = int(comment) - 1
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.ID:
                     new_comment = input("Enter new comment: ")
@@ -775,8 +786,8 @@ class Project:
         for idx, username in enumerate(all_usernames, start=1):
             console.print(f"{idx}. {username}")
 
-        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or '0' to go back: ").split(',')))
-        if selected_indices[0] == "0":
+        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        if selected_indices[0] == "":
             return
         
         for idx_str in selected_indices:
@@ -806,8 +817,8 @@ class Project:
         for idx, member in enumerate(members_to_display, start=1):
             console.print(f"{idx}. {member}")
 
-        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or '0' to go back: ").split(',')))
-        if selected_indices[0] == "0":
+        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        if selected_indices[0] == "":
             return
 
         for idx_str in selected_indices:
@@ -870,8 +881,8 @@ class Project:
             if member != self.owner:
                 console.print(f"{idx}. {get_username(member)}")
 
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or '0' to go back: ").split(',')))
-        if selected_indices[0] == "0":
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to assign as members (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        if selected_indices[0] == "":
             return
         
         member_ID = []
@@ -904,8 +915,8 @@ class Project:
         for idx, member in enumerate(task.assignees, start=1):
             console.print(f"{idx}. {get_username(member)}")
         
-        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or '0' to go back: ").split(',')))
-        if selected_indices[0] == "0":
+        selected_indices =  list(map(lambda x:x.strip(),input("Enter the numbers of the users to remove from task (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        if selected_indices[0] == "":
             return
         
         member_ID = []
@@ -924,7 +935,7 @@ class Project:
             self.remove_assignee(member,task)
         task.add_to_history(user.ID, action="remove assignee", members=member_ID)
 
-    def create_task_menu(self, user:User):
+    def create_manage_task(self, user:User):
         if self.owner != user.ID:
             console.print("Only the project owner can create tasks.", style="Error")
             wait_for_key_press()
@@ -933,11 +944,10 @@ class Project:
             clear_screen()
             console.print("|Creating New Task|\n", style="Title")
             console.print("Please provide the following details to create a new task:", style="Info")
+            console.print("(or press ENTER to go back)" , style="Info")
             title = input("Task Title: ")
-            if not title:
-                console.print("Title cannot be empty. Please enter a valid title.", style="Error")
-                wait_for_key_press()
-                continue
+            if title == "":
+                return
             description = input("Task Description: ")
             new_task = Task(title , description)
             self.tasks[new_task.ID]=vars(new_task)
@@ -1010,13 +1020,13 @@ class Project:
                 
                 console.print(main_table)
             
-                task_id = input("Enter task ID to manage (or '0' to go back): ")
-                if task_id == "0":
+                task_id = input("Enter task ID to manage (or press ENTER to go back): ")
+                if task_id == "":
                     return
                 flag = False
                 for task in self.tasks.values():
                     if task["ID"] == task_id:
-                        self.task_menu(user, Task(**task))
+                        self.manage_task(user, Task(**task))
                         flag = True
                         break
                 if not flag:
@@ -1028,8 +1038,8 @@ class Project:
         while True:
             clear_screen()
             console.print("|Creating new Project|\n" , style="Title")
-            title = input("Enter project title (or '0' to go back): ")
-            if title == '0':
+            title = input("Enter project title (or press ENTER to go back): ")
+            if title == '':
                 return  
             if title:  
                 break
@@ -1084,7 +1094,7 @@ class Project:
 
             choice = input("Enter your choice: ")
             if choice == "1":
-                self.create_task_menu(user)
+                self.create_manage_task(user)
             elif choice == "2":
                 self.view_project_tasks(user)
             elif choice == "3":
@@ -1102,6 +1112,7 @@ class Project:
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
     def change_task_fields(self, user : User , task : Task):
         while True:
@@ -1141,21 +1152,22 @@ class Project:
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "5":
-                task.change_title()
-                task.add_to_history(user.ID , action = "change title" , new_amount = task.title)
-                self.update_task(task)
-                self.save_project_data()
+                if task.change_title():
+                    task.add_to_history(user.ID , action = "change title" , new_amount = task.title)
+                    self.update_task(task)
+                    self.save_project_data()
             elif choice == "6":
-                task.change_description()
-                task.add_to_history(user.ID , action = "change description" , new_amount = task.description)
-                self.update_task(task)
-                self.save_project_data()
+                if task.change_description():
+                    task.add_to_history(user.ID , action = "change description" , new_amount = task.description)
+                    self.update_task(task)
+                    self.save_project_data()
             elif choice == "7":
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
-    def task_menu(self, user: User, task: Task):
+    def manage_task(self, user: User, task: Task):
         if user.ID not in task.assignees and user.ID != self.owner:
             console.print("You don't have access to modify this task.", style='Error')
             wait_for_key_press()
@@ -1198,6 +1210,7 @@ class Project:
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
     def manage_comments(self, task: Task, user: User):
         while True:
@@ -1216,10 +1229,10 @@ class Project:
                 wait_for_key_press()
             
             elif choice == "2":
-                task.add_comment(user.ID, user.ID == self.owner)
-                task.add_to_history(user.ID, action="add comment", message=task.comments[-1])
-                self.update_task(task)
-                self.save_project_data()
+                if task.add_comment(user.ID, user.ID == self.owner):
+                    task.add_to_history(user.ID, action="add comment", message=task.comments[-1])
+                    self.update_task(task)
+                    self.save_project_data()
 
             elif choice == "3":
                 if task.edit_comment(user):
@@ -1237,6 +1250,7 @@ class Project:
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
     def manage_assignees(self, task: Task, user: User):
         while True:
@@ -1268,6 +1282,7 @@ class Project:
                 break
             else:
                 console.print("Invalid choice.", style="Error")
+                wait_for_key_press()
 
     def view_user_projects(user: User):
         data = User.load_user_projects(user.username)
@@ -1295,8 +1310,8 @@ class Project:
         console.print(table)
 
         while True:
-            project_number = input("Enter project number to manage (or '0' to go back): ")
-            if project_number == "0":
+            project_number = input("Enter project number to manage (or press ENTER to go back): ")
+            if project_number == "":
                 return
             if project_number in project_map:
                 project = project_map[project_number]
