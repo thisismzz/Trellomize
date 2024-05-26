@@ -12,24 +12,26 @@ from rich.console import Console
 from rich.table import Table
 from rich.theme import Theme
 
-custom_theme = Theme({
-    "Title":  "bold Magenta",
+CUSTOM_THEME = Theme({
+    "Title": "bold Magenta",
     "Info": "blue",
     "Notice": "bold green",
     "Error": "bold red"
 })
 
-console = Console(theme=custom_theme)
+console = Console(theme=CUSTOM_THEME)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler  = logging.FileHandler('logs.log' , mode='a')
+handler = logging.FileHandler('logs.log', mode='a')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 def wait_for_key_press():
     console.print("\nPress any key to continue...", style="yellow")
@@ -37,7 +39,9 @@ def wait_for_key_press():
         import msvcrt
         return msvcrt.getch()
     else:
-        import sys, tty, termios
+        import sys
+        import tty
+        import termios
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -46,10 +50,12 @@ def wait_for_key_press():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
+    
 
 #........................#
 #        CLASSES         #
 #........................#
+
 
 class Status(Enum):
     BACKLOG = 'BACKLOG'
@@ -58,60 +64,64 @@ class Status(Enum):
     DONE = 'DONE'
     ARCHIVED = 'ARCHIVED'
 
+
 class Priority(Enum):
     CRITICAL = 'CRITICAL'
     HIGH = 'HIGH'
     MEDIUM = 'MEDIUM'
     LOW = 'LOW'
 
-#........................................................................#
 
 class User:
-        
-    def __init__(self, email, username, password, active = True , ID = None):
+
+    def __init__(self, email, username, password, active=True, user_id=None):
         self.email = email
         self.username = username
         self.password = password
         self.active = active
-        self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
+        self.id = user_id if user_id is not None else str(uuid.uuid1())[:8]
 
+    @staticmethod
     def validate_email_format(email):
         email_regex = r'^[\w\.\+\-]+\@[\w]+\.[a-z]{2,3}$'
         return re.match(email_regex, email) is not None
-
+    
+    @staticmethod
     # def validate_username_format(username):
     #     username_regex = r'^[a-zA-Z0-9_]+$'
     #     if re.match(username_regex, username) and 3 <= len(username) <= 20:
     #         return True
     #     return False
 
+    @staticmethod
     def check_unique_email(email):
         data = {}
-        try : 
-            with open ('emails and usernames.json' , 'r') as file:
+        try:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
         except FileNotFoundError:
-            logger.error("Problem with [emails and usernames.json]")
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
-        
+
         if email in data['emails']:
             return False
         return True
 
+    @staticmethod
     def check_unique_username(username):
         data = {}
-        
         try:
-            with open ('emails and usernames.json' , 'r') as file:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
-        except FileNotFoundError as e:
-            logger.error("Problem with [emails and usernames.json]")
+        except FileNotFoundError:
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
-        
+
         if username in list(data['usernames'].values()):
             return False
         return True
     
+    @staticmethod
     # def validate_password_strength(password):
     #     if len(password) < 8:
     #         return False
@@ -124,34 +134,35 @@ class User:
     #     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
     #         return False
     #     return True
-    
+
+    @staticmethod
     def get_all_usernames():
         data = {}
         try:
-            with open ('emails and usernames.json' , 'r') as file:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
         except FileNotFoundError:
-            logger.error("Problem with [emails and usernames.json]")
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
         return list(data['usernames'].values())
-    
+
     def add_email_username(self):
         data = {}
         try:
-            with open ('emails and usernames.json' , 'r') as file:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
 
             data['emails'].append(self.email)
-            data['usernames'][self.ID] = self.username
+            data['usernames'][self.id] = self.username
 
-            with open ('emails and usernames.json' , 'w') as file:
-                data = json.dump(data , file , indent=4)
+            with open('emails_and_usernames.json', 'w') as file:
+                json.dump(data, file, indent=4)
         except FileNotFoundError:
-            logger.error("Problem with [emails and usernames.json]")
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
 
-    def save_user_data (self):
-        user_folder = "users/" + self.username
+    def save_user_data(self):
+        user_folder = f"users/{self.username}"
         os.makedirs(user_folder, exist_ok=True)
         json_file_path = os.path.join(user_folder, f"{self.username}.json")
         try:
@@ -161,78 +172,82 @@ class User:
             logger.error(f"Problem with [{json_file_path}]")
             raise FileNotFoundError("File Error. Terminating Program")
 
-    def load_user_data (username):
-        user_folder = "users/" + username
+    @staticmethod
+    def load_user_data(username):
+        user_folder = f"users/{username}"
         json_file_path = os.path.join(user_folder, f"{username}.json")
-        try : 
+        try:
             with open(json_file_path, "r") as json_file:
                 return json.load(json_file)
         except FileNotFoundError:
             logger.error(f"Problem with [{json_file_path}]")
             raise FileNotFoundError("File Error. Terminating Program")
-        
-    def add_my_project(username,project_id):
-        path = "users/" + username + "/projects.json"
+
+    @staticmethod
+    def add_my_project(username, project_id):
+        path = f"users/{username}/projects.json"
         data = {}
         if os.path.exists(path):
             with open(path, "r") as file:
                 data = json.load(file)
             data['projects'].append(project_id)
         else:
-            data = {'projects' : [project_id]}
+            data = {'projects': [project_id]}
         try:
             with open(path, "w") as file:
-                json.dump(data , file , indent=4)
+                json.dump(data, file, indent=4)
         except FileNotFoundError:
             logger.error(f"Problem with [{path}]")
             raise FileNotFoundError("File Error. Terminating Program")
 
-    def remove_project(ID , project_id):
-        path = "users/" + get_username(ID) + "/projects.json"
+    @staticmethod
+    def remove_project(user_id, project_id):
+        path = f"users/{get_username(user_id)}/projects.json"
         data = {}
-        try : 
+        try:
             with open(path, "r") as file:
                 data = json.load(file)
 
             data['projects'].remove(project_id)
             with open(path, "w") as file:
-                json.dump(data,file,indent=4)
+                json.dump(data, file, indent=4)
         except FileNotFoundError:
             logger.error(f"Problem with [{path}]")
             raise FileNotFoundError("File Error. Terminating Program")
-    
+
+    @staticmethod
     def load_user_projects(username):
-        path = "users/" + username + "/projects.json"
+        path = f"users/{username}/projects.json"
         try:
             with open(path, "r") as file:
-                    return json.load(file)
+                return json.load(file)
         except FileNotFoundError:
             logger.error(f"Problem with [{path}]")
             return None
-        
 
     def change_username(self, new_username):
         old_username = self.username
         self.username = new_username
-        os.rename(f"users/{old_username}",f"users/{new_username}")
-        os.rename(f"users/{new_username}/{old_username}.json",f"users/{new_username}/{new_username}.json")
+        os.rename(f"users/{old_username}", f"users/{new_username}")
+        os.rename(f"users/{new_username}/{old_username}.json",
+                  f"users/{new_username}/{new_username}.json")
         self.save_user_data()
         data = {}
         try:
-            with open('emails and usernames.json', 'r') as file:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
-            data['usernames'][self.ID] = new_username
-            with open('emails and usernames.json', 'w') as file:
+            data['usernames'][self.id] = new_username
+            with open('emails_and_usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
             console.print("Username updated successfully.", style="Notice")
             logger.info(f"User [{self.username}] changed username from {old_username} to {new_username}")
         except FileNotFoundError:
-            logger.error("Problem with [emails and usernames.json]")
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
-    
+
     def change_password(self, new_password):
         if bcrypt.checkpw(new_password.encode('utf-8'), self.password.encode('utf-8')):
-            console.print("Enter a new password not your old password!" , style="Error")
+            console.print("Enter a new password not your old password!", style="Error")
             return
         self.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         self.save_user_data()
@@ -241,26 +256,26 @@ class User:
 
     def change_email(self, new_email):
         if new_email == self.email:
-            console.print("Enter a new email not your old email!" , style='Error')
+            console.print("Enter a new email not your old email!", style='Error')
             return
-        
+
         data = {}
-        try :
+        try:
             old_email = self.email
             self.email = new_email
             self.save_user_data()
-            with open('emails and usernames.json', 'r') as file:
+            with open('emails_and_usernames.json', 'r') as file:
                 data = json.load(file)
             data['emails'].remove(old_email)
             data['emails'].append(new_email)
-            with open('emails and usernames.json', 'w') as file:
+            with open('emails_and_usernames.json', 'w') as file:
                 json.dump(data, file, indent=4)
             console.print("Email updated successfully.", style="Notice")
             logger.info(f"User [{self.username}] changed email from {old_email} to {new_email}")
         except FileNotFoundError:
-            logger.error("Problem with [emails and usernames.json]")
+            logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
-        
+
     def edit_profile_menu(self):
         while True:
             clear_screen()
@@ -270,8 +285,7 @@ class User:
             console.print("2. Password")
             console.print("3. Email")
             console.print("4. Back")
-
-            choice = input("Enter your choice: ")
+            choice = input("Choose an option: ")
             if choice == "1":
                 clear_screen()
                 console.print("|Editing Username|\n", style="Title")
@@ -310,25 +324,22 @@ class User:
                 console.print("Invalid choice.", style="Error")
                 wait_for_key_press()
 
+    @staticmethod
     def register():
         clear_screen()
         console.print("|Registration|\n", style="Title")
         console.print("Please provide the following details to create your account:", style="Info")
-        console.print("(or press ENTER to go back)" , style='Info')
+        console.print("(or press ENTER to go back)", style='Info')
         email = input("Email: ")
-        if email =="":
+        if email == "":
             return
         username = input("Username: ")
         password = input("Password: ")
         try:
             if not User.validate_email_format(email):
                 raise ValueError("Invalid email format! Please enter a valid email address in the format 'example@example.com'.")
-            # if not User.validate_username_format(username):
-            #     raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
             if not User.check_unique_username(username):
                 raise ValueError("Username already exists! Please choose a different username.")
-            # if not User.validate_password_strength(password):
-            #     raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
             if not User.check_unique_email(email):
                 raise ValueError("Email already exists! Please enter a different email.")
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -336,27 +347,28 @@ class User:
             new_user.save_user_data()
             new_user.add_email_username()
             console.print("Account created successfully.", style="Notice")
-            logger.info(f"A new user registered : {new_user.username}")
+            logger.info(f"A new user registered: {new_user.username}")
             wait_for_key_press()
-        
+
         except ValueError as e:
             console.print(str(e), style="Error")
             wait_for_key_press()
         except FileNotFoundError as e:
-            console.print(e , style="Error")
+            console.print(e, style="Error")
             exit()
-            
+
+    @staticmethod
     def login():
         clear_screen()
         console.print("|Login|\n", style="Title")
         console.print("Please provide your credentials to log in:", style="Info")
-        console.print("(or press ENTER to go back)" , style='Info')
+        console.print("(or press ENTER to go back)", style='Info')
         username = input("Username: ")
         if username == "":
             return
-        password = maskpass.advpass("Password: ", mask="*")  # Using maskpass to hide password input with '*'
+        password = maskpass.advpass("Password: ", mask="*")
         path = f"users/{username}/{username}.json"
-        
+
         if os.path.exists(path):
             user_data = User.load_user_data(username)
             if user_data["username"] == username and bcrypt.checkpw(password.encode('utf-8'), user_data["password"].encode('utf-8')):
@@ -365,18 +377,17 @@ class User:
                     wait_for_key_press()
                     return None
                 console.print("Login successful.", style="Notice")
-                logger.info(f"User [{user_data['username']}] has logged in ")
+                logger.info(f"User [{user_data['username']}] has logged in")
                 wait_for_key_press()
                 return User(**user_data)
 
         console.print("Incorrect username or password.", style="Error")
         wait_for_key_press()
-    
-#........................................................................#
-    
+
+
 class Task:
-        
-    def __init__(self, title, description, priority = None, status = None, ID = None, start_time = None, end_time = None, assignees = [], comments = [], history = []):
+
+    def __init__(self, title, description, priority=None, status=None, ID=None, start_time=None, end_time=None, assignees=None, comments=None, history=None):
         self.title = title
         self.description = description
         self.priority = priority if priority is not None else Priority.LOW.value
@@ -384,10 +395,9 @@ class Task:
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
         self.start_time = start_time if start_time is not None else str(datetime.now())
         self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
-        self.assignees = assignees 
-        self.comments = comments
-        self.history = history
-        
+        self.assignees = assignees if assignees is not None else []
+        self.comments = comments if comments is not None else []
+        self.history = history if history is not None else []
 
     def view_task(self):
         table = Table(title=f"Task: {self.title}", style="cyan")
@@ -411,13 +421,13 @@ class Task:
         try:
             self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
             console.print("End time changed successfully.", style="Notice")
-            logger.debug(f"Task [id : {self.ID}] end time has changed (current : {self.end_time})")
+            logger.debug(f"Task [id: {self.ID}] end time has changed (current: {self.end_time})")
             wait_for_key_press()
             return True
         except ValueError:
             console.print("Invalid date/time format. Please use the format YYYY-MM-DD HH:MM:SS.", style="Error")
-            return False
             wait_for_key_press()
+            return False
 
     def change_start_time(self):
         clear_screen()
@@ -428,7 +438,7 @@ class Task:
         try:
             self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
             console.print("Start time changed successfully.", style="Notice")
-            logger.debug(f"Task [id : {self.ID}] start time has changed (current : {self.start_time})")
+            logger.debug(f"Task [id: {self.ID}] start time has changed (current: {self.start_time})")
             wait_for_key_press()
             return True
         except ValueError:
@@ -445,16 +455,21 @@ class Task:
         new_status = input("Enter the number for the new status or press ENTER to go back: ")
         if new_status == "":
             return False
-        new_status_idx = int(new_status) - 1
-        if 0 <= new_status_idx < len(Status):
-            new_status = list(Status)[new_status_idx].name
-            self.status = new_status
-            console.print("Task status changed successfully.", style="Notice")
-            logger.debug(f"Task [id : {self.ID}] status has changed (current : {self.status})")
-            wait_for_key_press()
-            return True
-        else:
-            console.print("Invalid status number.", style="Error")
+        try:
+            new_status_idx = int(new_status) - 1
+            if 0 <= new_status_idx < len(Status):
+                new_status = list(Status)[new_status_idx].name
+                self.status = new_status
+                console.print("Task status changed successfully.", style="Notice")
+                logger.debug(f"Task [id: {self.ID}] status has changed (current: {self.status})")
+                wait_for_key_press()
+                return True
+            else:
+                console.print("Invalid status number.", style="Error")
+                wait_for_key_press()
+                return False
+        except ValueError:
+            console.print("Invalid input. Please enter a number.", style="Error")
             wait_for_key_press()
             return False
 
@@ -467,16 +482,21 @@ class Task:
         new_priority = input("Enter the number for the new priority or press ENTER to go back: ")
         if new_priority == "":
             return False
-        new_priority_idx = int(new_priority) - 1
-        if 0 <= new_priority_idx < len(Priority):
-            new_priority = list(Priority)[new_priority_idx].name
-            self.priority = new_priority
-            console.print("Task priority changed successfully.", style="Notice")
-            logger.debug(f"Task [id : {self.ID}] priority has changed (current : {self.priority})")
-            wait_for_key_press()
-            return True
-        else:
-            console.print("Invalid priority number.", style="Error")
+        try:
+            new_priority_idx = int(new_priority) - 1
+            if 0 <= new_priority_idx < len(Priority):
+                new_priority = list(Priority)[new_priority_idx].name
+                self.priority = new_priority
+                console.print("Task priority changed successfully.", style="Notice")
+                logger.debug(f"Task [id: {self.ID}] priority has changed (current: {self.priority})")
+                wait_for_key_press()
+                return True
+            else:
+                console.print("Invalid priority number.", style="Error")
+                wait_for_key_press()
+                return False
+        except ValueError:
+            console.print("Invalid input. Please enter a number.", style="Error")
             wait_for_key_press()
             return False
 
@@ -488,7 +508,7 @@ class Task:
             return False
         self.title = new_title
         console.print(f"Task title changed to {self.title}", style="Notice")
-        logger.debug(f"Task [id : {self.ID}] title has changed (current : {self.title})")
+        logger.debug(f"Task [id: {self.ID}] title has changed (current: {self.title})")
         wait_for_key_press()
         return True
 
@@ -500,7 +520,7 @@ class Task:
             return False
         self.description = new_description
         console.print(f"Task description changed to {self.description}", style="Notice")
-        logger.debug(f"Task [id : {self.ID}] description has changed (current : {self.description})")
+        logger.debug(f"Task [id: {self.ID}] description has changed (current: {self.description})")
         wait_for_key_press()
         return True
 
@@ -512,30 +532,35 @@ class Task:
             console.print("|Task's Comments|\n", style="Title")
 
             table = Table(title="Comments")
-            table.add_column("No.", justify="center", style="White", width=5)
+            table.add_column("No.", justify="center", style="white", width=5)
             table.add_column("Username", justify="center", style="cyan", no_wrap=True, width=15)
             table.add_column("Role", justify="center", style="magenta", width=15)
             table.add_column("Comment", justify="center", style="green")
             table.add_column("Timestamp", justify="center", style="yellow", width=25)
 
             for idx, comment in enumerate(self.comments, start=1):
-                table.add_row(str(idx),get_username(comment['user']),comment['role'],comment['comment'],comment['timestamp'])
+                table.add_row(str(idx), get_username(comment['user']), comment['role'], comment['comment'], comment['timestamp'])
 
             console.print(table)
 
-    def add_comment(self, userID, is_owner: bool):
+    def add_comment(self, user_id, is_owner: bool):
         clear_screen()
         console.print("|Adding Comment To Task|\n", style="Title")
         new_comment = input("Enter new comment: (or press ENTER to go back)")
         if new_comment == "":
             return False
-        self.comments.append({"user": userID, "comment": new_comment, "role": "owner" if is_owner else "assignee", "timestamp": str(datetime.now())[:19]})
+        self.comments.append({
+            "user": user_id,
+            "comment": new_comment,
+            "role": "owner" if is_owner else "assignee",
+            "timestamp": str(datetime.now())[:19]
+        })
         console.print("Comment added successfully.", style="Notice")
-        logger.debug(f"A new comment added to task [id : {self.ID}] by user [{get_username(userID)}]")
+        logger.debug(f"A new comment added to task [id: {self.ID}] by user [{get_username(user_id)}]")
         wait_for_key_press()
         return True
 
-    def remove_comment(self , user : User):
+    def remove_comment(self, user: User):
         if not self.comments:
             console.print("No comments available for this task to remove.", style="Error")
             wait_for_key_press()
@@ -545,19 +570,19 @@ class Task:
             clear_screen()
             console.print("|Removing Comment From Task|\n", style="Title")
             self.view_comments()
-            comment_idx = int(input("Enter the number of the comment to remove or press ENTER to go back: "))
+            comment_idx = input("Enter the number of the comment to remove or press ENTER to go back: ")
             if comment_idx == "":
                 return False
-            comment_idx = comment_idx - 1
+            comment_idx = int(comment_idx) - 1
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.ID:
                     removed_comment = self.comments.pop(comment_idx)
                     console.print(f"Comment by {get_username(removed_comment['user'])} removed successfully.", style="Notice")
-                    logger.debug(f"Comment removed from task [id : {self.ID}] by user [{get_username(removed_comment['user'])}]")
+                    logger.debug(f"Comment removed from task [id: {self.ID}] by user [{get_username(removed_comment['user'])}]")
                     wait_for_key_press()
                     return True
                 else:
-                    console.print("This comment is not belong to you." , style="Error")
+                    console.print("This comment does not belong to you.", style="Error")
                     wait_for_key_press()
                     return False
             else:
@@ -569,7 +594,7 @@ class Task:
             wait_for_key_press()
             return False
 
-    def edit_comment(self , user : User):
+    def edit_comment(self, user: User):
         if not self.comments:
             console.print("No comments available for this task to edit.", style="Error")
             wait_for_key_press()
@@ -579,21 +604,21 @@ class Task:
             clear_screen()
             console.print("|Editing Comment|\n", style="Title")
             self.view_comments()
-            comment = int(input("Enter the number of the comment to edit or press Enter to go back: "))
-            if comment == "":
+            comment_idx = input("Enter the number of the comment to edit or press Enter to go back: ")
+            if comment_idx == "":
                 return False
-            comment_idx = int(comment) - 1
+            comment_idx = int(comment_idx) - 1
             if 0 <= comment_idx < len(self.comments):
                 if self.comments[comment_idx]["user"] == user.ID:
                     new_comment = input("Enter new comment: ")
                     self.comments[comment_idx]['comment'] = new_comment
                     self.comments[comment_idx]['timestamp'] = str(datetime.now())[:19]
                     console.print("Comment edited successfully.", style="Notice")
-                    logger.debug(f"Comment edited on task [id : {self.ID}] by user [{get_username(self.comments[comment_idx]['user'])}]")
+                    logger.debug(f"Comment edited on task [id: {self.ID}] by user [{get_username(self.comments[comment_idx]['user'])}]")
                     wait_for_key_press()
                     return True
                 else:
-                    console.print("This comment is not belong to you." , style="Error")
+                    console.print("This comment does not belong to you.", style="Error")
                     wait_for_key_press()
                     return False
             else:
@@ -675,29 +700,33 @@ class Task:
         table.add_column("User", style="cyan", justify="center", width=15)
         table.add_column("Action", style="magenta", justify="center", width=20)
         table.add_column("Amount", style="green", justify="center")
-        table.add_column("Timestamp", style="yellow", justify="center", width=25)  
+        table.add_column("Timestamp", style="yellow", justify="center", width=25)
 
         for index, entry in enumerate(self.history, start=1):
             user = get_username(entry.get("user", ""))
             action = entry.get("action", "")
-            amount = entry.get("new status", "") or entry.get("new priority", "") or entry.get("new start time", "") or entry.get("new end time", "") or entry.get("new title", "") or entry.get("new description", "") or entry.get("message","")[:20] or entry.get("description")
-            if amount == None:
-                amount = str(list(map(lambda x:get_username(x),entry.get("new assignees", ""))))
+            amount = entry.get("new status", "") or \
+                     entry.get("new priority", "") or \
+                     entry.get("new start time", "") or \
+                     entry.get("new end time", "") or \
+                     entry.get("new title", "") or \
+                     entry.get("new description", "") or \
+                     entry.get("message", "")[:20] or \
+                     entry.get("description")
+            if amount is None:
+                amount = str([get_username(x) for x in entry.get("new assignees", "")])
             if amount == "[]":
-                amount = str(list(map(lambda x:get_username(x),entry.get("removed assignees", ""))))
-            timestamp = entry.get("timestamp", "")                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                amount = str([get_username(x) for x in entry.get("removed assignees", "")])
+            timestamp = entry.get("timestamp", "")
             table.add_row(str(index), user, action, amount, timestamp)
-            
-            
 
         console.print(table)
         wait_for_key_press()
 
-#........................................................................#
 
 class Project:
 
-    def __init__(self, title, owner , tasks = {} , collaborators = None, ID = None):
+    def __init__(self, title, owner, tasks={}, collaborators=None, ID=None):
         self.title = title
         self.owner = owner
         self.tasks = tasks
@@ -708,7 +737,7 @@ class Project:
         project_folder = "projects/"
         os.makedirs(project_folder, exist_ok=True)
         json_file_path = os.path.join(project_folder, f"{self.ID}.json")
-        try : 
+        try:
             with open(json_file_path, "w") as json_file:
                 json.dump(vars(self), json_file, indent=4)
         except FileNotFoundError:
@@ -724,11 +753,11 @@ class Project:
             logger.error(f"Problem with [{json_file_path}]")
             raise FileNotFoundError("File Error. Terminating Program")
 
-    def update_task(self,new_task:Task):
+    def update_task(self, new_task: Task):
         self.tasks[new_task.ID] = vars(new_task)
 
     def view_members(self):
-        if len(self.collaborators) == 1:  
+        if len(self.collaborators) == 1:
             console.print("There are no project members to display.", style="Error")
             wait_for_key_press()
             return
@@ -744,24 +773,24 @@ class Project:
         if member not in self.collaborators:
             self.collaborators.append(member)
             console.print(f"Member '{get_username(member)}' added to project successfully.", style="Notice")
-            User.add_my_project(get_username(member),self.ID)
+            User.add_my_project(get_username(member), self.ID)
             self.save_project_data()
             logger.debug(f"A new member [user : {get_username(member)}] added to project [id : {self.ID}] collaborators by owner")
         else:
-            console.print(f"User {get_username(member)} has already been added" , style='Error')
+            console.print(f"User {get_username(member)} has already been added", style='Error')
 
     def remove_member(self, user_ID):
         if user_ID in self.collaborators:
             self.collaborators.remove(user_ID)
-            
-            #delete project id from user's project.json
-            User.remove_project(user_ID,self.ID)
-            
-            #erase user's name from any tasks
+
+            # delete project id from user's project.json
+            User.remove_project(user_ID, self.ID)
+
+            # erase user's name from any tasks
             for task in self.tasks.values():
                 if user_ID in task["assignees"]:
-                    self.remove_assignee(user_ID,Task(**task))
-            
+                    self.remove_assignee(user_ID, Task(**task))
+
             self.save_project_data()
             console.print(f"Member '{get_username(user_ID)}' removed from project successfully.", style="Notice")
             logger.debug(f"A member [user : {get_username(user_ID)}] removed from project [id : {self.ID}] collaborators")
@@ -772,12 +801,12 @@ class Project:
         if self.owner != user.ID:
             console.print("Only the project owner can add members.", style="Error")
             return
-        
+
         all_usernames = User.get_all_usernames()
         if not all_usernames:
             console.print("There are no available users to add to the project.", style="Error")
             return
-        
+
         clear_screen()
         console.print("|Adding Member To Project|\n", style="Title")
         console.print("Available users:", style='Info')
@@ -786,10 +815,10 @@ class Project:
         for idx, username in enumerate(all_usernames, start=1):
             console.print(f"{idx}. {username}")
 
-        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to add as members (e.g.:'1,2') or press ENTER to go back: ").split(',')))
         if selected_indices[0] == "":
             return
-        
+
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
@@ -805,7 +834,7 @@ class Project:
         if self.owner != user.ID:
             console.print("Only the project owner can remove members.", style="Error")
             return
-        
+
         members_to_display = [get_username(member) for member in self.collaborators if member != self.owner]
         if not members_to_display:
             console.print("There are no project members to remove.", style="Error")
@@ -817,7 +846,7 @@ class Project:
         for idx, member in enumerate(members_to_display, start=1):
             console.print(f"{idx}. {member}")
 
-        selected_indices = list(map(lambda x:x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or press ENTER to go back: ").split(',')))
+        selected_indices = list(map(lambda x: x.strip(), input("Enter the numbers of the users to remove from the project (e.g.:'1,2') or press ENTER to go back: ").split(',')))
         if selected_indices[0] == "":
             return
 
@@ -989,37 +1018,39 @@ class Project:
                 doing_table = Table()
                 done_table = Table()
                 archived_table = Table()
-                
-                backlog_table.add_column("Tack ID",justify="center", width=50)
-                backlog_table.add_column("Task title",justify="center", width=50)
-                todo_table.add_column("Tack ID",justify="center", width=50)
-                todo_table.add_column("Task title",justify="center", width=50)
-                doing_table.add_column("Tack ID",justify="center", width=50)
-                doing_table.add_column("Task title",justify="center", width=50)
-                done_table.add_column("Tack ID",justify="center", width=50)
-                done_table.add_column("Task title",justify="center", width=50)
-                archived_table.add_column("Tack ID",justify="center", width=50)
-                archived_table.add_column("Task title",justify="center", width=50)
-                
+
+                backlog_table.add_column("Task ID", justify="center", width=50)
+                backlog_table.add_column("Task title", justify="center", width=50)
+                todo_table.add_column("Task ID", justify="center", width=50)
+                todo_table.add_column("Task title", justify="center", width=50)
+                doing_table.add_column("Task ID", justify="center", width=50)
+                doing_table.add_column("Task title", justify="center", width=50)
+                done_table.add_column("Task ID", justify="center", width=50)
+                done_table.add_column("Task title", justify="center", width=50)
+                archived_table.add_column("Task ID", justify="center", width=50)
+                archived_table.add_column("Task title", justify="center", width=50)
+
                 for task in self.tasks.values():
                     instance_task = Task(**task)
-                    # task_title_id = f"ID: {instance_task.ID}, Title: {instance_task.title}"
                     if instance_task.status == "BACKLOG":
-                        backlog_table.add_row(instance_task.ID,instance_task.title)
+                        backlog_table.add_row(instance_task.ID, instance_task.title)
                     elif instance_task.status == "TODO":
-                        todo_table.add_row(instance_task.ID,instance_task.title)
+                        todo_table.add_row(instance_task.ID, instance_task.title)
                     elif instance_task.status == "DOING":
-                        doing_table.add_row(instance_task.ID,instance_task.title)
+                        doing_table.add_row(instance_task.ID, instance_task.title)
                     elif instance_task.status == "DONE":
-                        done_table.add_row(instance_task.ID,instance_task.title)
+                        done_table.add_row(instance_task.ID, instance_task.title)
                     else:
-                        archived_table.add_row(instance_task.ID,instance_task.title)
+                        archived_table.add_row(instance_task.ID, instance_task.title)
 
-                main_table.add_row(backlog_table if len(backlog_table.rows) != 0 else "No task Available" ,todo_table if len(todo_table.rows) != 0 else "No task Available"
-                ,doing_table if len(doing_table.rows) != 0 else "No task Available",done_table if len(done_table.rows) != 0 else "No task Available",archived_table if len(archived_table.rows) != 0 else "No task Available")
-                
+                main_table.add_row(backlog_table if len(backlog_table.rows) != 0 else "No task Available",
+                                todo_table if len(todo_table.rows) != 0 else "No task Available",
+                                doing_table if len(doing_table.rows) != 0 else "No task Available",
+                                done_table if len(done_table.rows) != 0 else "No task Available",
+                                archived_table if len(archived_table.rows) != 0 else "No task Available")
+
                 console.print(main_table)
-            
+
                 task_id = input("Enter task ID to manage (or press ENTER to go back): ")
                 if task_id == "":
                     return
@@ -1033,24 +1064,23 @@ class Project:
                     console.print("Invalid Task ID", style="Error")
                     wait_for_key_press()
 
-
-    def create_project(user:User):
+    def create_project(user: User):
         while True:
             clear_screen()
-            console.print("|Creating new Project|\n" , style="Title")
+            console.print("|Creating new Project|\n", style="Title")
             title = input("Enter project title (or press ENTER to go back): ")
             if title == '':
-                return  
-            if title:  
+                return
+            if title:
                 break
             else:
                 console.print("Title cannot be empty. Please enter a valid title.", style="Error")
                 wait_for_key_press()
-    
+
         project = Project(title, user.ID)
         project.save_project_data()
-        logger.info(f"A new project [name : {project.title} , id : {project.ID}] created by [{user.username}]")
-        User.add_my_project(user.username,project.ID)
+        logger.info(f"A new project [name: {project.title}, id: {project.ID}] created by [{user.username}]")
+        User.add_my_project(user.username, project.ID)
         console.print("Project created successfully.", style="Notice")
         wait_for_key_press()
 
@@ -1067,7 +1097,7 @@ class Project:
                 for member in self.collaborators:
                     User.remove_project(member, self.ID)
                 console.print(f"Project '{self.title}' has been deleted successfully.", style="Notice")
-                logger.info(f"Project [id : {self.ID}] deleted by owner [user : {user.username}]")
+                logger.info(f"Project [id: {self.ID}] deleted by owner [user: {user.username}]")
                 wait_for_key_press()
                 return True
             else:
@@ -1114,7 +1144,7 @@ class Project:
                 console.print("Invalid choice.", style="Error")
                 wait_for_key_press()
 
-    def change_task_fields(self, user : User , task : Task):
+    def change_task_fields(self, user: User, task: Task):
         while True:
             clear_screen()
             console.print("|Updating Task: ", end="", style="Title")
@@ -1133,32 +1163,32 @@ class Project:
             choice = input("Enter your choice: ")
             if choice == "1":
                 if task.change_status():
-                    task.add_to_history(user.ID , action = "change status" , new_amount = task.status)
+                    task.add_to_history(user.ID, action="change status", new_amount=task.status)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "2":
                 if task.change_priority():
-                    task.add_to_history(user.ID , action = "change priority" , new_amount = task.priority)
+                    task.add_to_history(user.ID, action="change priority", new_amount=task.priority)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "3":
                 if task.change_start_time():
-                    task.add_to_history(user.ID , action = "change start time" , new_amount = task.start_time)
+                    task.add_to_history(user.ID, action="change start time", new_amount=task.start_time)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "4":
                 if task.change_end_time():
-                    task.add_to_history(user.ID , action = "change end time" , new_amount = task.end_time)
+                    task.add_to_history(user.ID, action="change end time", new_amount=task.end_time)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "5":
                 if task.change_title():
-                    task.add_to_history(user.ID , action = "change title" , new_amount = task.title)
+                    task.add_to_history(user.ID, action="change title", new_amount=task.title)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "6":
                 if task.change_description():
-                    task.add_to_history(user.ID , action = "change description" , new_amount = task.description)
+                    task.add_to_history(user.ID, action="change description", new_amount=task.description)
                     self.update_task(task)
                     self.save_project_data()
             elif choice == "7":
@@ -1203,7 +1233,7 @@ class Project:
                 task.view_history()
 
             elif choice == "5":
-                self.delete_task(task,user)
+                self.delete_task(task, user)
                 self.save_project_data()
                 break
             elif choice == "6":
@@ -1236,13 +1266,13 @@ class Project:
 
             elif choice == "3":
                 if task.edit_comment(user):
-                    task.add_to_history(user.ID , action = "edit comment" , new_amount="VIEW EDITED MESSAGE IN VIEW COMMENTS")
+                    task.add_to_history(user.ID, action="edit comment", new_amount="VIEW EDITED MESSAGE IN VIEW COMMENTS")
                     self.update_task(task)
                     self.save_project_data()
                 
             elif choice == "4":
                 if task.remove_comment(user):
-                    task.add_to_history(user.ID , action= "remove comment" , new_amount="MESSAGE REMOVED")
+                    task.add_to_history(user.ID, action="remove comment", new_amount="MESSAGE REMOVED")
                     self.update_task(task)
                     self.save_project_data()
             
@@ -1291,7 +1321,7 @@ class Project:
 
         else:
             console.print("You don't have any projects to display.", style="Error")
-            console.print("Create a project first." , style='Error')
+            console.print("Create a project first.", style='Error')
             wait_for_key_press()
             return
 
@@ -1322,9 +1352,11 @@ class Project:
             else:
                 console.print("Invalid number", style="Error")
 
+
 #.........................#
 #       FUNCTIONS         #
 #.........................#
+
 
 def main_menu():
     while True:
@@ -1379,9 +1411,9 @@ def user_menu(user: User):
             
 def get_username(ID):
     data = {}
-    try : 
-        with open ("emails and usernames.json" , 'r') as file:
-             data = json.load(file)
+    try:
+        with open("emails and usernames.json", 'r') as file:
+            data = json.load(file)
     except FileNotFoundError:
         logger.error("Problem with [emails and usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
@@ -1389,9 +1421,9 @@ def get_username(ID):
     
 def get_ID(username):
     data = {}
-    try : 
-        with open ("emails and usernames.json" , 'r') as file:
-             data = json.load(file)
+    try:
+        with open("emails and usernames.json", 'r') as file:
+            data = json.load(file)
     except FileNotFoundError:
         logger.error("Problem with [emails and usernames.json]")
         raise FileNotFoundError("File Error. Terminating Program")
@@ -1400,9 +1432,11 @@ def get_ID(username):
         if data['usernames'][ID] == username:
             return ID 
     
+
 #.........................#
 #      START POINT        #
 #.........................#
+
 
 if __name__ == "__main__":
     main_menu()
