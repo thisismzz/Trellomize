@@ -988,8 +988,7 @@ class Project:
         
     def delete_task(self,task : Task , user : User):
         if user.ID == self.owner :
-            console.print("Are you sure? (y/n)" , style='Info')
-            choice = input()
+            choice = input("Are you sure? (y/n)")
             if choice == 'y':
                 del self.tasks[task.ID]
                 console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
@@ -1096,8 +1095,7 @@ class Project:
             wait_for_key_press()
             return False
         
-        console.print("Are you sure? (y/n)" , style='Info')
-        choice = input()
+        choice = input("Are you sure? (y/n)")
         if choice == 'y':
             file_path = f"projects/{self.ID}.json"
             try:
