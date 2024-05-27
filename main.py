@@ -427,6 +427,7 @@ class Task:
         self.history = history if history is not None else []
 
     def view_task(self):
+        # Create and display a table of task details
         table = Table(title=f"Task: {self.title}", style="cyan")
         table.add_column("ID", justify="center", width=15)
         table.add_column("Title", justify="center", width=15)
@@ -446,6 +447,7 @@ class Task:
         if new_end_time == "":
             return False
         try:
+            # Ensure the new end time is not before the start time
             if datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S") < datetime.strptime(self.start_time, "%Y-%m-%d %H:%M:%S"):
                 console.print("Cannot set a date before start time." , style='Error')
                 wait_for_key_press()
@@ -556,6 +558,7 @@ class Task:
         return True
 
     def view_comments(self):
+        # Display the comments associated with the task
         if not self.comments:
             console.print("No comments available for this task to display.", style="Error")
         else:
@@ -569,6 +572,7 @@ class Task:
             table.add_column("Comment", justify="center", style="green")
             table.add_column("Timestamp", justify="center", style="yellow", width=25)
 
+            # Iterate over comments and add them to the table
             for idx, comment in enumerate(self.comments, start=1):
                 table.add_row(str(idx), get_username(comment['user']), comment['role'], comment['comment'], comment['timestamp'])
 
@@ -580,6 +584,7 @@ class Task:
         new_comment = input("Enter new comment: (or press ENTER to go back)" )
         if new_comment == "":
             return False
+        # Add the new comment to the comments list
         self.comments.append({
             "user": user_id,
             "comment": new_comment,
@@ -662,6 +667,7 @@ class Task:
             return False
 
     def add_to_history(self , ID , action , message = None , members = None , new_amount = None) :
+        # Add a new entry to the task's history based on the action
         if action == "add comment":
             new_history = {"user" : ID , "action" : action , "message" : message["comment"]}
             new_history["timestamp"] = str(datetime.now())[:19]
@@ -725,6 +731,7 @@ class Task:
             wait_for_key_press()
             return
         clear_screen()
+        # Create a table to display the task's history
         console.print("|Task's History|\n", style="Title")
         table = Table(title="Task's History")
         table.add_column("No.", style="white", justify="center", width=5)
@@ -733,6 +740,7 @@ class Task:
         table.add_column("Amount", style="green", justify="center")
         table.add_column("Timestamp", style="yellow", justify="center", width=25)
 
+        # Iterate over the task's history entries and add them to the table
         for index, entry in enumerate(self.history, start=1):
             user = get_username(entry.get("user", ""))
             action = entry.get("action", "")
@@ -765,6 +773,7 @@ class Project:
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
 
     def save_project_data(self):
+        # Saves the project data to a JSON file in the "projects/" folder.
         project_folder = "projects/"
         os.makedirs(project_folder, exist_ok=True)
         json_file_path = os.path.join(project_folder, f"{self.ID}.json")
@@ -775,6 +784,7 @@ class Project:
             raise FileNotFoundError("File Error. Teminating Program.")
 
     def load_project_data(ID):
+        # Loads project data from a JSON file based on the given ID.
         project_folder = "projects/"
         json_file_path = os.path.join(project_folder, f"{ID}.json")
         try:
@@ -788,6 +798,7 @@ class Project:
         self.tasks[new_task.ID] = vars(new_task)
 
     def view_members(self):
+        # Displays the current project members in the console.
         if len(self.collaborators) == 1:
             console.print("There are no project members to display.", style="Error")
             wait_for_key_press()
@@ -801,6 +812,7 @@ class Project:
         wait_for_key_press()
 
     def add_member(self, member):
+        # Adds a new member to the project if they are not already a collaborator.
         if member not in self.collaborators:
             self.collaborators.append(member)
             console.print(f"Member '{get_username(member)}' added to project successfully.", style="Notice")
@@ -811,6 +823,7 @@ class Project:
             console.print(f"User {get_username(member)} has already been added", style='Error')
 
     def remove_member(self, user_ID):
+        # Removes a member from the project if they are a current collaborator.
         if user_ID in self.collaborators:
             self.collaborators.remove(user_ID)
 
@@ -829,6 +842,7 @@ class Project:
             console.print(f"{get_username(user_ID)} is not a member of the project.", style="Error")
 
     def add_member_menu(self, user: User):
+        # Displays a menu to add new members to the project, accessible only to the owner.
         if self.owner != user.ID:
             console.print("Only the project owner can add members.", style="Error")
             return
@@ -838,6 +852,7 @@ class Project:
             console.print("There are no available users to add to the project.", style="Error")
             return
 
+        # Display available users and add selected users to the project.
         clear_screen()
         console.print("|Adding Member To Project|\n", style="Title")
         console.print("Available users:", style='Info')
@@ -862,10 +877,12 @@ class Project:
                 console.print(f"Invalid user number: {idx + 1}.", style="Error")
 
     def remove_member_menu(self, user: User):
+        # Checks if the user trying to remove a member is the project owner.
         if self.owner != user.ID:
             console.print("Only the project owner can remove members.", style="Error")
             return
 
+        # Creates a list of project members excluding the owner.
         members_to_display = [get_username(member) for member in self.collaborators if member != self.owner]
         if not members_to_display:
             console.print("There are no project members to remove.", style="Error")
@@ -881,6 +898,7 @@ class Project:
         if selected_indices[0] == "":
             return
 
+        # Validates and processes the selected removals.
         for idx_str in selected_indices:
             if not idx_str.isdigit():
                 console.print("Invalid input. Please enter valid user numbers.", style="Error")
@@ -906,6 +924,7 @@ class Project:
         wait_for_key_press()
 
     def assign_member(self, member, task: Task):
+        # Checks if the member is a project collaborator and assigns them to the task if not already assigned.
         if member in self.collaborators:
             if member not in task.assignees:
                 task.assignees.append(member)
@@ -918,6 +937,7 @@ class Project:
             console.print(f"User ({get_username(member)}) is not a member of the project.", style="Error")
 
     def remove_assignee(self, userID, task: Task):
+        # Checks if the assignee is in the task's assignees list and removes them if found.
         if userID in task.assignees:
             task.assignees.remove(userID)
             console.print(f"Member '{get_username(userID)}' removed from task successfully.", style="Notice")
