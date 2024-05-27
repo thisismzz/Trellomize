@@ -1,4 +1,8 @@
 {
-    "emails": [],
-    "usernames": {}
+    "emails": [
+        "tester@test.com"
+    ],
+    "usernames": {
+        "c3e12361": "tester"
+    }
 }

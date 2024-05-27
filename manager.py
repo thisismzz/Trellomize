@@ -131,14 +131,13 @@ class Manager:
         return list(users_data["usernames"].values())
 
     def deactivate_user(username):
-        path = 'users/' + username + '/' + username + ".json"
+        path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
             user_data = json.load(file)
         
         if user_data["active"] == False:
             console.print(f"User ({username}) has already been deactivated.", style='Error')
-            wait_for_key_press()
             return
         
         user_data["active"] = False
@@ -148,7 +147,6 @@ class Manager:
         
         console.print(f"User ({username}) has been deactivated successfully.", style='Notice')
         logger.info(f"User ({username}) deactivated by Manager")
-        wait_for_key_press()
 
     def deactivate_user_menu():
         clear_screen()
@@ -163,17 +161,20 @@ class Manager:
             return
         
         for username in selected_usernames:
+            if username not in all_usernames:
+                console.print(f"User {username} does not exist.", style='Error')
+                continue
             Manager.deactivate_user(username)
+        wait_for_key_press()
 
     def activate_user(username):
-        path = 'users/' + username + '/' + username + ".json"
+        path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
             user_data = json.load(file)
         
         if user_data["active"] == True:
             console.print(f"User ({username}) is active." , style='Error')
-            wait_for_key_press()
             return
         
         user_data["active"] = True
@@ -183,7 +184,6 @@ class Manager:
         
         console.print(f"User ({username}) has been activated successfully.", style='Notice')
         logger.info(f"User ({username}) activated by Manager")
-        wait_for_key_press()
         
     def activate_user_menu():
         clear_screen()
@@ -198,7 +198,11 @@ class Manager:
             return
         
         for username in selected_usernames:
+            if username not in all_usernames:
+                console.print(f"User {username} does not exist.", style='Error')
+                continue
             Manager.activate_user(username)
+        wait_for_key_press()
             
     def purge_data(self, is_run=False):
         if not is_run:

@@ -769,3 +769,21 @@
 2024-05-27 01:55:09,116 - __main__ - INFO - User (kimia) activated by Manager
 2024-05-27 01:55:35,869 - __main__ - INFO - All users has been deleted
 2024-05-27 01:55:46,938 - __main__ - INFO - End of Manager program
+2024-05-27 11:20:19,878 - __main__ - INFO - A new user registered: tester
+2024-05-27 11:20:31,318 - __main__ - INFO - User [tester] has logged in
+2024-05-27 11:20:47,680 - __main__ - INFO - A new project [name: for debug, id: d47379ed] created by [tester]
+2024-05-27 11:20:55,971 - __main__ - DEBUG - User [tester] is managing project [id: d47379ed]
+2024-05-27 11:23:11,573 - __main__ - INFO - User [tester] has logged in
+2024-05-27 11:23:15,008 - __main__ - DEBUG - User [tester] is managing project [id: d47379ed]
+2024-05-27 11:23:23,434 - __main__ - INFO - A new task [name : No.1 , id : [31499ac7]] created by [tester]
+2024-05-27 11:25:57,094 - __main__ - INFO - User [tester] logged out
+2024-05-27 11:25:59,212 - __main__ - INFO - EXIT (end of program)
+2024-05-27 11:33:15,001 - __main__ - INFO - Manager has logged in successfully
+2024-05-27 11:34:06,518 - __main__ - INFO - End of Manager program
+2024-05-27 11:34:08,301 - __main__ - INFO - Manager has logged in successfully
+2024-05-27 11:34:46,367 - __main__ - INFO - End of Manager program
+2024-05-27 11:34:49,421 - __main__ - INFO - Manager has logged in successfully
+2024-05-27 11:36:55,800 - __main__ - INFO - End of Manager program
+2024-05-27 11:36:57,622 - __main__ - INFO - Manager has logged in successfully
+2024-05-27 11:37:18,318 - __main__ - INFO - User (tester) deactivated by Manager
+2024-05-27 11:37:54,421 - __main__ - INFO - End of Manager program

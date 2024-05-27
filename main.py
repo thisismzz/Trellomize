@@ -393,8 +393,8 @@ class Task:
         self.priority = priority if priority is not None else Priority.LOW.value
         self.status = status if status is not None else Status.BACKLOG.value
         self.ID = ID if ID is not None else str(uuid.uuid1())[:8]
-        self.start_time = start_time if start_time is not None else str(datetime.now())
-        self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))
+        self.start_time = start_time if start_time is not None else str(datetime.now())[:19]
+        self.end_time = end_time if end_time is not None else str(datetime.now() + timedelta(hours=24))[:19]
         self.assignees = assignees if assignees is not None else []
         self.comments = comments if comments is not None else []
         self.history = history if history is not None else []
@@ -415,10 +415,14 @@ class Task:
     def change_end_time(self):
         clear_screen()
         console.print("|Changing EndTime|\n", style="Title")
-        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back)")
+        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back) ")
         if new_end_time == "":
             return False
         try:
+            if datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S") < datetime.strptime(self.start_time, "%Y-%m-%d %H:%M:%S"):
+                console.print("Cannot set a date before start time." , style='Error')
+                wait_for_key_press()
+                return False
             self.end_time = str(datetime.strptime(new_end_time, "%Y-%m-%d %H:%M:%S"))
             console.print("End time changed successfully.", style="Notice")
             logger.debug(f"Task [id: {self.ID}] end time has changed (current: {self.end_time})")
