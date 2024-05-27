@@ -87,11 +87,11 @@ class User:
         return re.match(email_regex, email) is not None
     
     @staticmethod
-    # def validate_username_format(username):
-    #     username_regex = r'^[a-zA-Z0-9_]+$'
-    #     if re.match(username_regex, username) and 3 <= len(username) <= 20:
-    #         return True
-    #     return False
+    def validate_username_format(username):
+        username_regex = r'^[a-zA-Z0-9_]+$'
+        if re.match(username_regex, username) and 3 <= len(username) <= 20:
+            return True
+        return False
 
     @staticmethod
     def check_unique_email(email):
@@ -122,18 +122,18 @@ class User:
         return True
     
     @staticmethod
-    # def validate_password_strength(password):
-    #     if len(password) < 8:
-    #         return False
-    #     if not re.search(r"[A-Z]", password):
-    #         return False
-    #     if not re.search(r"[a-z]", password):
-    #         return False
-    #     if not re.search(r"[0-9]", password):
-    #         return False
-    #     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-    #         return False
-    #     return True
+    def validate_password_strength(password):
+        if len(password) < 8:
+            return False
+        if not re.search(r"[A-Z]", password):
+            return False
+        if not re.search(r"[a-z]", password):
+            return False
+        if not re.search(r"[0-9]", password):
+            return False
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            return False
+        return True
 
     @staticmethod
     def get_all_usernames():
@@ -346,6 +346,10 @@ class User:
                 raise ValueError("Username already exists! Please choose a different username.")
             if not User.check_unique_email(email):
                 raise ValueError("Email already exists! Please enter a different email.")
+            if not User.validate_password_strength(password):
+                raise ValueError("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.")
+            if not User.validate_username_format(username):
+                raise ValueError("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.")
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             new_user = User(email, username, hashed_password)
             new_user.save_user_data()

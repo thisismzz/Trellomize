@@ -50,18 +50,17 @@ class TestMainClsProject(TestCase):
         self.assertTrue(os.path.exists("projects/tester.json"))
         self.assertEqual(expected_data_project, Project.load_project_data("tester"))
 
-
 class TestMainClsTask(TestCase):
 
     def setUp(self):
-        self.task1 = Task("task1 test", "test No.1", ID="tester", start_time="2024-05-22 22:56:04.092445", end_time="2024-05-23 22:56:04.092445")
+        self.task1 = Task("task1 test", "test No.1", ID="tester", start_time="2024-05-22 22:56:04", end_time="2024-05-23 22:56:04")
 
     def test_create_task(self):
         self.assertEqual(self.task1.title, "task1 test")
         self.assertEqual(self.task1.description, "test No.1")
         self.assertEqual(self.task1.ID, "tester")
-        self.assertEqual(self.task1.start_time, "2024-05-22 22:56:04.092445")
-        self.assertEqual(self.task1.end_time, "2024-05-23 22:56:04.092445")
+        self.assertEqual(self.task1.start_time, "2024-05-22 22:56:04")
+        self.assertEqual(self.task1.end_time, "2024-05-23 22:56:04")
         self.assertEqual(self.task1.priority, "LOW")
         self.assertEqual(self.task1.status, "BACKLOG")
 
@@ -102,4 +101,4 @@ class TestMainClsTask(TestCase):
 
 
 if __name__ == '__main__':
-    main(argv=[''], exit=False)
+    main()
