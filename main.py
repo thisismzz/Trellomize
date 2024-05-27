@@ -36,7 +36,6 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-
 def wait_for_key_press():
     #Waits for a key press from the user and handles different OS requirements.
     console.print("\nPress any key to continue...", style="yellow")
@@ -393,7 +392,7 @@ class User:
         username = input("Username: ")
         if username == "":
             return
-        password = maskpass.advpass("Password: ", mask="*")
+        password = input("Password: ")
         path = f"users/{username}/{username}.json"
 
         if os.path.exists(path):
