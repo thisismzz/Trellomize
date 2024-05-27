@@ -1058,7 +1058,7 @@ class Project:
             if choice == 'y':
                 # Delete the task from the project's task list
                 del self.tasks[task.ID]
-                console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
+                console.print(f"Task has deleted successfully" , style='Notice')
                 logger.debug(f"Task [id = {task.ID}] deleted by user [user = {user.username}]")
                 wait_for_key_press()
                 return True
