@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.theme import Theme
 
+# Custom theme for console output using the rich library
 CUSTOM_THEME = Theme({
     "Title": "bold Magenta",
     "Info": "blue",
@@ -21,6 +22,7 @@ CUSTOM_THEME = Theme({
 
 console = Console(theme=CUSTOM_THEME)
 
+# Setting up logger for logging errors and debug information
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('logs.log', mode='a')
@@ -30,10 +32,13 @@ logger.addHandler(handler)
 
 
 def clear_screen():
+    #Clears the terminal screen based on the operating system.
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+
 def wait_for_key_press():
+    #Waits for a key press from the user and handles different OS requirements.
     console.print("\nPress any key to continue...", style="yellow")
     if platform.system().lower() == 'windows':
         import msvcrt
@@ -83,11 +88,13 @@ class User:
 
     @staticmethod
     def validate_email_format(email):
+        #Validates the email format using a regex pattern.
         email_regex = r'^[\w\.\+\-]+\@[\w]+\.[a-z]{2,3}$'
         return re.match(email_regex, email) is not None
     
     @staticmethod
     def validate_username_format(username):
+        #Validates the username format and length.
         username_regex = r'^[a-zA-Z0-9_]+$'
         if re.match(username_regex, username) and 3 <= len(username) <= 20:
             return True
@@ -95,6 +102,7 @@ class User:
 
     @staticmethod
     def check_unique_email(email):
+        #Checks if the email is unique by comparing it to stored emails.
         data = {}
         try:
             with open('emails_and_usernames.json', 'r') as file:
@@ -109,6 +117,7 @@ class User:
 
     @staticmethod
     def check_unique_username(username):
+        #Checks if the username is unique by comparing it to stored usernames.
         data = {}
         try:
             with open('emails_and_usernames.json', 'r') as file:
@@ -122,6 +131,7 @@ class User:
         return True
     
     @staticmethod
+    # Validate password strength based on criteria
     def validate_password_strength(password):
         if len(password) < 8:
             return False
@@ -137,6 +147,7 @@ class User:
 
     @staticmethod
     def get_all_usernames():
+        # Retrieve all stored usernames
         data = {}
         try:
             with open('emails_and_usernames.json', 'r') as file:
@@ -145,8 +156,9 @@ class User:
             logger.error("Problem with [emails_and_usernames.json]")
             raise FileNotFoundError("File Error. Terminating Program")
         return list(data['usernames'].values())
-
+    
     def add_email_username(self):
+        # Add email and username to stored data
         data = {}
         try:
             with open('emails_and_usernames.json', 'r') as file:
@@ -162,10 +174,12 @@ class User:
             raise FileNotFoundError("File Error. Terminating Program")
 
     def save_user_data(self):
+        # Create user folder if it doesn't exist
         user_folder = f"users/{self.username}"
         os.makedirs(user_folder, exist_ok=True)
         json_file_path = os.path.join(user_folder, f"{self.username}.json")
         try:
+            # Save user data to a JSON file
             with open(json_file_path, "w") as json_file:
                 json.dump(vars(self), json_file, indent=4)
         except FileNotFoundError:
@@ -174,6 +188,7 @@ class User:
 
     @staticmethod
     def load_user_data(username):
+        # Load user data from a JSON file
         user_folder = f"users/{username}"
         json_file_path = os.path.join(user_folder, f"{username}.json")
         try:
@@ -185,6 +200,7 @@ class User:
 
     @staticmethod
     def add_my_project(username, project_id):
+        # Add a project to the user's list of projects
         path = f"users/{username}/projects.json"
         data = {}
         if os.path.exists(path):
@@ -194,6 +210,7 @@ class User:
         else:
             data = {'projects': [project_id]}
         try:
+            # Save the updated projects list to a JSON file
             with open(path, "w") as file:
                 json.dump(data, file, indent=4)
         except FileNotFoundError:
@@ -202,6 +219,7 @@ class User:
 
     @staticmethod
     def remove_project(user_id, project_id):
+        # Remove a project from the user's list of projects
         path = f"users/{get_username(user_id)}/projects.json"
         data = {}
         try:
@@ -217,6 +235,7 @@ class User:
 
     @staticmethod
     def load_user_projects(username):
+        # Load the user's list of projects from a JSON file
         path = f"users/{username}/projects.json"
         try:
             with open(path, "r") as file:
