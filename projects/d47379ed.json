@@ -10,13 +10,38 @@
             "ID": "31499ac7",
             "start_time": "2024-05-27 11:23:23",
             "end_time": "2024-05-28 11:23:23",
-            "assignees": [],
+            "assignees": [
+                "72edd77a"
+            ],
             "comments": [],
-            "history": []
+            "history": [
+                {
+                    "user": "c3e12361",
+                    "action": "add assignee",
+                    "new assignees": [
+                        "72edd77a"
+                    ],
+                    "timestamp": "2024-05-27 11:57:18"
+                },
+                {
+                    "user": "72edd77a",
+                    "action": "add comment",
+                    "message": "ha la la lay la lay",
+                    "timestamp": "2024-05-27 12:03:40"
+                },
+                {
+                    "user": "72edd77a",
+                    "action": "remove comment",
+                    "description": "MESSAGE REMOVED",
+                    "timestamp": "2024-05-27 12:04:04"
+                }
+            ]
         }
     },
     "collaborators": [
-        "c3e12361"
+        "c3e12361",
+        "72edd77a",
+        "7a960928"
     ],
     "ID": "d47379ed"
 }

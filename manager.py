@@ -58,7 +58,6 @@ class Manager:
             console.print("Admin info already exists.", style='Error')
             exit()
         
-        clear_screen()
         admin_info = {
             "username": self.username, 
             "password": base64.b64encode(self.password.encode("utf-8")).decode("utf-8")
@@ -68,7 +67,6 @@ class Manager:
             json.dump(admin_info, admin_file)
         console.print("Admin info created successfully.", style="Notice")
         logger.info("Manager has created successfully")
-        wait_for_key_press()
     
     def login(self):
         data = {}

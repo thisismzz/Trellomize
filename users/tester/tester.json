@@ -2,6 +2,6 @@
     "email": "tester@test.com",
     "username": "tester",
     "password": "$2b$12$Fn5brKuaenG2Nb1XPkQ2L.uL6rh.gNj8k8Tll.5mqO1HZwGVhKeZa",
-    "active": false,
+    "active": true,
     "ID": "c3e12361"
 }

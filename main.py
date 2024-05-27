@@ -313,8 +313,12 @@ class User:
                 if new_email == "":
                     return
                 if User.check_unique_email(new_email):
-                    self.change_email(new_email)
-                    wait_for_key_press()
+                    if User.validate_email_format(new_email):
+                        self.change_email(new_email)
+                        wait_for_key_press()
+                    else:
+                        console.print("Invalid email format! Please enter a valid email address in the format 'example@example.com'." , style='Error')
+                        wait_for_key_press()
                 else:
                     console.print("Email already exists. Please choose a different one.", style="Error")
                     wait_for_key_press()
@@ -436,7 +440,7 @@ class Task:
     def change_start_time(self):
         clear_screen()
         console.print("|Changing StartTime|\n", style="Title")
-        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back)")
+        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back) ")
         if new_start_time == "":
             return False
         try:
@@ -507,7 +511,7 @@ class Task:
     def change_title(self):
         clear_screen()
         console.print("|Changing Title|\n", style="Title")
-        new_title = input("Enter new title: (or press ENTER to go back)")
+        new_title = input("Enter new title: (or press ENTER to go back) ")
         if new_title == "":
             return False
         self.title = new_title
@@ -519,7 +523,7 @@ class Task:
     def change_description(self):
         clear_screen()
         console.print("|Changing Description|\n", style="Title")
-        new_description = input("Enter new description: (or press ENTER to go back)")
+        new_description = input("Enter new description: (or press ENTER to go back) ")
         if new_description == "":
             return False
         self.description = new_description
@@ -550,7 +554,7 @@ class Task:
     def add_comment(self, user_id, is_owner: bool):
         clear_screen()
         console.print("|Adding Comment To Task|\n", style="Title")
-        new_comment = input("Enter new comment: (or press ENTER to go back)")
+        new_comment = input("Enter new comment: (or press ENTER to go back)" )
         if new_comment == "":
             return False
         self.comments.append({
