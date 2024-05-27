@@ -36,7 +36,6 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-
 def wait_for_key_press():
     #Waits for a key press from the user and handles different OS requirements.
     console.print("\nPress any key to continue...", style="yellow")

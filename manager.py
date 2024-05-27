@@ -5,7 +5,6 @@ import base64
 import shutil
 import logging
 import platform
-import re
 from rich.console import Console
 from rich.theme import Theme
 
@@ -55,11 +54,7 @@ class Manager:
         self.password = password
     
     def create_admin(self):
-        """
-        create manager for system and store its data in manager_info.json
-        
-        """
-        
+        #create manager for system and store its data in manager_info.json
         if os.path.exists("manager_info.json"):
             console.print("Admin info already exists.", style='Error')
             exit()
@@ -126,11 +121,7 @@ class Manager:
     
     @staticmethod 
     def load_users():
-        """
-        get usernames from file and return the data
-        
-        """
-        
+        #get usernames from file and return the data
         if not os.path.exists("emails_and_usernames.json"):
             console.print("User info file not found.", style="Error")
             wait_for_key_press()
@@ -142,11 +133,7 @@ class Manager:
 
     @staticmethod
     def deactivate_user(username):
-        """
-        open user's data file and change user status to False 
-        
-        """
-        
+        #open user's data file and change user status to False 
         path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
@@ -187,11 +174,7 @@ class Manager:
 
     @staticmethod
     def activate_user(username):
-        """
-        open user's data file and change user status to True
-        
-        """
-        
+        #open user's data file and change user status to True
         path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
@@ -237,7 +220,6 @@ class Manager:
         that includes the Users and Projects folder and emails_and_usernames.json
         
         """
-        
         if not is_run:
             data = {}
             try:
