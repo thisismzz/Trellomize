@@ -1,12 +1,4 @@
 {
-    "emails": [
-        "tester@test.com",
-        "mahdi@mahdi.com",
-        "tester@tester.com"
-    ],
-    "usernames": {
-        "c3e12361": "tester",
-        "72edd77a": "kimia",
-        "7a960928": "mahdi"
-    }
+    "emails": [],
+    "usernames": {}
 }

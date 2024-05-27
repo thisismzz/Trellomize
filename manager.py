@@ -5,6 +5,7 @@ import base64
 import shutil
 import logging
 import platform
+import re
 from rich.console import Console
 from rich.theme import Theme
 
@@ -54,6 +55,11 @@ class Manager:
         self.password = password
     
     def create_admin(self):
+        """
+        create manager for system and store its data in manager_info.json
+        
+        """
+        
         if os.path.exists("manager_info.json"):
             console.print("Admin info already exists.", style='Error')
             exit()
@@ -117,8 +123,14 @@ class Manager:
             else:
                 console.print("Invalid choice.", style="Error")
                 wait_for_key_press()
-        
+    
+    @staticmethod 
     def load_users():
+        """
+        get usernames from file and return the data
+        
+        """
+        
         if not os.path.exists("emails_and_usernames.json"):
             console.print("User info file not found.", style="Error")
             wait_for_key_press()
@@ -128,7 +140,13 @@ class Manager:
             users_data = json.load(user_file)
         return list(users_data["usernames"].values())
 
+    @staticmethod
     def deactivate_user(username):
+        """
+        open user's data file and change user status to False 
+        
+        """
+        
         path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
@@ -146,6 +164,7 @@ class Manager:
         console.print(f"User ({username}) has been deactivated successfully.", style='Notice')
         logger.info(f"User ({username}) deactivated by Manager")
 
+    @staticmethod
     def deactivate_user_menu():
         clear_screen()
         console.print(f"|Deactivating Users|\n", style='Title')
@@ -153,6 +172,7 @@ class Manager:
         all_usernames = Manager.load_users()
         for username in all_usernames:
             console.print("-", username)
+            
         selected_usernames = list(map(lambda x:x.strip(),input("Enter usernames to deactive (format:'user1,user2') or press ENTER to go back: ").split(',')))
         
         if selected_usernames[0] == '':
@@ -165,7 +185,13 @@ class Manager:
             Manager.deactivate_user(username)
         wait_for_key_press()
 
+    @staticmethod
     def activate_user(username):
+        """
+        open user's data file and change user status to True
+        
+        """
+        
         path = f"users/{username}/{username}.json"
         user_data = {}
         with open(path , 'r') as file :
@@ -183,6 +209,7 @@ class Manager:
         console.print(f"User ({username}) has been activated successfully.", style='Notice')
         logger.info(f"User ({username}) activated by Manager")
         
+    @staticmethod
     def activate_user_menu():
         clear_screen()
         console.print(f"|Deactivating Users|\n", style='Title')
@@ -203,6 +230,14 @@ class Manager:
         wait_for_key_press()
             
     def purge_data(self, is_run=False):
+        """
+        If this function is executed with parse commands, 
+        it will first execute the login process, 
+        then it will end by deleting the database 
+        that includes the Users and Projects folder and emails_and_usernames.json
+        
+        """
+        
         if not is_run:
             data = {}
             try:

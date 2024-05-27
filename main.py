@@ -23,7 +23,7 @@ CUSTOM_THEME = Theme({
 console = Console(theme=CUSTOM_THEME)
 
 # Setting up logger for logging errors and debug information
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("__manager__")
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('logs.log', mode='a')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -1020,22 +1020,22 @@ class Project:
             console.print("Only the project owner can create tasks.", style="Error")
             wait_for_key_press()
             return
-        while True:
-            clear_screen()
-            console.print("|Creating New Task|\n", style="Title")
-            console.print("Please provide the following details to create a new task:", style="Info")
-            console.print("(or press ENTER to go back)" , style="Info")
-            title = input("Task Title: ")
-            if title == "":
-                return
-            description = input("Task Description: ")
-            new_task = Task(title , description)
-            self.tasks[new_task.ID]=vars(new_task)
-            self.save_project_data()
-            console.print("Task created successfully.", style="Notice")
-            logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
-            wait_for_key_press()
-            break
+        
+        clear_screen()
+        console.print("|Creating New Task|\n", style="Title")
+        console.print("Please provide the following details to create a new task:", style="Info")
+        console.print("(or press ENTER to go back)" , style="Info")
+        title = input("Task Title: ")
+        if title == "":
+            return
+        description = input("Task Description: ")
+        new_task = Task(title , description)
+        self.tasks[new_task.ID]=vars(new_task)
+        self.save_project_data()
+        console.print("Task created successfully.", style="Notice")
+        logger.info(f"A new task [name : {new_task.title} , id : [{new_task.ID}]] created by [{user.username}]")
+        wait_for_key_press()
+            
         
     def delete_task(self,task : Task , user : User):
         if user.ID == self.owner :
@@ -1121,18 +1121,16 @@ class Project:
                     wait_for_key_press()
 
     def create_project(user: User):
-        while True:
-            clear_screen()
-            console.print("|Creating new Project|\n", style="Title")
-            title = input("Enter project title (or press ENTER to go back): ")
-            if title == '':
-                return
-            if title:
-                break
-            else:
-                console.print("Title cannot be empty. Please enter a valid title.", style="Error")
-                wait_for_key_press()
-
+        """
+        create project and add its ID to owner's projects.json file
+        """
+        
+        clear_screen()
+        console.print("|Creating new Project|\n", style="Title")
+        title = input("Enter project title (or press ENTER to go back): ")
+        if title == '':
+            return
+            
         project = Project(title, user.ID)
         project.save_project_data()
         logger.info(f"A new project [name: {project.title}, id: {project.ID}] created by [{user.username}]")
@@ -1141,6 +1139,11 @@ class Project:
         wait_for_key_press()
 
     def delete_project(self, user: User):
+        """
+        Delete the project by removing its ID from the projects.json
+        file of all project members and then deleting its file
+        
+        """
         if self.owner != user.ID:
             console.print("Only the project owner can delete project.", style="Error")
             wait_for_key_press()
@@ -1375,6 +1378,12 @@ class Project:
                 wait_for_key_press()
 
     def view_user_projects(user: User):
+        """
+        load the user's projects.json file and 
+        get the ID of projects that is related to user
+        
+        """
+        
         data = User.load_user_projects(user.username)
         if data is not None and len(data['projects']) != 0:
             user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
