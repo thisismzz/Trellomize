@@ -4,7 +4,7 @@ import uuid
 import bcrypt
 import re
 import logging
-import maskpass
+import pwinput
 import platform
 from enum import Enum
 from datetime import datetime, timedelta
@@ -312,8 +312,12 @@ class User:
                 if new_username == "":
                     return
                 if User.check_unique_username(new_username):
-                    self.change_username(new_username)
-                    wait_for_key_press()
+                    if User.validate_username_format(new_username):
+                        self.change_username(new_username)
+                        wait_for_key_press()
+                    else:
+                        console.print("Invalid username format! Usernames can only contain letters, digits, and underscores, and must be 3-20 characters long.", style='Error')
+                        wait_for_key_press()
                 else:
                     console.print("Username already exists. Please choose a different one.", style="Error")
                     wait_for_key_press()
@@ -323,8 +327,12 @@ class User:
                 new_password = input("Enter new password (or press ENTER to go back): ")
                 if new_password == "":
                     return
-                self.change_password(new_password)
-                wait_for_key_press()
+                if User.validate_password_strength(new_password):
+                    self.change_password(new_password)
+                    wait_for_key_press()
+                else:
+                    console.print("Weak password! Passwords must be at least 8 characters long and include uppercase and lowercase letters, digits, and special characters.", style='Error')
+                    wait_for_key_press()
             elif choice == "3":
                 clear_screen()
                 console.print("|Editing Email|\n", style="Title")
@@ -393,7 +401,7 @@ class User:
         username = input("Username: ")
         if username == "":
             return
-        password = maskpass.advpass("Password: ", mask="*")
+        password = pwinput.pwinput(prompt="Password: ", mask="*")
         path = f"users/{username}/{username}.json"
 
         if os.path.exists(path):
@@ -443,7 +451,7 @@ class Task:
     def change_end_time(self):
         clear_screen()
         console.print("|Changing EndTime|\n", style="Title")
-        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back) ")
+        new_end_time = input("Enter new end time (YYYY-MM-DD HH:MM:SS) (or press ENTER to go back): ")
         if new_end_time == "":
             return False
         try:
@@ -465,10 +473,15 @@ class Task:
     def change_start_time(self):
         clear_screen()
         console.print("|Changing StartTime|\n", style="Title")
-        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS): (or press ENTER to go back) ")
+        new_start_time = input("Enter new start time (YYYY-MM-DD HH:MM:SS) (or press ENTER to go back) : ")
         if new_start_time == "":
             return False
         try:
+            # Ensure the new start time is not after the start time
+            if datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S") > datetime.strptime(self.end_time, "%Y-%m-%d %H:%M:%S"):
+                console.print("Cannot set a date after end time." , style='Error')
+                wait_for_key_press()
+                return False
             self.start_time = str(datetime.strptime(new_start_time, "%Y-%m-%d %H:%M:%S"))
             console.print("Start time changed successfully.", style="Notice")
             logger.debug(f"Task [id: {self.ID}] start time has changed (current: {self.start_time})")
@@ -536,7 +549,7 @@ class Task:
     def change_title(self):
         clear_screen()
         console.print("|Changing Title|\n", style="Title")
-        new_title = input("Enter new title: (or press ENTER to go back) ")
+        new_title = input("Enter new title (or press ENTER to go back): ")
         if new_title == "":
             return False
         self.title = new_title
@@ -548,7 +561,7 @@ class Task:
     def change_description(self):
         clear_screen()
         console.print("|Changing Description|\n", style="Title")
-        new_description = input("Enter new description: (or press ENTER to go back) ")
+        new_description = input("Enter new description (or press ENTER to go back): ")
         if new_description == "":
             return False
         self.description = new_description
@@ -581,7 +594,7 @@ class Task:
     def add_comment(self, user_id, is_owner: bool):
         clear_screen()
         console.print("|Adding Comment To Task|\n", style="Title")
-        new_comment = input("Enter new comment: (or press ENTER to go back)" )
+        new_comment = input("Enter new comment (or press ENTER to go back): " )
         if new_comment == "":
             return False
         # Add the new comment to the comments list
@@ -1082,16 +1095,16 @@ class Project:
                 archived_table = Table()
 
                 # Fill sub-tables with tasks based on their status
-                backlog_table.add_column("Task ID", justify="center", width=50)
-                backlog_table.add_column("Task title", justify="center", width=50)
-                todo_table.add_column("Task ID", justify="center", width=50)
-                todo_table.add_column("Task title", justify="center", width=50)
-                doing_table.add_column("Task ID", justify="center", width=50)
-                doing_table.add_column("Task title", justify="center", width=50)
-                done_table.add_column("Task ID", justify="center", width=50)
-                done_table.add_column("Task title", justify="center", width=50)
-                archived_table.add_column("Task ID", justify="center", width=50)
-                archived_table.add_column("Task title", justify="center", width=50)
+                backlog_table.add_column("ID", justify="center", width=50)
+                backlog_table.add_column("Title", justify="center", width=50)
+                todo_table.add_column("ID", justify="center", width=50)
+                todo_table.add_column("Title", justify="center", width=50)
+                doing_table.add_column("ID", justify="center", width=50)
+                doing_table.add_column("Title", justify="center", width=50)
+                done_table.add_column("ID", justify="center", width=50)
+                done_table.add_column("Title", justify="center", width=50)
+                archived_table.add_column("ID", justify="center", width=50)
+                archived_table.add_column("Title", justify="center", width=50)
 
                 for task in self.tasks.values():
                     instance_task = Task(**task)

@@ -1,0 +1,61 @@
+2024-05-27 22:26:32,131 - __manager__ - INFO - A new user registered: tester1
+2024-05-27 22:28:02,328 - __manager__ - INFO - A new user registered: tester2
+2024-05-27 22:28:37,857 - __manager__ - INFO - A new user registered: tester3
+2024-05-27 22:31:00,593 - __manager__ - INFO - A new user registered: mahdi
+2024-05-27 22:33:44,133 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 22:33:47,512 - __manager__ - INFO - User [mahdi] logged out
+2024-05-27 22:33:57,772 - __manager__ - INFO - User [tester1] has logged in
+2024-05-27 22:39:55,624 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 22:42:32,429 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 22:43:55,157 - __manager__ - ERROR - Problem with [users/mahdi/projects.json]
+2024-05-27 22:44:07,949 - __manager__ - INFO - A new project [name: test project, id: 4a843bd7] created by [mahdi]
+2024-05-27 22:44:10,627 - __manager__ - DEBUG - User [mahdi] is managing project [id: 4a843bd7]
+2024-05-27 22:44:31,011 - __manager__ - INFO - A new task [name : No.1 , id : [5842d6df]] created by [mahdi]
+2024-05-27 22:44:39,603 - __manager__ - INFO - A new task [name : No.1 , id : [5d61fcc6]] created by [mahdi]
+2024-05-27 22:44:48,604 - __manager__ - INFO - A new task [name : No.3 , id : [62bf51a8]] created by [mahdi]
+2024-05-27 22:45:10,152 - __manager__ - DEBUG - Task [id: 5d61fcc6] title has changed (current: No.2)
+2024-05-27 22:45:49,216 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:46:11,891 - __manager__ - DEBUG - Task [id: 5d61fcc6] description has changed (current: No.2)
+2024-05-27 22:46:26,471 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:46:45,155 - __manager__ - DEBUG - A new member [user : tester1] added to project [id : 4a843bd7] collaborators by owner
+2024-05-27 22:46:45,159 - __manager__ - DEBUG - A new member [user : tester2] added to project [id : 4a843bd7] collaborators by owner
+2024-05-27 22:46:45,163 - __manager__ - DEBUG - A new member [user : tester3] added to project [id : 4a843bd7] collaborators by owner
+2024-05-27 22:47:20,818 - __manager__ - DEBUG - A member [user : tester2] removed from project [id : 4a843bd7] collaborators
+2024-05-27 22:47:33,923 - __manager__ - DEBUG - A new member [user : tester2] added to project [id : 4a843bd7] collaborators by owner
+2024-05-27 22:48:02,542 - __manager__ - DEBUG - A new assignee [user : tester1] added to task.
+2024-05-27 22:48:02,542 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:48:24,940 - __manager__ - INFO - User [mahdi] logged out
+2024-05-27 22:48:45,563 - __manager__ - INFO - User [tester1] has logged in
+2024-05-27 22:49:20,127 - __manager__ - INFO - User [tester1] logged out
+2024-05-27 22:49:21,945 - __manager__ - INFO - EXIT (end of program)
+2024-05-27 22:49:33,134 - __manager__ - INFO - User [tester1] has logged in
+2024-05-27 22:50:18,701 - __manager__ - DEBUG - User [tester1] is managing project [id: 4a843bd7]
+2024-05-27 22:52:21,144 - __manager__ - DEBUG - A new comment added to task [id: 5d61fcc6] by user [tester1]
+2024-05-27 22:52:21,935 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:52:45,935 - __manager__ - DEBUG - Comment edited on task [id: 5d61fcc6] by user [tester1]
+2024-05-27 22:52:47,592 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:54:03,827 - __manager__ - DEBUG - Task [id: 5d61fcc6] status has changed (current: DOING)
+2024-05-27 22:54:04,684 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:54:15,293 - __manager__ - DEBUG - Task [id: 5d61fcc6] priority has changed (current: MEDIUM)
+2024-05-27 22:54:15,778 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:54:37,994 - __manager__ - DEBUG - Task [id: 5d61fcc6] start time has changed (current: 2024-05-30 12:34:23)
+2024-05-27 22:54:38,915 - __manager__ - DEBUG - Add new history to task [id : 5d61fcc6]
+2024-05-27 22:59:14,868 - __manager__ - INFO - User [tester1] logged out
+2024-05-27 22:59:16,896 - __manager__ - INFO - EXIT (end of program)
+2024-05-27 22:59:53,084 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 22:59:54,956 - __manager__ - DEBUG - User [mahdi] is managing project [id: 4a843bd7]
+2024-05-27 23:01:28,644 - __manager__ - INFO - User [mahdi] logged out
+2024-05-27 23:01:30,811 - __manager__ - INFO - EXIT (end of program)
+2024-05-27 23:03:10,240 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 23:03:12,498 - __manager__ - DEBUG - User [mahdi] is managing project [id: 4a843bd7]
+2024-05-27 23:04:44,935 - __manager__ - INFO - User [mahdi] logged out
+2024-05-27 23:04:47,252 - __manager__ - INFO - EXIT (end of program)
+2024-05-27 23:07:31,781 - __manager__ - INFO - User [tester3] has logged in
+2024-05-27 23:07:38,026 - __manager__ - INFO - User [tester3] changed password
+2024-05-27 23:14:02,894 - __manager__ - INFO - User [tester3] logged out
+2024-05-27 23:14:04,801 - __manager__ - INFO - EXIT (end of program)
+2024-05-27 23:15:00,614 - __manager__ - INFO - User [tester2] has logged in
+2024-05-27 23:15:15,254 - __manager__ - INFO - User [1234] changed username from tester2 to 1234
+2024-05-27 23:20:38,147 - __manager__ - INFO - User [mahdi] has logged in
+2024-05-27 23:21:01,157 - __manager__ - INFO - User [mahdi] logged out
+2024-05-27 23:21:02,891 - __manager__ - INFO - EXIT (end of program)
