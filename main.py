@@ -1025,10 +1025,12 @@ class Project:
         console.print("|Creating New Task|\n", style="Title")
         console.print("Please provide the following details to create a new task:", style="Info")
         console.print("(or press ENTER to go back)" , style="Info")
+        # Get task details from user input
         title = input("Task Title: ")
         if title == "":
             return
         description = input("Task Description: ")
+        # Add the new task to the project's task list and save project data
         new_task = Task(title , description)
         self.tasks[new_task.ID]=vars(new_task)
         self.save_project_data()
@@ -1039,8 +1041,10 @@ class Project:
         
     def delete_task(self,task : Task , user : User):
         if user.ID == self.owner :
+            # Confirm deletion with the user
             choice = input("Are you sure? (y/n)")
             if choice == 'y':
+                # Delete the task from the project's task list
                 del self.tasks[task.ID]
                 console.print(f"Task [id = {task.ID}] has deleted successfully" , style='Notice')
                 logger.debug(f"Task [id = {task.ID}] deleted by user [user = {user.username}]")
@@ -1062,6 +1066,7 @@ class Project:
                 console.print(f"{self.title}", end="", style="cyan")
                 console.print("|\n", style="Title")
 
+                # Create a table to display tasks based on their status
                 main_table = Table(title="Tasks based on their status")
                 main_table.add_column("BACKLOG", style="cyan", justify="center", width=50)
                 main_table.add_column("TODO", style="yellow", justify="center", width=50)
@@ -1069,12 +1074,14 @@ class Project:
                 main_table.add_column("DONE", style="green", justify="center", width=50)
                 main_table.add_column("ARCHIVED", style="blue", justify="center", width=50)
 
+                # Create sub-tables for each status
                 backlog_table = Table()
                 todo_table = Table()
                 doing_table = Table()
                 done_table = Table()
                 archived_table = Table()
 
+                # Fill sub-tables with tasks based on their status
                 backlog_table.add_column("Task ID", justify="center", width=50)
                 backlog_table.add_column("Task title", justify="center", width=50)
                 todo_table.add_column("Task ID", justify="center", width=50)
@@ -1131,6 +1138,7 @@ class Project:
         if title == '':
             return
             
+        # Create a new project with the entered title and user's ID and save project data to file
         project = Project(title, user.ID)
         project.save_project_data()
         logger.info(f"A new project [name: {project.title}, id: {project.ID}] created by [{user.username}]")
@@ -1149,10 +1157,12 @@ class Project:
             wait_for_key_press()
             return False
         
+        # Confirm project deletion
         choice = input("Are you sure? (y/n)")
         if choice == 'y':
             file_path = f"projects/{self.ID}.json"
             try:
+                # Remove project file
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     for member in self.collaborators:
@@ -1171,6 +1181,7 @@ class Project:
             
 
     def manage_project_menu(self, user):
+        # Menu for managing project tasks and members
         while True:
             clear_screen()
             console.print("|Managing Project: ", end="", style="Title")
@@ -1208,6 +1219,7 @@ class Project:
                 wait_for_key_press()
 
     def change_task_fields(self, user: User, task: Task):
+        # Allow the user to change various fields of a task
         while True:
             clear_screen()
             console.print("|Updating Task: ", end="", style="Title")
@@ -1224,6 +1236,7 @@ class Project:
             console.print("7. Back")
 
             choice = input("Enter your choice: ")
+            # Handle field change choices
             if choice == "1":
                 if task.change_status():
                     task.add_to_history(user.ID, action="change status", new_amount=task.status)
@@ -1261,6 +1274,7 @@ class Project:
                 wait_for_key_press()
 
     def manage_task(self, user: User, task: Task):
+        # Manage tasks including changing fields, comments, assignees, history, and deletion
         if user.ID not in task.assignees and user.ID != self.owner:
             console.print("You don't have access to modify this task.", style='Error')
             wait_for_key_press()
@@ -1281,6 +1295,7 @@ class Project:
             console.print("6. Back")
 
             choice = input("Enter your choice: ")
+            # Handle task management choices
             if choice == "1":
                 self.change_task_fields(user, task)
                 self.update_task(task)
@@ -1306,6 +1321,7 @@ class Project:
                 wait_for_key_press()
 
     def manage_comments(self, task: Task, user: User):
+        # Manage comments for a task including viewing, adding, editing, and removing comments
         while True:
             clear_screen()
             console.print("|Managing Comments|\n", style="Title")
@@ -1317,6 +1333,7 @@ class Project:
             console.print("5. Back")
 
             choice = input("Enter your choice: ")
+            # Handle comment management choices
             if choice == "1":
                 task.view_comments()
                 wait_for_key_press()
@@ -1346,6 +1363,7 @@ class Project:
                 wait_for_key_press()
 
     def manage_assignees(self, task: Task, user: User):
+        # Manage assignees for a task including viewing, assigning, and removing assignees
         while True:
             clear_screen()
             console.print("|Managing Assignees|\n", style="Title")
@@ -1386,6 +1404,7 @@ class Project:
         
         data = User.load_user_projects(user.username)
         if data is not None and len(data['projects']) != 0:
+            # Load user's projects if they exist
             user_projects = [Project.load_project_data(proj_id) for proj_id in data["projects"]]
 
         else:
@@ -1413,6 +1432,7 @@ class Project:
             if project_number == "":
                 return
             if project_number in project_map:
+                # Manage the selected project
                 project = project_map[project_number]
                 project_instance = Project(**project)
                 logger.debug(f"User [{user.username}] is managing project [id: {project_instance.ID}]")
@@ -1442,6 +1462,7 @@ def main_menu():
         elif choice == "2":
             user = User.login()
             if user:
+                # If login is successful, go to the user menu
                 user_menu(user)
         elif choice == "3":
             console.print("Thank you for using the Project Management System. Have a great day!", style="Notice")
@@ -1479,6 +1500,7 @@ def user_menu(user: User):
             wait_for_key_press()
             
 def get_username(ID):
+    # Function to retrieve username based on ID
     data = {}
     try:
         with open("emails_and_usernames.json", 'r') as file:
@@ -1489,6 +1511,7 @@ def get_username(ID):
     return data["usernames"][ID]
     
 def get_ID(username):
+    # Function to retrieve ID based on username
     data = {}
     try:
         with open("emails_and_usernames.json", 'r') as file:
@@ -1506,6 +1529,6 @@ def get_ID(username):
 #      START POINT        #
 #.........................#
 
-
+# Start the main menu loop when the script is executed
 if __name__ == "__main__":
     main_menu()
