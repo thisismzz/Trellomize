@@ -17,7 +17,7 @@ CUSTOM_THEME = Theme({
 
 console = Console(theme=CUSTOM_THEME)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("__manager__")
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('logs.log', mode='a')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

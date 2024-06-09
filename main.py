@@ -23,7 +23,7 @@ CUSTOM_THEME = Theme({
 console = Console(theme=CUSTOM_THEME)
 
 # Setting up logger for logging errors and debug information
-logger = logging.getLogger("__manager__")
+logger = logging.getLogger("__main__")
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('logs.log', mode='a')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
